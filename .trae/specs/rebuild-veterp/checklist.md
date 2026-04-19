@@ -1,12 +1,12 @@
 # Checklist de Implementación por Fases
 
 ## Fase 1: Auth + Tenant Context + Navegación Protegida
-- [ ] Proyecto Next.js inicializado con Supabase y shadcn/ui.
-- [ ] Base de datos conectada con esquema inicial (`User`, `Clinica`, `MembresiaClinica`).
-- [ ] Flujo de registro, login y reseteo de contraseña funcional.
-- [ ] Vista `select_clinica` permite elegir la clínica y setea el contexto de la sesión (cookie/jwt).
-- [ ] Middleware activado (redirige si no hay login o clínica activa).
-- [ ] RLS activado asegurando que un usuario solo ve datos de su clínica activa.
+- [x] Proyecto Next.js inicializado con Supabase y shadcn/ui.
+- [x] Base de datos conectada con esquema inicial (`User`, `Clinica`, `MembresiaClinica`).
+- [x] Flujo de registro, login y reseteo de contraseña funcional.
+- [x] Vista `select_clinica` permite elegir la clínica y setea el contexto de la sesión (cookie/jwt).
+- [x] Middleware activado (redirige si no hay login o clínica activa).
+- [x] RLS activado asegurando que un usuario solo ve datos de su clínica activa.
 
 ## Fase 2: Clientes + Mascotas
 - [ ] Listado de Clientes y Mascotas funcional.
