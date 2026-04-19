@@ -11,10 +11,10 @@
 - [x] RLS activado asegurando que un usuario solo ve datos de su clínica activa.
 
 ## Fase 2: Clientes + Mascotas
-- [ ] Listado de Clientes y Mascotas funcional.
-- [ ] Creación de Cliente y Mascota garantiza integridad referencial (no FKs nulas).
-- [ ] Componentes modales reutilizables integrados correctamente.
-- [ ] RLS probado para evitar fuga de datos entre tenants.
+- [x] Listado de Clientes y Mascotas funcional.
+- [x] Creación de Cliente y Mascota garantiza integridad referencial (no FKs nulas).
+- [x] Componentes modales reutilizables integrados correctamente.
+- [x] RLS probado para evitar fuga de datos entre tenants.
 
 ## Fase 3: Agenda + Citas
 - [ ] Catálogo de Tipos de Cita implementado.

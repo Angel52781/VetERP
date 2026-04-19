@@ -7,10 +7,10 @@
   - [x] SubTask 1.4: Implementar vista `select_clinica` y manejo de estado/cookie de `clinica_id`.
   - [x] SubTask 1.5: Configurar layouts, Navbar y Middleware (Guards de rutas).
 
-- [ ] Task 2: Fase 2 - Clientes + Mascotas
-  - [ ] SubTask 2.1: Modelar tablas (`Cliente`, `Mascota`) con RLS.
-  - [ ] SubTask 2.2: Desarrollar componentes modales reutilizables para creación.
-  - [ ] SubTask 2.3: Desarrollar vista `clientes_mascotas` (Listado, búsqueda y detalle).
+- [x] Task 2: Fase 2 - Clientes + Mascotas
+  - [x] SubTask 2.1: Modelar tablas (`Cliente`, `Mascota`) con RLS.
+  - [x] SubTask 2.2: Desarrollar componentes modales reutilizables para creación.
+  - [x] SubTask 2.3: Desarrollar vista `clientes_mascotas` (Listado, búsqueda y detalle).
 
 - [ ] Task 3: Fase 3 - Agenda + Citas
   - [ ] SubTask 3.1: Modelar tablas de catálogo (`TipoCita`) y tabla operativa (`Cita`) con RLS.
