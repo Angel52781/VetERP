@@ -1,11 +1,11 @@
 # Tasks
 
-- [ ] Task 1: Fase 1 - Auth + Tenant Context + Navegación Protegida
-  - [ ] SubTask 1.1: Inicializar Next.js, Tailwind, shadcn/ui y Supabase.
-  - [ ] SubTask 1.2: Modelar y crear tablas base (`User`, `Clinica`, `MembresiaClinica`) con RLS.
-  - [ ] SubTask 1.3: Implementar flujos de Login, Signup, Reset Password (Supabase Auth).
-  - [ ] SubTask 1.4: Implementar vista `select_clinica` y manejo de estado/cookie de `clinica_id`.
-  - [ ] SubTask 1.5: Configurar layouts, Navbar y Middleware (Guards de rutas).
+- [x] Task 1: Fase 1 - Auth + Tenant Context + Navegación Protegida
+  - [x] SubTask 1.1: Inicializar Next.js, Tailwind, shadcn/ui y Supabase.
+  - [x] SubTask 1.2: Modelar y crear tablas base (`User`, `Clinica`, `MembresiaClinica`) con RLS.
+  - [x] SubTask 1.3: Implementar flujos de Login, Signup, Reset Password (Supabase Auth).
+  - [x] SubTask 1.4: Implementar vista `select_clinica` y manejo de estado/cookie de `clinica_id`.
+  - [x] SubTask 1.5: Configurar layouts, Navbar y Middleware (Guards de rutas).
 
 - [ ] Task 2: Fase 2 - Clientes + Mascotas
   - [ ] SubTask 2.1: Modelar tablas (`Cliente`, `Mascota`) con RLS.
