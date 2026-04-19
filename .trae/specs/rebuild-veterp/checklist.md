@@ -4,6 +4,8 @@
 - [x] Proyecto Next.js inicializado con Supabase y shadcn/ui.
 - [x] Base de datos conectada con esquema inicial (`User`, `Clinica`, `MembresiaClinica`).
 - [x] Flujo de registro, login y reseteo de contraseña funcional.
+- [x] Flujo de Onboarding: Creación de primera clínica si el usuario no tiene ninguna asignada.
+- [x] Mostrar mensajes de error de autenticación en la UI (login/signup).
 - [x] Vista `select_clinica` permite elegir la clínica y setea el contexto de la sesión (cookie/jwt).
 - [x] Middleware activado (redirige si no hay login o clínica activa).
 - [x] RLS activado asegurando que un usuario solo ve datos de su clínica activa.
