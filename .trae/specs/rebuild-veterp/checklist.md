@@ -1,9 +1,9 @@
 # Checklist de Implementación por Fases
 
-## Fase 1: Auth + Tenant Context + Navegación Protegida (EN PROGRESO - RECONSTRUIDA)
+## Fase 1: Auth + Tenant Context + Navegación Protegida (LISTA - RECONSTRUIDA)
 - [x] Proyecto Next.js inicializado con Supabase y shadcn/ui.
 - [x] Base de datos conectada con esquema inicial (`User`, `Clinica`, `MembresiaClinica`).
-- [ ] Flujo de registro, login y reseteo de contraseña funcional. *(Falta Signup y Reset)*
+- [x] Flujo de registro, login y reseteo de contraseña funcional.
 - [x] Flujo de Onboarding: Creación de primera clínica si el usuario no tiene ninguna asignada.
 - [x] Mostrar mensajes de error de autenticación en la UI (login/signup).
 - [x] Vista `select_clinica` permite elegir la clínica y setea el contexto de la sesión (cookie/jwt).

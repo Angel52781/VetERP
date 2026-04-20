@@ -3,7 +3,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import { clinicaCookieName } from "@/lib/supabase/env";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const publicPaths = new Set<string>(["/login"]);
+const publicPaths = new Set<string>([
+  "/login",
+  "/signup",
+  "/reset-password",
+  "/update-password",
+  "/auth/callback",
+]);
 const clinicPaths = ["/app", "/clientes", "/ajustes"];
 
 function isClinicRequiredPath(pathname: string) {
@@ -24,7 +30,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (user && pathname === "/login") {
+  if (user && (pathname === "/login" || pathname === "/signup" || pathname === "/reset-password")) {
     const clinicaId = request.cookies.get(clinicaCookieName)?.value;
     return NextResponse.redirect(
       new URL(clinicaId ? "/app" : "/select-clinica", request.url),
