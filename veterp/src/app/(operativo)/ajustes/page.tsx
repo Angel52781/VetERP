@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CatalogoList } from "./catalogo-client";
-import { getItemsCatalogo, getProveedores } from "./actions";
+import { ProveedoresList } from "./proveedores-client";
+import { AlmacenesList } from "./almacenes-client";
+import { getItemsCatalogo, getProveedores, getAlmacenes } from "./actions";
 
 export const metadata = {
   title: "Ajustes | VetERP",
@@ -9,13 +11,15 @@ export const metadata = {
 };
 
 export default async function AjustesPage() {
-  const [itemsRes, proveedoresRes] = await Promise.all([
+  const [itemsRes, proveedoresRes, almacenesRes] = await Promise.all([
     getItemsCatalogo(),
     getProveedores(),
+    getAlmacenes(),
   ]);
 
   const items = itemsRes.data || [];
   const proveedores = proveedoresRes.data || [];
+  const almacenes = almacenesRes.data || [];
 
   return (
     <div className="space-y-6">
@@ -26,6 +30,7 @@ export default async function AjustesPage() {
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="catalogo">Catálogo</TabsTrigger>
           <TabsTrigger value="proveedores">Proveedores</TabsTrigger>
+          <TabsTrigger value="almacenes">Almacenes</TabsTrigger>
         </TabsList>
         <TabsContent value="general" className="mt-6">
           <Card>
@@ -46,11 +51,15 @@ export default async function AjustesPage() {
         </TabsContent>
         <TabsContent value="proveedores" className="mt-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Proveedores</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              Gestión de proveedores (próximamente).
+            <CardContent className="pt-6">
+              <ProveedoresList proveedores={proveedores} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="almacenes" className="mt-6">
+          <Card>
+            <CardContent className="pt-6">
+              <AlmacenesList almacenes={almacenes} />
             </CardContent>
           </Card>
         </TabsContent>

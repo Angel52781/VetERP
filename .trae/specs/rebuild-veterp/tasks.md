@@ -32,11 +32,11 @@
   - [x] SubTask 5.5: Desarrollar vista `caja_inventario` enfocada exclusivamente en Caja y Ventas.
   - [x] SubTask 5.6: Desarrollar UI para el catálogo de Servicios y Productos (Crear, editar, listar `ItemCatalogo`).
 
-- [ ] Task 6: Fase 6 - Inventario + Movimiento Stock
-  - [ ] SubTask 6.1: Modelar tablas logísticas (`Proveedor`, `Almacen`, `MovimientoStock`).
-  - [ ] SubTask 6.2: Desarrollar CRUD de catálogos logísticos (Settings).
-  - [ ] SubTask 6.3: Desarrollar pestaña Inventario (Kardex) y lógica de suma de stock.
-  - [ ] SubTask 6.4: Vincular rebaja automática de stock al procesar ventas de productos.
+- [x] Task 6: Fase 6 - Inventario + Movimiento Stock
+  - [x] SubTask 6.1: Modelar tablas logísticas (`Proveedor`, `Almacen`, `MovimientoStock`).
+  - [x] SubTask 6.2: Desarrollar CRUD de catálogos logísticos (Settings).
+  - [x] SubTask 6.3: Desarrollar pestaña Inventario (Kardex) y lógica de suma de stock.
+  - [x] SubTask 6.4: Vincular rebaja automática de stock al procesar ventas de productos.
 
 - [ ] Task 7: Fase 7 - Hardening + QA + Permisos
   - [ ] SubTask 7.1: Implementar RBAC basado en `MembresiaClinica.rol_text`.

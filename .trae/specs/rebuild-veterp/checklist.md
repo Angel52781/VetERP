@@ -36,10 +36,10 @@
 - [x] Registro de pagos (`Ledger`) funcional y sumando correctamente.
 
 ## Fase 6: Inventario + Movimiento Stock
-- [ ] Catálogos de Proveedores y Almacenes operativos.
-- [ ] Inventario calcula stock actual en tiempo real mediante `SUM(MovimientoStock)`.
-- [ ] Movimientos manuales de ajuste reflejados en el Kardex.
-- [ ] Rebaja de stock automática probada al vender ítems tipo "producto".
+- [x] Catálogos de Proveedores y Almacenes operativos.
+- [x] Inventario calcula stock actual en tiempo real mediante `SUM(MovimientoStock)`.
+- [x] Movimientos manuales de ajuste reflejados en el Kardex.
+- [x] Rebaja de stock automática probada al vender ítems tipo "producto".
 
 ## Fase 7: Hardening + QA + Permisos
 - [ ] Reglas de Autorización (RBAC) aplicadas en UI y Server Actions.

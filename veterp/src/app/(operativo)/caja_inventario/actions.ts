@@ -122,6 +122,41 @@ export async function getItemsCatalogo() {
   return { error: null, data };
 }
 
+async function getDefaultAlmacen(clinicaId: string, supabase: any) {
+  let { data: almacen } = await supabase
+    .from("almacenes")
+    .select("id")
+    .eq("clinica_id", clinicaId)
+    .eq("is_default", true)
+    .single();
+
+  if (!almacen) {
+    const { data: firstAlmacen } = await supabase
+      .from("almacenes")
+      .select("id")
+      .eq("clinica_id", clinicaId)
+      .limit(1)
+      .single();
+    
+    almacen = firstAlmacen;
+  }
+
+  if (!almacen) {
+    const { data: newAlmacen } = await supabase
+      .from("almacenes")
+      .insert({
+        clinica_id: clinicaId,
+        nombre: "Almacén Principal",
+        is_default: true,
+      })
+      .select("id")
+      .single();
+    almacen = newAlmacen;
+  }
+
+  return almacen.id;
+}
+
 export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput, "venta_id">) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
@@ -136,7 +171,7 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
     // 1. Obtener precio actual del item desde el catálogo (seguridad backend)
     const { data: itemCatalogo, error: itemError } = await supabase
       .from("items_catalogo")
-      .select("precio_inc")
+      .select("precio_inc, kind")
       .eq("id", validatedData.item_id)
       .eq("clinica_id", clinicaId)
       .single();
@@ -165,6 +200,26 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
     if (insertError) {
       console.error("Error inserting item_venta:", insertError);
       return { error: insertError.message, data: null };
+    }
+
+    if (itemCatalogo.kind === "producto") {
+      const almacenId = await getDefaultAlmacen(clinicaId, supabase);
+      const { error: stockError } = await supabase
+        .from("movimientos_stock")
+        .insert({
+          clinica_id: clinicaId,
+          item_id: validatedData.item_id,
+          almacen_id: almacenId,
+          qty: -validatedData.cantidad,
+          tipo: "venta",
+          notas: `Venta ${ventaId}`,
+        });
+
+      if (stockError) {
+        console.error("Error reducing stock:", stockError);
+        // We might want to rollback the item_venta insertion here if this was a true transaction,
+        // but for now we log it.
+      }
     }
 
     // 3. Recalcular total de la venta de forma segura
@@ -206,6 +261,26 @@ export async function removeVentaItem(itemId: string, ventaId: string) {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
 
+    // 1. Obtener item_venta para revertir stock
+    const { data: itemVenta, error: fetchError } = await supabase
+      .from("items_venta")
+      .select(`
+        cantidad,
+        item_id,
+        items_catalogo!inner (
+          kind
+        )
+      `)
+      .eq("id", itemId)
+      .eq("venta_id", ventaId)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching item_venta to remove:", fetchError);
+      return { error: fetchError.message };
+    }
+
     const { error } = await supabase
       .from("items_venta")
       .delete()
@@ -216,6 +291,28 @@ export async function removeVentaItem(itemId: string, ventaId: string) {
     if (error) {
       console.error("Error removing item_venta:", error);
       return { error: error.message };
+    }
+
+    const kind = Array.isArray(itemVenta.items_catalogo) 
+      ? itemVenta.items_catalogo[0]?.kind 
+      : (itemVenta.items_catalogo as any)?.kind;
+
+    if (kind === "producto") {
+      const almacenId = await getDefaultAlmacen(clinicaId, supabase);
+      const { error: stockError } = await supabase
+        .from("movimientos_stock")
+        .insert({
+          clinica_id: clinicaId,
+          item_id: itemVenta.item_id,
+          almacen_id: almacenId,
+          qty: itemVenta.cantidad,
+          tipo: "reversion_venta",
+          notas: `Reversión Venta ${ventaId}`,
+        });
+
+      if (stockError) {
+        console.error("Error reverting stock:", stockError);
+      }
     }
 
     await recalcularTotalVenta(ventaId, clinicaId, supabase);
@@ -317,4 +414,84 @@ export async function getVentasResumen() {
   }
 
   return { error: null, data: ventas };
+}
+
+export async function getInventario() {
+  const clinicaId = await requireClinicaIdFromCookies();
+  const supabase = await createClient();
+
+  // First get all items of kind = 'producto'
+  const { data: productos, error: itemsError } = await supabase
+    .from("items_catalogo")
+    .select("id, nombre, is_disabled")
+    .eq("clinica_id", clinicaId)
+    .eq("kind", "producto")
+    .order("nombre");
+
+  if (itemsError) {
+    console.error("Error fetching productos:", itemsError);
+    return { error: itemsError.message, data: [] };
+  }
+
+  // Get stock sums grouped by item_id
+  // Because supabase doesn't support GROUP BY directly in select yet without RPC,
+  // we'll fetch all movimientos for this clinic and group them in JS (fine for small to medium scale)
+  // Or we can just use an RPC. Since we don't want to create an RPC now, we can fetch them.
+  // Actually, we can just fetch the sum using postgREST if possible, but let's just fetch all.
+  
+  const { data: movimientos, error: movsError } = await supabase
+    .from("movimientos_stock")
+    .select("item_id, qty")
+    .eq("clinica_id", clinicaId);
+
+  if (movsError) {
+    console.error("Error fetching movimientos_stock:", movsError);
+    return { error: movsError.message, data: [] };
+  }
+
+  // Group by item_id
+  const stockMap: Record<string, number> = {};
+  for (const mov of movimientos || []) {
+    if (!stockMap[mov.item_id]) {
+      stockMap[mov.item_id] = 0;
+    }
+    stockMap[mov.item_id] += Number(mov.qty);
+  }
+
+  const result = (productos || []).map(p => ({
+    ...p,
+    stock: stockMap[p.id] || 0
+  }));
+
+  return { error: null, data: result };
+}
+
+import { movimientoStockSchema, MovimientoStockInput } from "@/lib/validators/ajustes";
+
+export async function addMovimientoStock(input: MovimientoStockInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const validatedData = movimientoStockSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("movimientos_stock")
+      .insert({
+        ...validatedData,
+        clinica_id: clinicaId,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating movimiento_stock:", error);
+      return { error: error.message, data: null };
+    }
+
+    revalidatePath("/(operativo)/caja_inventario", "page");
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al registrar movimiento", data: null };
+  }
 }

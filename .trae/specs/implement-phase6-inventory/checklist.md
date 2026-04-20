@@ -1,0 +1,8 @@
+- [x] Migración SQL `0006_inventario.sql` implementada, abarcando `almacenes` y `movimientos_stock` con RLS y aislamientos requeridos.
+- [x] CRUD funcional para `Proveedores` y `Almacenes` en la vista `/ajustes`.
+- [x] Vista de Inventario / Kardex disponible en `/caja_inventario`, que calcula dinámicamente el stock sumando los movimientos.
+- [x] Funcionalidad para realizar ajustes manuales de stock (`MovimientoStock` arbitrario) integrada.
+- [x] El stock disminuye automáticamente cuando se registra un `ItemVenta` que sea de tipo "producto".
+- [x] El stock se reintegra automáticamente cuando un `ItemVenta` ("producto") es eliminado de la orden.
+- [x] El `build` pasa y los tipos son correctos.
+- [x] El documento `/.trae/documents/phase6_validation.md` confirma que la Fase 6 está finalizada.

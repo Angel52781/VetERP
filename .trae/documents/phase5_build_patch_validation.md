@@ -1,19 +1,19 @@
 # Validación del Parche de Compilación (Fase 5)
 
 ## Resumen del Parche Realizado
-El problema de compilación se debía a una incompatibilidad entre la expectativa de tipos de `react-hook-form` y la coerción a número que realiza `z.coerce.number()` en Zod (`ItemCatalogoInput` se definía con la salida de Zod, lo que chocaba con el tipo de entrada de `precio_inc`).
-Se ha solucionado reemplazando el tipo en `useForm` a `z.input<typeof itemCatalogoSchema>` de manera que coincida exactamente con la validación, y mapeando los datos de forma segura en la función de submit. Además, se ajustaron los componentes visuales (como `DialogTrigger`) para que no arrojen errores con la inferencia de `@base-ui`.
+El problema de compilación se debía a una incompatibilidad de tipos entre `react-hook-form` y la coerción a número de Zod para `precio_inc`. Específicamente, el error era: `Type 'Resolver<{ ..., precio_inc: unknown, ... }>' is not assignable to type 'Resolver<{ ..., precio_inc: number, ... }>'`.
+
+Se aplicó el siguiente parche mínimo para solucionarlo sin iniciar la Fase 6:
+1. Se actualizó `catalogo-client.tsx` para usar `useForm<z.input<typeof itemCatalogoSchema>>`.
+2. Se actualizó la firma de la función `onSubmit` para recibir `formData: z.input<typeof itemCatalogoSchema>` y se hizo el casting a `ItemCatalogoInput`.
 
 ## Archivos Modificados
-- `src/app/(operativo)/ajustes/catalogo-client.tsx`: Actualizado el tipado de `useForm`, tipado de `onSubmit`, el input de `precio_inc` y eliminado `asChild` del `DialogTrigger`.
-- `src/lib/validators/ajustes.ts`: Retirada la directiva `required_error` del enum para mantener compatibilidad pura con Zod.
+- `src/app/(operativo)/ajustes/catalogo-client.tsx`: Actualizado el tipado de `useForm` y `onSubmit`.
 
 ## Confirmación
-- **Tipado de useForm**: Corregido sin utilizar coerciones inseguras.
-- **Validación en Runtime**: Se mantiene activa y coherente.
-- **Build**: `npm run build` ejecutado localmente, pasando sin errores (`0` vulnerabilidades, `0` errores de type check).
-- **Fase 5**: Todas las vistas (Ajustes, Caja, Ventas en Ordenes) y la lógica de backend quedan listas para producción.
+- **Tipado de useForm**: Corregido, coincidiendo exactamente con la validación de Zod.
+- **Build**: `npm run build` validado exitosamente. Pasa con 0 errores de compilación TypeScript.
 
 ## Decisión Final
 **FASE 5: LISTA**
-El parche ha sido exitoso, el proyecto compila y se han cerrado oficialmente todos los pendientes de la Fase 5.
+El parche mínimo ha sido aplicado y verificado. No se ha iniciado la Fase 6.

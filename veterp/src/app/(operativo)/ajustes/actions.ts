@@ -2,7 +2,14 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
-import { itemCatalogoSchema, ItemCatalogoInput } from "@/lib/validators/ajustes";
+import { 
+  itemCatalogoSchema, 
+  ItemCatalogoInput,
+  proveedorSchema,
+  ProveedorInput,
+  almacenSchema,
+  AlmacenInput
+} from "@/lib/validators/ajustes";
 
 export async function getItemsCatalogo() {
   try {
@@ -91,7 +98,7 @@ export async function getProveedores() {
 
     const { data, error } = await supabase
       .from("proveedores")
-      .select("id, nombre")
+      .select("*")
       .eq("clinica_id", clinicaId)
       .order("nombre");
 
@@ -103,5 +110,137 @@ export async function getProveedores() {
     return { error: null, data };
   } catch (err: any) {
     return { error: err.message || "Error al obtener proveedores", data: null };
+  }
+}
+
+export async function createProveedor(input: ProveedorInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const validatedData = proveedorSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("proveedores")
+      .insert({
+        ...validatedData,
+        clinica_id: clinicaId,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating proveedor:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al crear proveedor", data: null };
+  }
+}
+
+export async function updateProveedor(id: string, input: ProveedorInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const validatedData = proveedorSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("proveedores")
+      .update({
+        ...validatedData,
+      })
+      .eq("id", id)
+      .eq("clinica_id", clinicaId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating proveedor:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al actualizar proveedor", data: null };
+  }
+}
+
+export async function getAlmacenes() {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("almacenes")
+      .select("*")
+      .eq("clinica_id", clinicaId)
+      .order("nombre");
+
+    if (error) {
+      console.error("Error fetching almacenes:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al obtener almacenes", data: null };
+  }
+}
+
+export async function createAlmacen(input: AlmacenInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const validatedData = almacenSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("almacenes")
+      .insert({
+        ...validatedData,
+        clinica_id: clinicaId,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating almacen:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al crear almacén", data: null };
+  }
+}
+
+export async function updateAlmacen(id: string, input: AlmacenInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const validatedData = almacenSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("almacenes")
+      .update({
+        ...validatedData,
+      })
+      .eq("id", id)
+      .eq("clinica_id", clinicaId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating almacen:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al actualizar almacén", data: null };
   }
 }
