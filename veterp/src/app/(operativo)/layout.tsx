@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { getUserRole } from "@/lib/clinica";
 
 import { AppUserMenu } from "./user-menu";
 
@@ -12,6 +13,9 @@ export default async function OperativoLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const role = await getUserRole();
+  const isAdminOrOwner = role === "owner" || role === "admin";
 
   return (
     <div className="flex flex-1">
@@ -41,14 +45,25 @@ export default async function OperativoLayout({
             Clientes
           </Link>
           <Link
-            href="/ajustes"
+            href="/caja_inventario"
             className={buttonVariants({
               variant: "ghost",
               className: "w-full justify-start",
             })}
           >
-            Ajustes
+            Caja e Inventario
           </Link>
+          {isAdminOrOwner && (
+            <Link
+              href="/ajustes"
+              className={buttonVariants({
+                variant: "ghost",
+                className: "w-full justify-start",
+              })}
+            >
+              Ajustes
+            </Link>
+          )}
         </nav>
       </aside>
 
@@ -57,7 +72,7 @@ export default async function OperativoLayout({
           <Link href="/app" className="font-semibold md:hidden">
             VetERP
           </Link>
-          <AppUserMenu email={user?.email ?? ""} />
+          <AppUserMenu email={user?.email ?? ""} isAdminOrOwner={isAdminOrOwner} />
         </header>
 
         <main className="flex min-w-0 flex-1 flex-col px-4 py-6">

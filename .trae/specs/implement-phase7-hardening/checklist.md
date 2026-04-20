@@ -1,0 +1,8 @@
+- [x] RBAC implementado (basado en `user_clinicas.role`).
+- [x] Rutas y botones de `/ajustes` y opciones financieras bloqueados para usuarios sin privilegios.
+- [x] Server Actions financieras y maestras (catálogos, almacenes) protegidas mediante validación de rol.
+- [x] Zod mejorado para validaciones estrictas y sanitización básica (Hardening).
+- [x] Rendimiento optimizado: se eliminan "waterfalls" usando `Promise.all()` en dashboards complejos.
+- [x] Seed data de prueba (`supabase/seed.sql` o acción) lista para validación E2E.
+- [x] `npm run build` pasa con 0 errores.
+- [x] Se genera el documento de validación de la Fase 7 y el proyecto es declarado "LISTO PARA VALIDACIÓN FINAL".

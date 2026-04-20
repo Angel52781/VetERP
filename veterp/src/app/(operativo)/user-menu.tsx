@@ -18,7 +18,7 @@ import { createClient } from "@/lib/supabase/client";
 
 import { clearClinica } from "../select-clinica/actions";
 
-export function AppUserMenu({ email }: { email: string }) {
+export function AppUserMenu({ email, isAdminOrOwner }: { email: string, isAdminOrOwner: boolean }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -47,10 +47,12 @@ export function AppUserMenu({ email }: { email: string }) {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Cuenta</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => router.push("/ajustes")}>
-          <Settings2 />
-          Ajustes
-        </DropdownMenuItem>
+        {isAdminOrOwner && (
+          <DropdownMenuItem onSelect={() => router.push("/ajustes")}>
+            <Settings2 />
+            Ajustes
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onSelect={changeClinic}>
           <Stethoscope />
           Cambiar clínica

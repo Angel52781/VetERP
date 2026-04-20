@@ -38,7 +38,7 @@
   - [x] SubTask 6.3: Desarrollar pestaña Inventario (Kardex) y lógica de suma de stock.
   - [x] SubTask 6.4: Vincular rebaja automática de stock al procesar ventas de productos.
 
-- [ ] Task 7: Fase 7 - Hardening + QA + Permisos
-  - [ ] SubTask 7.1: Implementar RBAC basado en `MembresiaClinica.rol_text`.
-  - [ ] SubTask 7.2: Revisión de seguridad y performance (Vercel Best Practices).
-  - [ ] SubTask 7.3: Corrección de bugs (QA) y validaciones finales.
+- [x] Task 7: Fase 7 - Hardening + QA + Permisos
+  - [x] SubTask 7.1: Implementar RBAC basado en `user_clinicas.role`.
+  - [x] SubTask 7.2: Revisión de seguridad y performance (Vercel Best Practices).
+  - [x] SubTask 7.3: Corrección de bugs (QA) y validaciones finales (Seed Data).

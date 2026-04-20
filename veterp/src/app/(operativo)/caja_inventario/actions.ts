@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { requireClinicaIdFromCookies } from "@/lib/clinica";
+import { requireClinicaIdFromCookies, requireUserRole } from "@/lib/clinica";
 import { itemVentaSchema, ItemVentaInput, ledgerSchema, LedgerInput } from "@/lib/validators/ventas";
 import { revalidatePath } from "next/cache";
 
@@ -470,7 +470,7 @@ import { movimientoStockSchema, MovimientoStockInput } from "@/lib/validators/aj
 
 export async function addMovimientoStock(input: MovimientoStockInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = movimientoStockSchema.parse(input);
