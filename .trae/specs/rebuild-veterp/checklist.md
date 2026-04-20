@@ -21,11 +21,11 @@
 - [x] Calendario visualiza y permite crear citas correctamente.
 - [x] Citas vinculadas correctamente al Cliente y la Mascota.
 
-## Fase 4: Órdenes + Entradas Clínicas + Adjuntos
-- [ ] Vista `index` muestra listado de atenciones activas.
-- [ ] Vista `orden_y_colas` permite gestionar transiciones de estado (`Open`, `In Progress`, etc.).
-- [ ] Registro de notas (`EntradaClinica`) funcional.
-- [ ] Subida y visualización de archivos (`Adjunto`) segura vía Supabase Storage.
+## Fase 4: Órdenes + Entradas Clínicas + Adjuntos (LISTA PARCIAL)
+- [x] Vista `index` muestra listado de atenciones activas.
+- [x] Vista `orden_y_colas` permite gestionar transiciones de estado (`Open`, `In Progress`, etc.).
+- [x] Registro de notas (`EntradaClinica`) funcional.
+- [x] Subida y visualización de archivos (`Adjunto`) segura vía Supabase Storage.
 - [ ] Kanban de colas muestra pacientes en espera en los carriles correctos.
 
 ## Fase 5: Caja + Ventas + Item Venta + Ledger

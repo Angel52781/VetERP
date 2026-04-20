@@ -17,11 +17,11 @@
   - [x] SubTask 3.2: Integrar componente de calendario en `agenda_colas_settings`.
   - [x] SubTask 3.3: Desarrollar flujo de agendamiento (vinculando Cliente/Mascota).
 
-- [ ] Task 4: Fase 4 - Órdenes + Entradas Clínicas + Adjuntos
-  - [ ] SubTask 4.1: Modelar tablas (`OrdenServicio`, `EntradaClinica`, `Adjunto`, `ItemCola`).
-  - [ ] SubTask 4.2: Desarrollar vista `index` (Panel de Atenciones abiertas).
-  - [ ] SubTask 4.3: Desarrollar vista `orden_y_colas` (Detalle, Notas Clínicas).
-  - [ ] SubTask 4.4: Configurar Supabase Storage e implementar subida de archivos.
+- [x] Task 4: Fase 4 - Órdenes + Entradas Clínicas + Adjuntos
+  - [x] SubTask 4.1: Modelar tablas (`OrdenServicio`, `EntradaClinica`, `Adjunto`, `ItemCola`).
+  - [x] SubTask 4.2: Desarrollar vista `index` (Panel de Atenciones abiertas).
+  - [x] SubTask 4.3: Desarrollar vista `orden_y_colas` (Detalle, Notas Clínicas).
+  - [x] SubTask 4.4: Configurar Supabase Storage e implementar subida de archivos.
   - [ ] SubTask 4.5: Desarrollar tablero Kanban para Colas (`agenda_colas_settings`).
 
 - [ ] Task 5: Fase 5 - Caja + Ventas + Item Venta + Ledger
