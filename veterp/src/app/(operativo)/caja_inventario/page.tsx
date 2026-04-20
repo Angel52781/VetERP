@@ -1,5 +1,6 @@
 import { getVentasResumen, getInventario } from "./actions";
 import { getAlmacenes } from "../ajustes/actions";
+import { getUserRole } from "@/lib/clinica";
 import { VentasList } from "./ventas-list";
 import { InventarioList } from "./inventario-list";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -7,11 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, TrendingUp, AlertCircle } from "lucide-react";
 
 export default async function CajaInventarioPage() {
-  const [ventasRes, invRes, almacenesRes] = await Promise.all([
+  const [role, ventasRes, invRes, almacenesRes] = await Promise.all([
+    getUserRole(),
     getVentasResumen(),
     getInventario(),
     getAlmacenes()
   ]);
+
+  const isVeterinario = role === "veterinario";
 
   const ventas = ventasRes.data || [];
   const inventario = invRes.data || [];
@@ -47,13 +51,14 @@ export default async function CajaInventarioPage() {
         <p className="text-muted-foreground mt-1">Gestión de ingresos, cuentas por cobrar y stock de productos.</p>
       </div>
 
-      <Tabs defaultValue="caja" className="w-full">
+      <Tabs defaultValue={isVeterinario ? "inventario" : "caja"} className="w-full">
         <TabsList>
-          <TabsTrigger value="caja">Caja y Ventas</TabsTrigger>
+          {!isVeterinario && <TabsTrigger value="caja">Caja y Ventas</TabsTrigger>}
           <TabsTrigger value="inventario">Inventario / Kardex</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="caja" className="space-y-6 mt-6">
+        {!isVeterinario && (
+          <TabsContent value="caja" className="space-y-6 mt-6">
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -99,6 +104,7 @@ export default async function CajaInventarioPage() {
             </CardContent>
           </Card>
         </TabsContent>
+        )}
 
         <TabsContent value="inventario" className="mt-6">
           <Card>

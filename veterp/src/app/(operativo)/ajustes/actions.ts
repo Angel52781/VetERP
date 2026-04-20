@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { requireClinicaIdFromCookies } from "@/lib/clinica";
+import { requireClinicaIdFromCookies, requireUserRole } from "@/lib/clinica";
 import { 
   itemCatalogoSchema, 
   ItemCatalogoInput,
@@ -38,7 +38,7 @@ export async function getItemsCatalogo() {
 
 export async function createItemCatalogo(input: ItemCatalogoInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = itemCatalogoSchema.parse(input);
@@ -65,10 +65,11 @@ export async function createItemCatalogo(input: ItemCatalogoInput) {
 
 export async function updateItemCatalogo(id: string, input: ItemCatalogoInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = itemCatalogoSchema.parse(input);
+
 
     const { data, error } = await supabase
       .from("items_catalogo")
@@ -115,7 +116,7 @@ export async function getProveedores() {
 
 export async function createProveedor(input: ProveedorInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = proveedorSchema.parse(input);
@@ -142,7 +143,7 @@ export async function createProveedor(input: ProveedorInput) {
 
 export async function updateProveedor(id: string, input: ProveedorInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = proveedorSchema.parse(input);
@@ -192,7 +193,7 @@ export async function getAlmacenes() {
 
 export async function createAlmacen(input: AlmacenInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = almacenSchema.parse(input);
@@ -219,7 +220,7 @@ export async function createAlmacen(input: AlmacenInput) {
 
 export async function updateAlmacen(id: string, input: AlmacenInput) {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     const validatedData = almacenSchema.parse(input);

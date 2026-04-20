@@ -42,6 +42,6 @@
 - [x] Rebaja de stock automática probada al vender ítems tipo "producto".
 
 ## Fase 7: Hardening + QA + Permisos
-- [ ] Reglas de Autorización (RBAC) aplicadas en UI y Server Actions.
-- [ ] Rendimiento optimizado según mejores prácticas de React.
-- [ ] Seed data mínima inyectada para pruebas finales.
+- [x] Reglas de Autorización (RBAC) aplicadas en UI y Server Actions.
+- [x] Rendimiento optimizado según mejores prácticas de React.
+- [x] Seed data mínima inyectada para pruebas finales.

@@ -4,6 +4,8 @@ import { CatalogoList } from "./catalogo-client";
 import { ProveedoresList } from "./proveedores-client";
 import { AlmacenesList } from "./almacenes-client";
 import { getItemsCatalogo, getProveedores, getAlmacenes } from "./actions";
+import { getUserRole } from "@/lib/clinica";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Ajustes | VetERP",
@@ -11,11 +13,16 @@ export const metadata = {
 };
 
 export default async function AjustesPage() {
-  const [itemsRes, proveedoresRes, almacenesRes] = await Promise.all([
+  const [role, itemsRes, proveedoresRes, almacenesRes] = await Promise.all([
+    getUserRole(),
     getItemsCatalogo(),
     getProveedores(),
     getAlmacenes(),
   ]);
+
+  if (role !== "owner" && role !== "admin") {
+    redirect("/app"); // Or somewhere else if they don't have access
+  }
 
   const items = itemsRes.data || [];
   const proveedores = proveedoresRes.data || [];
