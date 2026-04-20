@@ -1,0 +1,5 @@
+- [x] Tipado de `useForm` en `catalogo-client.tsx` corregido sin usar coerción de forma que rompa `react-hook-form`.
+- [x] Validación en runtime (Zod) mantenida y coherente con valores iniciales y submit.
+- [x] Build (`npm run build`) pasa con 0 errores de tipado.
+- [x] Fase 5 queda funcional y lista.
+- [x] Se crea el reporte `/.trae/documents/phase5_build_patch_validation.md`.
