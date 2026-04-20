@@ -16,10 +16,10 @@
 - [x] Componentes modales reutilizables integrados correctamente. *(Mascota-form extraído, cliente-form pendiente de refactor)*
 - [x] RLS probado para evitar fuga de datos entre tenants.
 
-## Fase 3: Agenda + Citas
-- [ ] Catálogo de Tipos de Cita implementado.
-- [ ] Calendario visualiza y permite crear citas correctamente.
-- [ ] Citas vinculadas correctamente al Cliente y la Mascota.
+## Fase 3: Agenda + Citas (LISTA)
+- [x] Catálogo de Tipos de Cita implementado.
+- [x] Calendario visualiza y permite crear citas correctamente.
+- [x] Citas vinculadas correctamente al Cliente y la Mascota.
 
 ## Fase 4: Órdenes + Entradas Clínicas + Adjuntos
 - [ ] Vista `index` muestra listado de atenciones activas.

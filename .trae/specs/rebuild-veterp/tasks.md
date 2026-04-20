@@ -12,10 +12,10 @@
   - [x] SubTask 2.2: Desarrollar componentes modales reutilizables para creación.
   - [x] SubTask 2.3: Desarrollar vista `clientes_mascotas` (Listado, búsqueda y detalle).
 
-- [ ] Task 3: Fase 3 - Agenda + Citas
-  - [ ] SubTask 3.1: Modelar tablas de catálogo (`TipoCita`) y tabla operativa (`Cita`) con RLS.
-  - [ ] SubTask 3.2: Integrar componente de calendario en `agenda_colas_settings`.
-  - [ ] SubTask 3.3: Desarrollar flujo de agendamiento (vinculando Cliente/Mascota).
+- [x] Task 3: Fase 3 - Agenda + Citas
+  - [x] SubTask 3.1: Modelar tablas de catálogo (`TipoCita`) y tabla operativa (`Cita`) con RLS.
+  - [x] SubTask 3.2: Integrar componente de calendario en `agenda_colas_settings`.
+  - [x] SubTask 3.3: Desarrollar flujo de agendamiento (vinculando Cliente/Mascota).
 
 - [ ] Task 4: Fase 4 - Órdenes + Entradas Clínicas + Adjuntos
   - [ ] SubTask 4.1: Modelar tablas (`OrdenServicio`, `EntradaClinica`, `Adjunto`, `ItemCola`).
