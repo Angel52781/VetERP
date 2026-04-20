@@ -1,20 +1,20 @@
 # Checklist de Implementación por Fases
 
-## Fase 1: Auth + Tenant Context + Navegación Protegida (PENDIENTE - CÓDIGO PERDIDO)
-- [ ] Proyecto Next.js inicializado con Supabase y shadcn/ui.
-- [ ] Base de datos conectada con esquema inicial (`User`, `Clinica`, `MembresiaClinica`).
-- [ ] Flujo de registro, login y reseteo de contraseña funcional.
-- [ ] Flujo de Onboarding: Creación de primera clínica si el usuario no tiene ninguna asignada.
-- [ ] Mostrar mensajes de error de autenticación en la UI (login/signup).
-- [ ] Vista `select_clinica` permite elegir la clínica y setea el contexto de la sesión (cookie/jwt).
-- [ ] Middleware activado (redirige si no hay login o clínica activa).
-- [ ] RLS activado asegurando que un usuario solo ve datos de su clínica activa.
+## Fase 1: Auth + Tenant Context + Navegación Protegida (EN PROGRESO - RECONSTRUIDA)
+- [x] Proyecto Next.js inicializado con Supabase y shadcn/ui.
+- [x] Base de datos conectada con esquema inicial (`User`, `Clinica`, `MembresiaClinica`).
+- [ ] Flujo de registro, login y reseteo de contraseña funcional. *(Falta Signup y Reset)*
+- [x] Flujo de Onboarding: Creación de primera clínica si el usuario no tiene ninguna asignada.
+- [x] Mostrar mensajes de error de autenticación en la UI (login/signup).
+- [x] Vista `select_clinica` permite elegir la clínica y setea el contexto de la sesión (cookie/jwt).
+- [x] Middleware activado (redirige si no hay login o clínica activa).
+- [x] RLS activado asegurando que un usuario solo ve datos de su clínica activa.
 
-## Fase 2: Clientes + Mascotas (PENDIENTE - CÓDIGO PERDIDO)
-- [ ] Listado de Clientes y Mascotas funcional.
-- [ ] Creación de Cliente y Mascota garantiza integridad referencial (no FKs nulas).
-- [ ] Componentes modales reutilizables integrados correctamente.
-- [ ] RLS probado para evitar fuga de datos entre tenants.
+## Fase 2: Clientes + Mascotas (LISTA - RECONSTRUIDA)
+- [x] Listado de Clientes y Mascotas funcional.
+- [x] Creación de Cliente y Mascota garantiza integridad referencial (no FKs nulas).
+- [x] Componentes modales reutilizables integrados correctamente. *(Mascota-form extraído, cliente-form pendiente de refactor)*
+- [x] RLS probado para evitar fuga de datos entre tenants.
 
 ## Fase 3: Agenda + Citas
 - [ ] Catálogo de Tipos de Cita implementado.
