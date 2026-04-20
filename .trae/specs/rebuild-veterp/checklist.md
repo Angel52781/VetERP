@@ -29,11 +29,11 @@
 - [ ] Kanban de colas muestra pacientes en espera en los carriles correctos.
 
 ## Fase 5: Caja + Ventas + Item Venta + Ledger
-- [ ] Catálogo de Servicios/Productos operativo.
-- [ ] Ítems de venta pueden agregarse a una orden/venta.
-- [ ] Vista `caja_inventario` (Caja) muestra el detalle de ventas.
-- [ ] El total de la venta se calcula en el backend, mitigando riesgos P1.
-- [ ] Registro de pagos (`Ledger`) funcional y sumando correctamente.
+- [x] Catálogo de Servicios/Productos operativo.
+- [x] Ítems de venta pueden agregarse a una orden/venta.
+- [x] Vista `caja_inventario` (Caja) muestra el detalle de ventas.
+- [x] El total de la venta se calcula en el backend, mitigando riesgos P1.
+- [x] Registro de pagos (`Ledger`) funcional y sumando correctamente.
 
 ## Fase 6: Inventario + Movimiento Stock
 - [ ] Catálogos de Proveedores y Almacenes operativos.

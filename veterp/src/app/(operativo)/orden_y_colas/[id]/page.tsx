@@ -2,11 +2,13 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getOrdenCompleta } from "./actions";
+import { getItemsCatalogo } from "@/app/(operativo)/caja_inventario/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EntradasList } from "./entradas-list";
 import { NuevaEntradaForm } from "./nueva-entrada-form";
 import { AdjuntosPanel } from "./adjuntos-panel";
+import { VentaPanel } from "./venta-panel";
 
 interface PageProps {
   params: Promise<{
@@ -16,7 +18,10 @@ interface PageProps {
 
 export default async function OrdenDetailsPage({ params }: PageProps) {
   const { id } = await params;
-  const { data: orden, error } = await getOrdenCompleta(id);
+  const [{ data: orden, error }, { data: itemsCatalogo }] = await Promise.all([
+    getOrdenCompleta(id),
+    getItemsCatalogo()
+  ]);
 
   if (error || !orden) {
     notFound();
@@ -35,10 +40,11 @@ export default async function OrdenDetailsPage({ params }: PageProps) {
       </div>
 
       <Tabs defaultValue="resumen" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="resumen">Resumen</TabsTrigger>
           <TabsTrigger value="notas">Notas Clínicas</TabsTrigger>
           <TabsTrigger value="adjuntos">Adjuntos</TabsTrigger>
+          <TabsTrigger value="venta">Venta / Caja</TabsTrigger>
         </TabsList>
         
         <TabsContent value="resumen" className="mt-6 space-y-6">
@@ -120,6 +126,14 @@ export default async function OrdenDetailsPage({ params }: PageProps) {
         
         <TabsContent value="adjuntos" className="mt-6">
           <AdjuntosPanel ordenId={id} adjuntos={orden.adjuntos || []} />
+        </TabsContent>
+        
+        <TabsContent value="venta" className="mt-6">
+          <VentaPanel 
+            ordenId={id} 
+            clienteId={orden.cliente_id} 
+            itemsCatalogo={itemsCatalogo || []} 
+          />
         </TabsContent>
       </Tabs>
     </div>
