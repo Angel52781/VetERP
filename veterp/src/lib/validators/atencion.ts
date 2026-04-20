@@ -13,7 +13,7 @@ export const entradaClinicaSchema = z.object({
 
 export const adjuntoSchema = z.object({
   orden_id: z.string().uuid("ID de orden inválido"),
-  archivo_url: z.string().url("URL de archivo inválida"),
+  archivo_url: z.string(), // changed from z.string().url() since it's a relative path now
   descripcion_text: z.string().optional(),
 });
 

@@ -50,6 +50,30 @@ export async function getOrdenCompleta(id: string) {
       return { error: error.message, data: null };
     }
 
+    // Replace stored filePath with a fresh Signed URL valid for 1 hour
+    if (data.adjuntos && data.adjuntos.length > 0) {
+      for (const adjunto of data.adjuntos) {
+        // En la BD guardaremos solo el path del archivo, ej: "clinica_id/orden_id/uuid.ext"
+        // Si por alguna razón el archivo ya es una URL pública/antigua, la extraemos
+        let filePath = adjunto.archivo_url;
+        if (filePath.startsWith("http")) {
+          // Fallback para URLs antiguas: intentamos extraer la ruta "clinicaId/ordenId/archivo.ext"
+          const parts = filePath.split("adjuntos/");
+          if (parts.length > 1) {
+            filePath = parts[1].split("?")[0]; // removemos los query params del signed url
+          }
+        }
+
+        const { data: signedUrlData, error: signError } = await supabase.storage
+          .from("adjuntos")
+          .createSignedUrl(filePath, 3600);
+
+        if (!signError && signedUrlData) {
+          adjunto.archivo_url = signedUrlData.signedUrl;
+        }
+      }
+    }
+
     return { error: null, data };
   } catch (error: any) {
     console.error("Exception in getOrdenCompleta:", error);
@@ -116,15 +140,14 @@ export async function uploadAdjunto(formData: FormData, ordenId: string) {
       return { error: "Error al subir el archivo", data: null };
     }
 
-    // 2. Get public URL (or signed URL, but usually public for simple apps)
-    const { data: publicUrlData } = supabase.storage
-      .from("adjuntos")
-      .getPublicUrl(filePath);
+    // 2. We NO LONGER generate the signed URL here. 
+    // We will save the raw `filePath` in the database.
+    // The signed URL will be generated dynamically on `getOrdenCompleta` when needed.
 
     // 3. Save to adjuntos table
     const validatedData = adjuntoSchema.parse({
       orden_id: ordenId,
-      archivo_url: publicUrlData.publicUrl,
+      archivo_url: filePath, // Storing relative path instead of signed URL
       descripcion_text: descripcion,
     });
 
