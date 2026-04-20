@@ -42,6 +42,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+import { z } from "zod";
+
 import { itemCatalogoSchema, ItemCatalogoInput } from "@/lib/validators/ajustes";
 import { createItemCatalogo, updateItemCatalogo } from "./actions";
 
@@ -73,7 +75,7 @@ export function ItemCatalogoForm({
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<ItemCatalogoInput>({
+  const form = useForm<z.input<typeof itemCatalogoSchema>>({
     resolver: zodResolver(itemCatalogoSchema),
     defaultValues: {
       nombre: initialData?.nombre || "",
@@ -85,7 +87,8 @@ export function ItemCatalogoForm({
     },
   });
 
-  async function onSubmit(data: ItemCatalogoInput) {
+  async function onSubmit(formData: z.input<typeof itemCatalogoSchema>) {
+    const data = formData as ItemCatalogoInput;
     setIsSubmitting(true);
     let error;
 
@@ -180,7 +183,7 @@ export function ItemCatalogoForm({
               <FormItem>
                 <FormLabel>Precio (Inc. IGV)</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" min="0" {...field} />
+                  <Input type="number" step="0.01" min="0" {...field} value={field.value as string | number} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -278,11 +281,9 @@ export function CatalogoList({
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-medium">Servicios y Productos</h2>
         <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="mr-2 h-4 w-4" />
-              Nuevo Ítem
-            </Button>
+          <DialogTrigger render={<Button size="sm" />}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nuevo Ítem
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
