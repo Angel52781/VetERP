@@ -21,25 +21,25 @@
 - [x] Calendario visualiza y permite crear citas correctamente.
 - [x] Citas vinculadas correctamente al Cliente y la Mascota.
 
-## Fase 4: Órdenes + Entradas Clínicas + Adjuntos
-- [ ] Vista `index` muestra listado de atenciones activas.
-- [ ] Vista `orden_y_colas` permite gestionar transiciones de estado (`Open`, `In Progress`, etc.).
-- [ ] Registro de notas (`EntradaClinica`) funcional.
-- [ ] Subida y visualización de archivos (`Adjunto`) segura vía Supabase Storage.
+## Fase 4: Órdenes + Entradas Clínicas + Adjuntos (LISTA PARCIAL)
+- [x] Vista `index` muestra listado de atenciones activas.
+- [x] Vista `orden_y_colas` permite gestionar transiciones de estado (`Open`, `In Progress`, etc.).
+- [x] Registro de notas (`EntradaClinica`) funcional.
+- [x] Subida y visualización de archivos (`Adjunto`) segura vía Supabase Storage.
 - [ ] Kanban de colas muestra pacientes en espera en los carriles correctos.
 
 ## Fase 5: Caja + Ventas + Item Venta + Ledger
-- [ ] Catálogo de Servicios/Productos operativo.
-- [ ] Ítems de venta pueden agregarse a una orden/venta.
-- [ ] Vista `caja_inventario` (Caja) muestra el detalle de ventas.
-- [ ] El total de la venta se calcula en el backend, mitigando riesgos P1.
-- [ ] Registro de pagos (`Ledger`) funcional y sumando correctamente.
+- [x] Catálogo de Servicios/Productos operativo.
+- [x] Ítems de venta pueden agregarse a una orden/venta.
+- [x] Vista `caja_inventario` (Caja) muestra el detalle de ventas.
+- [x] El total de la venta se calcula en el backend, mitigando riesgos P1.
+- [x] Registro de pagos (`Ledger`) funcional y sumando correctamente.
 
 ## Fase 6: Inventario + Movimiento Stock
-- [ ] Catálogos de Proveedores y Almacenes operativos.
-- [ ] Inventario calcula stock actual en tiempo real mediante `SUM(MovimientoStock)`.
-- [ ] Movimientos manuales de ajuste reflejados en el Kardex.
-- [ ] Rebaja de stock automática probada al vender ítems tipo "producto".
+- [x] Catálogos de Proveedores y Almacenes operativos.
+- [x] Inventario calcula stock actual en tiempo real mediante `SUM(MovimientoStock)`.
+- [x] Movimientos manuales de ajuste reflejados en el Kardex.
+- [x] Rebaja de stock automática probada al vender ítems tipo "producto".
 
 ## Fase 7: Hardening + QA + Permisos
 - [ ] Reglas de Autorización (RBAC) aplicadas en UI y Server Actions.
