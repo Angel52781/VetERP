@@ -1,7 +1,10 @@
+-- Asegurarse de que la extensión existe
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Insert into auth.users
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, role, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
 VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'admin@veterp.com', crypt('password123', gen_salt('bf')), now(), 'authenticated', '{"provider":"email","providers":["email"]}', '{}', now(), now())
+  ('11111111-1111-1111-1111-111111111111', 'admin@veterp.com', crypt('password123', public.gen_salt('bf')), now(), 'authenticated', '{"provider":"email","providers":["email"]}', '{}', now(), now())
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert into public.clinicas
