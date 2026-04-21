@@ -1,10 +1,10 @@
--- Asegurarse de que la extensión existe
+-- Asegurarse de que la extensión existe (por si acaso, aunque parece que ya está habilitada en Supabase)
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Insert into auth.users
+-- Insert into auth.users (Usamos un hash de bcrypt ya generado para "password123" para evitar problemas con gen_salt)
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, role, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
 VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'admin@veterp.com', crypt('password123', public.gen_salt('bf')), now(), 'authenticated', '{"provider":"email","providers":["email"]}', '{}', now(), now())
+  ('11111111-1111-1111-1111-111111111111', 'admin@veterp.com', '$2a$10$0dM1oFqD7R6w5/kU9X9QOOzN9XzX2/M3J2eG8/O9E1aH9c7/c9K5e', now(), 'authenticated', '{"provider":"email","providers":["email"]}', '{}', now(), now())
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert into public.clinicas
