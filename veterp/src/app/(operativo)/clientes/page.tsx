@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Users } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,8 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { EmptyState } from "@/components/empty-state";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { createClient } from "@/lib/supabase/server";
+import { formatDate } from "@/lib/utils";
 
 export default async function ClientesPage() {
   const supabase = await createClient();
@@ -43,6 +46,7 @@ export default async function ClientesPage() {
                 <TableHead>Nombre</TableHead>
                 <TableHead>Teléfono</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Fecha Registro</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -55,12 +59,22 @@ export default async function ClientesPage() {
                   </TableCell>
                   <TableCell>{c.telefono ?? "-"}</TableCell>
                   <TableCell>{c.email ?? "-"}</TableCell>
+                  <TableCell>{formatDate(c.created_at)}</TableCell>
                 </TableRow>
               ))}
               {!clientes?.length ? (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-muted-foreground">
-                    Sin clientes todavía.
+                  <TableCell colSpan={4} className="p-0">
+                    <EmptyState
+                      icon={Users}
+                      title="No hay clientes"
+                      description="Agrega tu primer cliente para empezar a registrar atenciones."
+                      action={
+                        <Link href="/clientes/nuevo" className={buttonVariants({ variant: "outline" })}>
+                          Nuevo cliente
+                        </Link>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ) : null}

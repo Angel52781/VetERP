@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Search } from "lucide-react";
+import { ExternalLink, Search, Receipt } from "lucide-react";
+import { EmptyState } from "@/components/empty-state";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 export function VentasList({ ventas }: { ventas: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,8 +51,12 @@ export function VentasList({ ventas }: { ventas: any[] }) {
           <TableBody>
             {filteredVentas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No se encontraron ventas.
+                <TableCell colSpan={7} className="p-0">
+                  <EmptyState
+                    icon={Receipt}
+                    title="No hay ventas"
+                    description="No se encontraron ventas que coincidan con tu búsqueda o aún no hay ventas registradas."
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -64,7 +68,7 @@ export function VentasList({ ventas }: { ventas: any[] }) {
                 return (
                   <TableRow key={venta.id}>
                     <TableCell className="text-xs font-medium">
-                      {format(new Date(venta.created_at), "dd/MM/yy HH:mm", { locale: es })}
+                      {formatDate(venta.created_at)}
                     </TableCell>
                     <TableCell>{venta.clientes?.nombre || "Desconocido"}</TableCell>
                     <TableCell>
@@ -72,9 +76,9 @@ export function VentasList({ ventas }: { ventas: any[] }) {
                         {venta.estado}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right font-medium">${total.toFixed(2)}</TableCell>
-                    <TableCell className="text-right text-emerald-600">${pagado.toFixed(2)}</TableCell>
-                    <TableCell className="text-right text-amber-600 font-bold">${deuda.toFixed(2)}</TableCell>
+                    <TableCell className="text-right font-medium">{formatCurrency(total)}</TableCell>
+                    <TableCell className="text-right text-emerald-600">{formatCurrency(pagado)}</TableCell>
+                    <TableCell className="text-right text-amber-600 font-bold">{formatCurrency(deuda)}</TableCell>
                     <TableCell className="text-center">
                       {venta.orden_id ? (
                         <Link href={`/orden_y_colas/${venta.orden_id}?tab=venta`}>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,8 +31,10 @@ export default function NuevoClientePage() {
       const result = await createCliente(values);
       if (result.error || !result.clienteId) {
         setError(result.error ?? "No se pudo crear el cliente.");
+        toast.error(result.error ?? "No se pudo crear el cliente.");
         return;
       }
+      toast.success("Cliente creado exitosamente");
       router.push(`/clientes/${result.clienteId}`);
     });
   }

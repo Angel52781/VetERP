@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Plus, Edit2 } from "lucide-react";
+import { Plus, Edit2, Package } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/empty-state";
+import { formatCurrency } from "@/lib/utils";
 
 import { z } from "zod";
 
@@ -315,8 +317,17 @@ export function CatalogoList({
           <TableBody>
             {items.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  No hay ítems en el catálogo.
+                <TableCell colSpan={6} className="p-0">
+                  <EmptyState
+                    icon={Package}
+                    title="Catálogo vacío"
+                    description="Agrega productos y servicios para empezar a usarlos en las atenciones y ventas."
+                    action={
+                      <Button onClick={() => setDialogOpen(true)}>
+                        Nuevo Ítem
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -328,7 +339,7 @@ export function CatalogoList({
                       {item.kind}
                     </Badge>
                   </TableCell>
-                  <TableCell>${Number(item.precio_inc).toFixed(2)}</TableCell>
+                  <TableCell>{formatCurrency(item.precio_inc)}</TableCell>
                   <TableCell>{item.proveedores?.nombre || "-"}</TableCell>
                   <TableCell>
                     {item.is_disabled ? (

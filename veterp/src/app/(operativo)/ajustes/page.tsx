@@ -21,7 +21,7 @@ export default async function AjustesPage() {
   ]);
 
   if (role !== "owner" && role !== "admin") {
-    redirect("/app"); // Or somewhere else if they don't have access
+    redirect("/inicio"); // Or somewhere else if they don't have access
   }
 
   const items = itemsRes.data || [];

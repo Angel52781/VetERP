@@ -6,6 +6,7 @@ import { InventarioList } from "./inventario-list";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, TrendingUp, AlertCircle } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function CajaInventarioPage() {
   const [role, ventasRes, invRes, almacenesRes] = await Promise.all([
@@ -66,7 +67,7 @@ export default async function CajaInventarioPage() {
                 <DollarSign className="h-4 w-4 text-emerald-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">${ingresosTotales.toFixed(2)}</div>
+                <div className="text-2xl font-bold">{formatCurrency(ingresosTotales)}</div>
                 <p className="text-xs text-muted-foreground">Total en caja</p>
               </CardContent>
             </Card>
@@ -77,7 +78,7 @@ export default async function CajaInventarioPage() {
                 <AlertCircle className="h-4 w-4 text-amber-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-amber-600">${montoPorCobrar.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-amber-600">{formatCurrency(montoPorCobrar)}</div>
                 <p className="text-xs text-muted-foreground">De {ventasAbiertas} ventas abiertas</p>
               </CardContent>
             </Card>

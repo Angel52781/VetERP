@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, PackageSearch } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/empty-state";
 
 import { z } from "zod";
 import { movimientoStockSchema, MovimientoStockInput } from "@/lib/validators/ajustes";
@@ -213,8 +214,12 @@ export function InventarioList({
           <TableBody>
             {inventario.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
-                  No hay productos registrados en el catálogo.
+                <TableCell colSpan={4} className="p-0">
+                  <EmptyState
+                    icon={PackageSearch}
+                    title="Inventario vacío"
+                    description="No hay productos registrados en el catálogo que controlen stock."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

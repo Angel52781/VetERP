@@ -1,0 +1,7 @@
+- [x] 1. Auto-Onboarding: Registro crea exitosamente una clínica, un almacén principal, un usuario asociado y un catálogo base de 3 ítems (sin usar SQL manual).
+- [x] 2. Shell Visual Global: El contenedor principal tiene un ancho máximo (ej. `max-w-7xl`), el fondo es distinto al blanco de las tarjetas (`bg-slate-50`), y el menú lateral (Sidebar) es más compacto y usa iconos.
+- [x] 3. Dashboard Real (`/inicio`): Muestra al menos 3 métricas calculadas (Citas de Hoy, Ingresos del Día, Órdenes Abiertas). No muestra texto placeholder.
+- [x] 4. Empty States: Clientes, Caja/Inventario y Ajustes usan un componente visual `<EmptyState>` con un CTA en lugar de texto plano cuando no hay registros.
+- [x] 5. Feedback UX (Toasts): Las acciones principales (crear cliente, agregar producto) disparan notificaciones (Toasts) de éxito o error.
+- [x] 6. Formato de Datos: Los precios se muestran como `$ 1,500.00` y las fechas en formato legible en todas las tablas y tarjetas.
+- [x] 7. Build: `npm run build` compila sin errores después de todas las modificaciones.

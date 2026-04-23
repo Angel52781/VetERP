@@ -41,7 +41,7 @@ export async function createClinica(
 
   const cookieStore = await cookies();
   cookieStore.set(clinicaCookieName, data, { path: "/", sameSite: "lax" });
-  redirect("/app");
+  redirect("/inicio");
 }
 
 export async function selectClinica(formData: FormData) {
@@ -71,7 +71,7 @@ export async function selectClinica(formData: FormData) {
     sameSite: "lax",
   });
 
-  redirect("/app");
+  redirect("/inicio");
 }
 
 export async function clearClinica() {

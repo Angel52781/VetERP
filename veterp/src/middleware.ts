@@ -10,7 +10,7 @@ const publicPaths = new Set<string>([
   "/update-password",
   "/auth/callback",
 ]);
-const clinicPaths = ["/app", "/clientes", "/ajustes"];
+const clinicPaths = ["/inicio", "/clientes", "/ajustes"];
 
 function isClinicRequiredPath(pathname: string) {
   return clinicPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/") {
-    return NextResponse.redirect(new URL("/app", request.url));
+    return NextResponse.redirect(new URL("/inicio", request.url));
   }
 
   const isPublic = publicPaths.has(pathname);
@@ -33,14 +33,14 @@ export async function middleware(request: NextRequest) {
   if (user && (pathname === "/login" || pathname === "/signup" || pathname === "/reset-password")) {
     const clinicaId = request.cookies.get(clinicaCookieName)?.value;
     return NextResponse.redirect(
-      new URL(clinicaId ? "/app" : "/select-clinica", request.url),
+      new URL(clinicaId ? "/inicio" : "/select-clinica", request.url),
     );
   }
 
   if (user && pathname === "/select-clinica") {
     const clinicaId = request.cookies.get(clinicaCookieName)?.value;
     if (clinicaId) {
-      return NextResponse.redirect(new URL("/app", request.url));
+      return NextResponse.redirect(new URL("/inicio", request.url));
     }
   }
 

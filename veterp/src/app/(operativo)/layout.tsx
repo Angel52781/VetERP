@@ -1,10 +1,11 @@
 import Link from "next/link";
 
-import { buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getUserRole } from "@/lib/clinica";
+import { Toaster } from "@/components/ui/sonner";
 
 import { AppUserMenu } from "./user-menu";
+import { SidebarNav } from "./sidebar-nav";
 
 export default async function OperativoLayout({
   children,
@@ -19,66 +20,30 @@ export default async function OperativoLayout({
 
   return (
     <div className="flex flex-1">
-      <aside className="hidden w-64 border-r bg-background px-4 py-6 md:block">
+      <aside className="hidden w-56 border-r bg-background px-4 py-6 md:block">
         <div className="mb-6 flex items-center justify-between">
-          <Link href="/app" className="font-semibold">
+          <Link href="/inicio" className="font-semibold">
             VetERP
           </Link>
         </div>
-        <nav className="space-y-2">
-          <Link
-            href="/app"
-            className={buttonVariants({
-              variant: "ghost",
-              className: "w-full justify-start",
-            })}
-          >
-            Inicio
-          </Link>
-          <Link
-            href="/clientes"
-            className={buttonVariants({
-              variant: "ghost",
-              className: "w-full justify-start",
-            })}
-          >
-            Clientes
-          </Link>
-          <Link
-            href="/caja_inventario"
-            className={buttonVariants({
-              variant: "ghost",
-              className: "w-full justify-start",
-            })}
-          >
-            Caja e Inventario
-          </Link>
-          {isAdminOrOwner && (
-            <Link
-              href="/ajustes"
-              className={buttonVariants({
-                variant: "ghost",
-                className: "w-full justify-start",
-              })}
-            >
-              Ajustes
-            </Link>
-          )}
-        </nav>
+        <SidebarNav isAdminOrOwner={isAdminOrOwner} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b px-4 py-3">
-          <Link href="/app" className="font-semibold md:hidden">
+        <header className="flex items-center justify-between border-b bg-background px-4 py-3">
+          <Link href="/inicio" className="font-semibold md:hidden">
             VetERP
           </Link>
           <AppUserMenu email={user?.email ?? ""} isAdminOrOwner={isAdminOrOwner} />
         </header>
 
-        <main className="flex min-w-0 flex-1 flex-col px-4 py-6">
-          {children}
+        <main className="flex min-w-0 flex-1 flex-col bg-slate-50 px-4 py-6">
+          <div className="mx-auto w-full max-w-7xl">
+            {children}
+          </div>
         </main>
       </div>
+      <Toaster />
     </div>
   );
 }
