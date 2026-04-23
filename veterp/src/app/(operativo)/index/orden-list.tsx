@@ -131,7 +131,7 @@ export function OrdenList({ ordenes }: OrdenListProps) {
               <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${estadoInfo.bgClass} ${estadoInfo.textClass}`}>
                 {estadoInfo.label}
               </span>
-              <Link href={`/atenciones/${orden.id}`} className="inline-flex h-7 items-center justify-center rounded-md border border-border bg-background px-2.5 text-xs font-medium hover:bg-muted hover:text-foreground">
+              <Link href={`/orden_y_colas/${orden.id}`} className="inline-flex h-7 items-center justify-center rounded-md border border-border bg-background px-2.5 text-xs font-medium hover:bg-muted hover:text-foreground">
                 Ver Detalle
               </Link>
             </CardFooter>

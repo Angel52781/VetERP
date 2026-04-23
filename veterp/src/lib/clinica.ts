@@ -1,66 +1,77 @@
 import { cookies } from "next/headers";
-import { createClient } from "./supabase/server";
 
 import { clinicaCookieName } from "./supabase/env";
+import { createClient } from "./supabase/server";
+
+export type ActiveClinicaContext = {
+  clinicaId: string;
+  role: string;
+  userId: string;
+};
 
 export async function getClinicaIdFromCookies(): Promise<string | null> {
   const cookieStore = await cookies();
   return cookieStore.get(clinicaCookieName)?.value ?? null;
 }
 
-export async function requireClinicaIdFromCookies(): Promise<string> {
-  const clinicaId = await getClinicaIdFromCookies();
+export async function getActiveClinicaContext(): Promise<ActiveClinicaContext | null> {
+  const cookieStore = await cookies();
+  const clinicaId = cookieStore.get(clinicaCookieName)?.value;
   if (!clinicaId) {
-    throw new Error("No hay clínica seleccionada.");
+    return null;
   }
-  return clinicaId;
-}
 
-export async function requireUserRole(allowedRoles: string[]): Promise<{ clinicaId: string, role: string }> {
-  const clinicaId = await requireClinicaIdFromCookies();
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) {
-    throw new Error("No autenticado.");
+    return null;
   }
 
-  const { data: membership, error } = await supabase
+  const { data: membership } = await supabase
     .from("user_clinicas")
     .select("role")
     .eq("user_id", user.id)
     .eq("clinica_id", clinicaId)
-    .single();
+    .maybeSingle();
 
-  if (error || !membership) {
-    throw new Error("No se encontró el rol del usuario en la clínica.");
+  if (!membership) {
+    cookieStore.delete(clinicaCookieName);
+    return null;
   }
 
-  if (!allowedRoles.includes(membership.role)) {
-    throw new Error(`Acceso denegado. Se requiere uno de los siguientes roles: ${allowedRoles.join(", ")}`);
+  return {
+    clinicaId,
+    role: membership.role,
+    userId: user.id,
+  };
+}
+
+export async function requireClinicaIdFromCookies(): Promise<string> {
+  const context = await getActiveClinicaContext();
+  if (!context) {
+    throw new Error("No hay una clinica activa valida para esta cuenta.");
+  }
+  return context.clinicaId;
+}
+
+export async function requireUserRole(allowedRoles: string[]): Promise<{ clinicaId: string; role: string }> {
+  const context = await getActiveClinicaContext();
+  if (!context) {
+    throw new Error("No hay contexto de clinica valido.");
   }
 
-  return { clinicaId, role: membership.role };
+  if (!allowedRoles.includes(context.role)) {
+    throw new Error(
+      `Acceso denegado. Se requiere uno de los siguientes roles: ${allowedRoles.join(", ")}`,
+    );
+  }
+
+  return { clinicaId: context.clinicaId, role: context.role };
 }
 
 export async function getUserRole(): Promise<string | null> {
-  try {
-    const clinicaId = await getClinicaIdFromCookies();
-    if (!clinicaId) return null;
-
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-
-    const { data: membership } = await supabase
-      .from("user_clinicas")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("clinica_id", clinicaId)
-      .single();
-
-    return membership?.role ?? null;
-  } catch {
-    return null;
-  }
+  const context = await getActiveClinicaContext();
+  return context?.role ?? null;
 }

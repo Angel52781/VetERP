@@ -1,25 +1,15 @@
 "use client";
 
 import { LogOut, Settings2, Stethoscope } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTransition } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { clinicaCookieName } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/client";
 
-import { clearClinica } from "../select-clinica/actions";
-
-export function AppUserMenu({ email, isAdminOrOwner }: { email: string, isAdminOrOwner: boolean }) {
-  const router = useRouter();
+export function AppUserMenu({ email, isAdminOrOwner }: { email: string; isAdminOrOwner: boolean }) {
   const [pending, startTransition] = useTransition();
 
   function signOut() {
@@ -31,36 +21,32 @@ export function AppUserMenu({ email, isAdminOrOwner }: { email: string, isAdminO
   }
 
   function changeClinic() {
-    startTransition(async () => {
-      await clearClinica();
-    });
+    document.cookie = `${clinicaCookieName}=; Path=/; Max-Age=0`;
+    window.location.href = "/select-clinica";
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        className={buttonVariants({ variant: "outline" })}
-        disabled={pending}
-      >
-        {email ? email : "Cuenta"}
+      <DropdownMenuTrigger className={buttonVariants({ variant: "outline" })} disabled={pending}>
+        {email || "Cuenta"}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Cuenta</DropdownMenuLabel>
+        <div className="px-1.5 py-1 text-xs text-muted-foreground">Cuenta</div>
         <DropdownMenuSeparator />
-        {isAdminOrOwner && (
-          <DropdownMenuItem onSelect={() => router.push("/ajustes")}>
-            <Settings2 />
-            Ajustes
-          </DropdownMenuItem>
-        )}
+
+        <DropdownMenuItem render={<Link href="/settings" />}>
+          <Settings2 />
+          {isAdminOrOwner ? "Settings" : "Settings (solo admin)"}
+        </DropdownMenuItem>
+
         <DropdownMenuItem onSelect={changeClinic}>
           <Stethoscope />
-          Cambiar clínica
+          Cambiar clinica
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={signOut}>
           <LogOut />
-          Salir
+          Cerrar sesion
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

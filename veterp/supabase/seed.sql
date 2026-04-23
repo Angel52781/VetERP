@@ -1,8 +1,38 @@
--- Insert into auth.users
-INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, role, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
-VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'admin@veterp.com', crypt('password123', gen_salt('bf')), now(), 'authenticated', '{"provider":"email","providers":["email"]}', '{}', now(), now())
+-- Insert into auth.users (Usamos un hash de bcrypt generado correctamente para "password123")
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, 
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+)
+VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  '11111111-1111-1111-1111-111111111111', 
+  'authenticated', 
+  'authenticated', 
+  'admin@veterp.com', 
+  '$2b$10$.9t7UyFui2MCzHV6tW0iZed3rRYM.NMhmSAkSJhRQ5sNlU23ar4PW', 
+  now(), 
+  '{"provider":"email","providers":["email"]}', 
+  '{}', 
+  now(), 
+  now()
+)
 ON CONFLICT (id) DO NOTHING;
+
+-- Insert into auth.identities (OBLIGATORIO en las nuevas versiones de Supabase para poder hacer login)
+INSERT INTO auth.identities (
+  id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+)
+VALUES (
+  '11111111-1111-1111-1111-111111111111',
+  '11111111-1111-1111-1111-111111111111',
+  format('{"sub":"%s","email":"%s"}', '11111111-1111-1111-1111-111111111111', 'admin@veterp.com')::jsonb,
+  'email',
+  '11111111-1111-1111-1111-111111111111',
+  now(),
+  now(),
+  now()
+)
+ON CONFLICT (provider, provider_id) DO NOTHING;
 
 -- Insert into public.clinicas
 INSERT INTO public.clinicas (id, nombre, created_by)

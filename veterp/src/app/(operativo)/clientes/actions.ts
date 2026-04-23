@@ -1,7 +1,9 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
+import { createClient } from "@/lib/supabase/server";
 import {
   clienteSchema,
   mascotaSchema,
@@ -9,74 +11,89 @@ import {
   type MascotaFormValues,
 } from "@/lib/validators/clientes";
 
-export async function createCliente(
-  input: ClienteFormValues,
-): Promise<{ error: string | null; clienteId?: string }> {
-  const parsed = clienteSchema.safeParse(input);
-  if (!parsed.success) {
-    return { error: "Datos inválidos." };
+type ClienteActionResult = {
+  error: string | null;
+  clienteId?: string;
+};
+
+type MascotaActionResult = {
+  error: string | null;
+  mascotaId?: string;
+};
+
+export async function createCliente(input: ClienteFormValues): Promise<ClienteActionResult> {
+  try {
+    const parsed = clienteSchema.safeParse(input);
+    if (!parsed.success) {
+      return { error: "Datos de cliente invalidos." };
+    }
+
+    const supabase = await createClient();
+    const clinicaId = await requireClinicaIdFromCookies();
+
+    const { data, error } = await supabase
+      .from("clientes")
+      .insert({
+        clinica_id: clinicaId,
+        nombre: parsed.data.nombre,
+        telefono: parsed.data.telefono || null,
+        email: parsed.data.email || null,
+      })
+      .select("id")
+      .single();
+
+    if (error || !data) {
+      return { error: "No se pudo crear el cliente en la clinica activa." };
+    }
+
+    revalidatePath("/clientes");
+    return { error: null, clienteId: data.id };
+  } catch {
+    return { error: "No hay una clinica activa valida para crear clientes." };
   }
-
-  const supabase = await createClient();
-  const clinicaId = await requireClinicaIdFromCookies();
-
-  const { data, error } = await supabase
-    .from("clientes")
-    .insert({
-      clinica_id: clinicaId,
-      nombre: parsed.data.nombre,
-      telefono: parsed.data.telefono || null,
-      email: parsed.data.email || null,
-    })
-    .select("id")
-    .single();
-
-  if (error || !data) {
-    return { error: "No se pudo crear el cliente." };
-  }
-
-  return { error: null, clienteId: data.id };
 }
 
-export async function createMascota(
-  clienteId: string,
-  input: MascotaFormValues,
-): Promise<{ error: string | null; mascotaId?: string }> {
-  const parsed = mascotaSchema.safeParse(input);
-  if (!parsed.success) {
-    return { error: "Datos inválidos." };
+export async function createMascota(clienteId: string, input: MascotaFormValues): Promise<MascotaActionResult> {
+  try {
+    const parsed = mascotaSchema.safeParse(input);
+    if (!parsed.success) {
+      return { error: "Datos de mascota invalidos." };
+    }
+
+    const supabase = await createClient();
+    const clinicaId = await requireClinicaIdFromCookies();
+
+    const { data: cliente } = await supabase
+      .from("clientes")
+      .select("id")
+      .eq("id", clienteId)
+      .eq("clinica_id", clinicaId)
+      .maybeSingle();
+
+    if (!cliente) {
+      return { error: "El cliente no pertenece a la clinica activa." };
+    }
+
+    const { data, error } = await supabase
+      .from("mascotas")
+      .insert({
+        clinica_id: clinicaId,
+        cliente_id: clienteId,
+        nombre: parsed.data.nombre,
+        especie: parsed.data.especie || null,
+        raza: parsed.data.raza || null,
+        nacimiento: parsed.data.nacimiento || null,
+      })
+      .select("id")
+      .single();
+
+    if (error || !data) {
+      return { error: "No se pudo crear la mascota." };
+    }
+
+    revalidatePath(`/clientes/${clienteId}`);
+    return { error: null, mascotaId: data.id };
+  } catch {
+    return { error: "No hay una clinica activa valida para crear mascotas." };
   }
-
-  const supabase = await createClient();
-  const clinicaId = await requireClinicaIdFromCookies();
-
-  const { data: cliente } = await supabase
-    .from("clientes")
-    .select("id,clinica_id")
-    .eq("id", clienteId)
-    .eq("clinica_id", clinicaId)
-    .maybeSingle();
-
-  if (!cliente) {
-    return { error: "Cliente no encontrado." };
-  }
-
-  const { data, error } = await supabase
-    .from("mascotas")
-    .insert({
-      clinica_id: clinicaId,
-      cliente_id: clienteId,
-      nombre: parsed.data.nombre,
-      especie: parsed.data.especie || null,
-      raza: parsed.data.raza || null,
-      nacimiento: parsed.data.nacimiento || null,
-    })
-    .select("id")
-    .single();
-
-  if (error || !data) {
-    return { error: "No se pudo crear la mascota." };
-  }
-
-  return { error: null, mascotaId: data.id };
 }

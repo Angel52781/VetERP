@@ -7,7 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, TrendingUp, AlertCircle } from "lucide-react";
 
-export default async function CajaInventarioPage() {
+type CajaInventarioPageProps = {
+  searchParams: Promise<{ tab?: string }>;
+};
+
+export default async function CajaInventarioPage({ searchParams }: CajaInventarioPageProps) {
+  const { tab } = await searchParams;
   const [role, ventasRes, invRes, almacenesRes] = await Promise.all([
     getUserRole(),
     getVentasResumen(),
@@ -16,6 +21,8 @@ export default async function CajaInventarioPage() {
   ]);
 
   const isVeterinario = role === "veterinario";
+  const requestedTab = tab === "inventario" ? "inventario" : "caja";
+  const defaultTab = isVeterinario ? "inventario" : requestedTab;
 
   const ventas = ventasRes.data || [];
   const inventario = invRes.data || [];
@@ -51,7 +58,7 @@ export default async function CajaInventarioPage() {
         <p className="text-muted-foreground mt-1">Gestión de ingresos, cuentas por cobrar y stock de productos.</p>
       </div>
 
-      <Tabs defaultValue={isVeterinario ? "inventario" : "caja"} className="w-full">
+      <Tabs defaultValue={defaultTab} className="w-full">
         <TabsList>
           {!isVeterinario && <TabsTrigger value="caja">Caja y Ventas</TabsTrigger>}
           <TabsTrigger value="inventario">Inventario / Kardex</TabsTrigger>

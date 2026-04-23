@@ -3,8 +3,10 @@ import { getClientesParaAgenda } from "../agenda/actions";
 import { OrdenList } from "./orden-list";
 import { NuevaAtencionForm } from "./nueva-atencion-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function IndexPage() {
-  const [{ data: ordenes, error: ordenesError }, { data: clientes, error: clientesError }] = await Promise.all([
+  const [{ data: ordenes, error: ordenesError }, { data: clientes }] = await Promise.all([
     getOrdenesServicio(),
     getClientesParaAgenda(),
   ]);

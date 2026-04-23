@@ -12,6 +12,20 @@ const loginSchema = z.object({
 
 export type LoginState = { error: string | null };
 
+function mapLoginError(message?: string): string {
+  const normalized = (message ?? "").toLowerCase();
+
+  if (normalized.includes("invalid login credentials")) {
+    return "Credenciales invalidas. Verifica email y contrasena.";
+  }
+
+  if (normalized.includes("email not confirmed")) {
+    return "La cuenta existe pero el email no esta confirmado.";
+  }
+
+  return "No se pudo iniciar sesion.";
+}
+
 export async function login(_: LoginState, formData: FormData): Promise<LoginState> {
   const parsed = loginSchema.safeParse({
     email: formData.get("email"),
@@ -19,14 +33,14 @@ export async function login(_: LoginState, formData: FormData): Promise<LoginSta
   });
 
   if (!parsed.success) {
-    return { error: "Credenciales inválidas." };
+    return { error: "Credenciales invalidas." };
   }
 
   const supabase = await createClient();
-
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
+
   if (error) {
-    return { error: "No se pudo iniciar sesión." };
+    return { error: mapLoginError(error.message) };
   }
 
   redirect("/select-clinica");
