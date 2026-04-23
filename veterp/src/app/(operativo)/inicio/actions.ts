@@ -17,12 +17,20 @@ export async function getDashboardMetrics() {
     const startIso = startOfToday.toISOString();
     const endIso = endOfToday.toISOString();
 
-    const { count: citasCount, error: citasError } = await supabase
+    const { data: citasData, count: citasCount, error: citasError } = await supabase
       .from("citas")
-      .select("*", { count: "exact", head: true })
+      .select(`
+        id,
+        start_date,
+        end_date,
+        clientes ( nombre, apellidos ),
+        mascotas ( nombre ),
+        tipo_citas ( nombre, color )
+      `, { count: "exact" })
       .eq("clinica_id", clinicaId)
       .gte("start_date", startIso)
-      .lte("start_date", endIso);
+      .lte("start_date", endIso)
+      .order("start_date");
 
     if (citasError) {
       console.error("Error fetching citas:", citasError);
@@ -56,12 +64,32 @@ export async function getDashboardMetrics() {
       console.error("Error fetching ordenes:", ordenesError);
     }
 
+    // 4. Órdenes Recientes
+    const { data: ordenesRecientes, error: ordenesRecientesError } = await supabase
+      .from("ordenes_servicio")
+      .select(`
+        id,
+        created_at,
+        estado_text,
+        clientes:cliente_id ( nombre, apellidos ),
+        mascotas:mascota_id ( nombre )
+      `)
+      .eq("clinica_id", clinicaId)
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    if (ordenesRecientesError) {
+      console.error("Error fetching ordenes recientes:", ordenesRecientesError);
+    }
+
     return {
       error: null,
       data: {
         citasHoy: citasCount || 0,
         ingresosHoy,
         ordenesAbiertas: ordenesCount || 0,
+        citasData: citasData || [],
+        ordenesRecientes: ordenesRecientes || [],
       },
     };
   } catch (error: any) {

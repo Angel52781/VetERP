@@ -1,36 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Home, Users, Package, Settings } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { 
+  Home, 
+  Users, 
+  Package, 
+  Settings, 
+  Wallet, 
+  Calendar,
+  ListTodo,
+  Activity
+} from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Suspense } from "react";
 
 interface SidebarNavProps {
   isAdminOrOwner: boolean;
 }
 
-export function SidebarNav({ isAdminOrOwner }: SidebarNavProps) {
+function SidebarNavContent({ isAdminOrOwner }: SidebarNavProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab");
 
   const routes = [
     {
       href: "/inicio",
-      label: "Inicio",
-      icon: Home,
+      label: "Atenciones",
+      icon: Activity,
       active: pathname === "/inicio",
+    },
+    {
+      href: "/index",
+      label: "Colas",
+      icon: ListTodo,
+      active: pathname === "/index",
+    },
+    {
+      href: "/caja_inventario",
+      label: "Caja",
+      icon: Wallet,
+      active: pathname === "/caja_inventario" && tab !== "inventario",
+    },
+    {
+      href: "/caja_inventario?tab=inventario",
+      label: "Inventario",
+      icon: Package,
+      active: pathname === "/caja_inventario" && tab === "inventario",
+    },
+    {
+      href: "/agenda",
+      label: "Agenda",
+      icon: Calendar,
+      active: pathname === "/agenda" || pathname.startsWith("/agenda/"),
     },
     {
       href: "/clientes",
       label: "Clientes",
       icon: Users,
       active: pathname === "/clientes" || pathname.startsWith("/clientes/"),
-    },
-    {
-      href: "/caja_inventario",
-      label: "Caja e Inventario",
-      icon: Package,
-      active: pathname === "/caja_inventario" || pathname.startsWith("/caja_inventario/"),
     },
   ];
 
@@ -61,5 +91,13 @@ export function SidebarNav({ isAdminOrOwner }: SidebarNavProps) {
         </Link>
       ))}
     </nav>
+  );
+}
+
+export function SidebarNav({ isAdminOrOwner }: SidebarNavProps) {
+  return (
+    <Suspense fallback={<nav className="space-y-2" />}>
+      <SidebarNavContent isAdminOrOwner={isAdminOrOwner} />
+    </Suspense>
   );
 }

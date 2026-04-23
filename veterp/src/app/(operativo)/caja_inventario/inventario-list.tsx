@@ -201,14 +201,14 @@ export function InventarioList({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <div className="rounded-md border overflow-hidden">
+        <Table className="[&_td]:py-2 [&_th]:py-3 text-sm">
+          <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead>Producto</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Stock Actual</TableHead>
-              <TableHead className="w-[120px]"></TableHead>
+              <TableHead className="w-[120px]">Estado</TableHead>
+              <TableHead className="text-right w-[140px]">Stock Actual</TableHead>
+              <TableHead className="w-[120px] text-center">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -240,7 +240,7 @@ export function InventarioList({
                       {item.stock}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     <Dialog 
                       open={selectedItem === item.id} 
                       onOpenChange={(open) => setSelectedItem(open ? item.id : null)}

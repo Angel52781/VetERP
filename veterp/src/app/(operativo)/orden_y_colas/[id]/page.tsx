@@ -47,13 +47,13 @@ export default async function OrdenDetailsPage({ params }: PageProps) {
           <TabsTrigger value="venta">Venta / Caja</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="resumen" className="mt-6 space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+        <TabsContent value="resumen" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
-              <CardHeader>
-                <CardTitle>Cliente</CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Cliente</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-1">
                 <div className="grid grid-cols-3 gap-1 text-sm">
                   <span className="font-medium text-muted-foreground">Nombre:</span>
                   <span className="col-span-2 font-medium">{orden.clientes?.nombre}</span>
@@ -62,16 +62,16 @@ export default async function OrdenDetailsPage({ params }: PageProps) {
                   <span className="col-span-2">{orden.clientes?.telefono || "N/A"}</span>
                   
                   <span className="font-medium text-muted-foreground">Email:</span>
-                  <span className="col-span-2">{orden.clientes?.email || "N/A"}</span>
+                  <span className="col-span-2 truncate" title={orden.clientes?.email || ""}>{orden.clientes?.email || "N/A"}</span>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Mascota</CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Mascota</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-1">
                 <div className="grid grid-cols-3 gap-1 text-sm">
                   <span className="font-medium text-muted-foreground">Nombre:</span>
                   <span className="col-span-2 font-medium">{orden.mascotas?.nombre}</span>
@@ -94,22 +94,22 @@ export default async function OrdenDetailsPage({ params }: PageProps) {
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Detalles de la Orden</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div>
-                  <p className="font-medium text-muted-foreground">Fecha de Creación</p>
-                  <p>{format(new Date(orden.created_at), "dd/MM/yyyy HH:mm", { locale: es })}</p>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Detalles de la Orden</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-2 text-sm">
+                  <div>
+                    <span className="font-medium text-muted-foreground block">Fecha de Creación</span>
+                    <span>{format(new Date(orden.created_at), "dd/MM/yyyy HH:mm", { locale: es })}</span>
+                  </div>
+                  {/* Agrega más campos relevantes si están disponibles en la tabla ordenes_servicio */}
                 </div>
-                {/* Agrega más campos relevantes si están disponibles en la tabla ordenes_servicio */}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
         
         <TabsContent value="notas" className="mt-6 space-y-6">

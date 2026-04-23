@@ -36,16 +36,16 @@ export function VentasList({ ventas }: { ventas: any[] }) {
       </div>
 
       <div className="rounded-md border overflow-hidden">
-        <Table>
+        <Table className="[&_td]:py-2 [&_th]:py-3 text-sm">
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead>Fecha</TableHead>
+              <TableHead className="w-[120px]">Fecha</TableHead>
               <TableHead>Cliente</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Total Venta</TableHead>
-              <TableHead className="text-right">Pagado</TableHead>
-              <TableHead className="text-right">Deuda</TableHead>
-              <TableHead className="w-12 text-center">Orden</TableHead>
+              <TableHead className="w-[100px]">Estado</TableHead>
+              <TableHead className="text-right w-[140px]">Total Venta</TableHead>
+              <TableHead className="text-right w-[140px]">Pagado</TableHead>
+              <TableHead className="text-right w-[140px]">Deuda</TableHead>
+              <TableHead className="w-16 text-center">Orden</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

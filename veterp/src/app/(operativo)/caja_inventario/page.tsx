@@ -46,14 +46,14 @@ export default async function CajaInventarioPage() {
   }, 0) || 0;
 
   return (
-    <div className="container mx-auto py-8 space-y-8 max-w-7xl">
+    <div className="container mx-auto py-8 space-y-8 max-w-full px-4 md:px-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Caja e Inventario</h1>
         <p className="text-muted-foreground mt-1">Gestión de ingresos, cuentas por cobrar y stock de productos.</p>
       </div>
 
       <Tabs defaultValue={isVeterinario ? "inventario" : "caja"} className="w-full">
-        <TabsList>
+        <TabsList className="w-full md:w-auto grid grid-cols-2 md:inline-flex">
           {!isVeterinario && <TabsTrigger value="caja">Caja y Ventas</TabsTrigger>}
           <TabsTrigger value="inventario">Inventario / Kardex</TabsTrigger>
         </TabsList>

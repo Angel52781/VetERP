@@ -1,0 +1,5 @@
+- [x] 1. La barra lateral de navegación (`sidebar-nav.tsx`) muestra las opciones equivalentes al Bubble original: Atenciones, Colas, Caja, Inventario, Agenda, Clientes, Settings.
+- [x] 2. El archivo `supabase/seed.sql` incluye datos realistas para clientes, mascotas, citas, órdenes, catálogo, inventario y caja.
+- [x] 3. La pantalla de Inicio / Atenciones tiene una densidad de información útil (métricas + listados).
+- [x] 4. Las pantallas de Clientes, Órdenes, Agenda y Caja/Inventario se sienten como un producto terminado (sin espacios en blanco excesivos, con buena estructura y densidad).
+- [x] 5. `npm run build` se ejecuta exitosamente sin errores de dependencias o tipado.
