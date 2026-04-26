@@ -3,10 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireUserRole } from "@/lib/clinica";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { invitationSchema, InvitationInput, staffMemberSchema, updateRoleSchema, UpdateRoleInput } from "@/lib/validators/staff";
-
-const staffListSchema = z.array(staffMemberSchema);
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Error inesperado.";
@@ -23,12 +20,17 @@ export async function getStaff() {
 
     if (error) throw error;
 
-    const parsed = staffListSchema.safeParse(data || []);
-    if (!parsed.success) {
+    const rows = Array.isArray(data) ? data : [];
+    const normalizedStaff = rows.flatMap((row) => {
+      const parsedRow = staffMemberSchema.safeParse(row);
+      return parsedRow.success ? [parsedRow.data] : [];
+    });
+
+    if (rows.length > 0 && normalizedStaff.length === 0) {
       return { error: "No se pudo normalizar el listado de staff.", data: [] };
     }
 
-    return { error: null, data: parsed.data };
+    return { error: null, data: normalizedStaff };
   } catch (error: unknown) {
     return { error: getErrorMessage(error), data: [] };
   }

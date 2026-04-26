@@ -26,12 +26,13 @@ export const staffMemberRowSchema = z.object({
   role: z.enum(roles, {
     message: "Rol invalido seleccionado",
   }),
-  email: z.string().trim().min(1, "Correo invalido"),
+  email: z.string().trim().nullish(),
   created_at: z.string(),
 });
 
-export const staffMemberSchema = staffMemberRowSchema.transform(({ user_id, created_at, ...rest }) => ({
+export const staffMemberSchema = staffMemberRowSchema.transform(({ user_id, created_at, email, ...rest }) => ({
   ...rest,
+  email: email?.trim() || "(sin correo)",
   userId: user_id,
   createdAt: created_at,
 }));
