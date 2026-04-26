@@ -25,11 +25,12 @@ import { createCita, getMascotasDeCliente } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import { format, addMinutes } from "date-fns";
 
 interface CitaFormProps {
-  clientes: { id: string; nombre: string; apellidos: string | null }[];
+  clientes: { id: string; nombre: string }[];
   tiposCita: { id: string; nombre: string; duracion_min: number }[];
   onSuccess?: () => void;
   initialDate?: string;
@@ -63,6 +64,10 @@ export function CitaForm({
 
   const selectedClienteId = form.watch("cliente_id");
   const selectedTipoCitaId = form.watch("tipo_cita_id");
+  const selectedStartDate = form.watch("start_date");
+
+  // Track if end_date was modified manually by the user
+  const [isEndDateManual, setIsEndDateManual] = useState(false);
 
   useEffect(() => {
     async function fetchMascotas() {
@@ -83,7 +88,7 @@ export function CitaForm({
         // Si el cliente no tiene la mascota seleccionada actual, resetear
         const currentMascota = form.getValues("mascota_id");
         if (currentMascota && !data.find((m) => m.id === currentMascota)) {
-          form.setValue("mascota_id", "");
+          form.resetField("mascota_id", { defaultValue: "" });
         }
       }
     }
@@ -92,18 +97,18 @@ export function CitaForm({
 
   useEffect(() => {
     // Actualizar la fecha de fin basada en la duración del tipo de cita seleccionado
-    if (selectedTipoCitaId) {
+    // Solo si el usuario NO la ha modificado manualmente
+    if (selectedTipoCitaId && selectedStartDate && !isEndDateManual) {
       const tipo = tiposCita.find((t) => t.id === selectedTipoCitaId);
-      const start = form.getValues("start_date");
-      if (tipo && start) {
-        const startDate = new Date(start);
-        if (!isNaN(startDate.getTime())) {
-          const endDate = addMinutes(startDate, tipo.duracion_min);
-          form.setValue("end_date", format(endDate, "yyyy-MM-dd'T'HH:mm"));
+      if (tipo) {
+        const start = new Date(selectedStartDate);
+        if (!isNaN(start.getTime())) {
+          const end = addMinutes(start, tipo.duracion_min);
+          form.setValue("end_date", format(end, "yyyy-MM-dd'T'HH:mm"));
         }
       }
     }
-  }, [selectedTipoCitaId, tiposCita, form]);
+  }, [selectedTipoCitaId, selectedStartDate, tiposCita, form, isEndDateManual]);
 
   async function onSubmit(data: CitaInput) {
     setIsSubmitting(true);
@@ -130,16 +135,24 @@ export function CitaForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Cliente</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select 
+                onValueChange={(val) => {
+                  field.onChange(val || "");
+                  form.resetField("mascota_id", { defaultValue: "" });
+                }} 
+                value={field.value || ""}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un cliente" />
+                    <SelectValue placeholder="Selecciona un cliente">
+                      {field.value ? clientes.find(c => c.id === field.value)?.nombre : "Selecciona un cliente"}
+                    </SelectValue>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {clientes.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
-                      {c.nombre} {c.apellidos || ""}
+                      {c.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -153,27 +166,57 @@ export function CitaForm({
           control={form.control}
           name="mascota_id"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-3">
               <FormLabel>Mascota</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value} disabled={!selectedClienteId || loadingMascotas}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={loadingMascotas ? "Cargando..." : "Selecciona una mascota"} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {mascotas.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.nombre}
-                    </SelectItem>
-                  ))}
-                  {mascotas.length === 0 && !loadingMascotas && selectedClienteId && (
-                    <SelectItem value="empty" disabled>
-                      No hay mascotas
-                    </SelectItem>
+              <FormControl>
+                <div className="grid grid-cols-2 gap-2">
+                  {loadingMascotas ? (
+                    <div className="col-span-2 flex items-center justify-center p-4 border rounded-md bg-muted/20">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span className="text-sm text-muted-foreground">Cargando...</span>
+                    </div>
+                  ) : !selectedClienteId ? (
+                    <div className="col-span-2 p-4 border border-dashed rounded-md text-center bg-muted/10">
+                      <p className="text-xs text-muted-foreground italic">Selecciona un cliente primero</p>
+                    </div>
+                  ) : mascotas.length === 0 ? (
+                    <div className="col-span-2 p-4 border border-dashed rounded-md text-center bg-destructive/5 border-destructive/20">
+                      <p className="text-xs text-destructive">El cliente no tiene mascotas</p>
+                    </div>
+                  ) : (
+                    mascotas.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          field.onChange(m.id);
+                          form.clearErrors("mascota_id");
+                        }}
+                        className={cn(
+                          "relative flex flex-col items-start p-3 text-left border rounded-lg transition-all",
+                          "hover:border-primary/50 hover:bg-accent/50",
+                          field.value === m.id 
+                            ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm" 
+                            : "border-input bg-background"
+                        )}
+                      >
+                        <span className={cn(
+                          "text-sm font-bold truncate w-full",
+                          field.value === m.id ? "text-primary" : "text-foreground"
+                        )}>
+                          {m.nombre}
+                        </span>
+                        <span className="text-[10px] font-medium text-muted-foreground uppercase mt-1">
+                          Paciente
+                        </span>
+                        {field.value === m.id && (
+                          <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
+                        )}
+                      </button>
+                    ))
                   )}
-                </SelectContent>
-              </Select>
+                </div>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -185,10 +228,23 @@ export function CitaForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tipo de Cita</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select 
+                onValueChange={(val) => {
+                  field.onChange(val || "");
+                  form.trigger("tipo_cita_id");
+                }} 
+                value={field.value || ""}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un tipo de cita" />
+                    <SelectValue placeholder="Selecciona un tipo de cita">
+                      {field.value 
+                        ? (() => {
+                            const t = tiposCita.find(t => t.id === field.value);
+                            return t ? `${t.nombre} (${t.duracion_min} min)` : "Selecciona un tipo de cita";
+                          })()
+                        : "Selecciona un tipo de cita"}
+                    </SelectValue>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -226,7 +282,14 @@ export function CitaForm({
               <FormItem>
                 <FormLabel>Fecha y Hora de Fin</FormLabel>
                 <FormControl>
-                  <Input type="datetime-local" {...field} />
+                  <Input 
+                    type="datetime-local" 
+                    {...field} 
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setIsEndDateManual(true);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

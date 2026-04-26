@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -33,9 +33,10 @@ import { getMascotasDeCliente } from "../agenda/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NuevaAtencionFormProps {
-  clientes: { id: string; nombre: string; apellidos: string | null }[];
+  clientes: { id: string; nombre: string }[];
 }
 
 export function NuevaAtencionForm({ clientes }: NuevaAtencionFormProps) {
@@ -47,6 +48,7 @@ export function NuevaAtencionForm({ clientes }: NuevaAtencionFormProps) {
 
   const form = useForm<OrdenServicioInput>({
     resolver: zodResolver(ordenServicioSchema),
+    mode: "onSubmit", // Solo validar al enviar para evitar ruidos de UX
     defaultValues: {
       cliente_id: "",
       mascota_id: "",
@@ -55,30 +57,34 @@ export function NuevaAtencionForm({ clientes }: NuevaAtencionFormProps) {
 
   const selectedClienteId = form.watch("cliente_id");
 
-  useEffect(() => {
-    async function fetchMascotas() {
-      if (!selectedClienteId) {
-        setMascotas([]);
-        return;
-      }
-      setLoadingMascotas(true);
-      const { data, error } = await getMascotasDeCliente(selectedClienteId);
-      setLoadingMascotas(false);
-      
-      if (error) {
-        toast.error("Error al cargar mascotas");
-        return;
-      }
-      if (data) {
-        setMascotas(data);
-        const currentMascota = form.getValues("mascota_id");
-        if (currentMascota && !data.find((m) => m.id === currentMascota)) {
-          form.setValue("mascota_id", "");
-        }
-      }
+  // Función atómica para cambiar cliente y limpiar estado
+  const handleClienteChange = useCallback(async (clienteId: string | null) => {
+    const id = clienteId || "";
+    // 1. Actualizar RHF de forma silenciosa
+    form.setValue("cliente_id", id, { shouldValidate: false });
+    form.setValue("mascota_id", "", { shouldValidate: false, shouldDirty: false, shouldTouch: false });
+    form.clearErrors(); // Limpieza total de errores preventivos
+
+    // 2. Cargar mascotas
+    if (!id) {
+      setMascotas([]);
+      return;
     }
-    fetchMascotas();
-  }, [selectedClienteId, form]);
+
+    setLoadingMascotas(true);
+    const { data, error } = await getMascotasDeCliente(id);
+    setLoadingMascotas(false);
+
+    if (error) {
+      toast.error("Error al cargar mascotas");
+      setMascotas([]);
+      return;
+    }
+
+    if (data) {
+      setMascotas(data);
+    }
+  }, [form]);
 
   async function onSubmit(data: OrdenServicioInput) {
     setIsSubmitting(true);
@@ -90,14 +96,21 @@ export function NuevaAtencionForm({ clientes }: NuevaAtencionFormProps) {
       return;
     }
 
-    toast.success("Orden de servicio creada exitosamente");
+    toast.success("Atención abierta correctamente");
     form.reset();
+    setMascotas([]);
     setOpen(false);
     router.refresh();
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(val) => {
+      if (!val) {
+        form.reset();
+        setMascotas([]);
+      }
+      setOpen(val);
+    }}>
       <DialogTrigger render={<Button />}>
         <Plus className="mr-2 h-4 w-4" />
         Nueva Atención
@@ -106,27 +119,33 @@ export function NuevaAtencionForm({ clientes }: NuevaAtencionFormProps) {
         <DialogHeader>
           <DialogTitle>Nueva Atención</DialogTitle>
           <DialogDescription>
-            Crea una nueva orden de servicio para atender a una mascota.
+            Selecciona un cliente y su mascota para iniciar la atención clínica.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
+            {/* Campo Cliente */}
             <FormField
               control={form.control}
               name="cliente_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cliente</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <FormLabel>Dueño / Cliente</FormLabel>
+                  <Select 
+                    onValueChange={handleClienteChange} 
+                    value={field.value}
+                  >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un cliente" />
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="Busca o selecciona un cliente">
+                          {field.value ? clientes.find(c => c.id === field.value)?.nombre : "Busca o selecciona un cliente"}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {clientes.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
-                          {c.nombre} {c.apellidos || ""}
+                          {c.nombre}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -136,40 +155,80 @@ export function NuevaAtencionForm({ clientes }: NuevaAtencionFormProps) {
               )}
             />
 
+            {/* Campo Mascota (UI Robusta de Botones) */}
             <FormField
               control={form.control}
               name="mascota_id"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mascota</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value} disabled={!selectedClienteId || loadingMascotas}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={loadingMascotas ? "Cargando..." : "Selecciona una mascota"} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {mascotas.map((m) => (
-                        <SelectItem key={m.id} value={m.id}>
-                          {m.nombre}
-                        </SelectItem>
-                      ))}
-                      {mascotas.length === 0 && !loadingMascotas && selectedClienteId && (
-                        <SelectItem value="empty" disabled>
-                          No hay mascotas registradas
-                        </SelectItem>
+                <FormItem className="space-y-3">
+                  <FormLabel>Paciente / Mascota</FormLabel>
+                  <FormControl>
+                    <div className="grid grid-cols-2 gap-2">
+                      {loadingMascotas ? (
+                        <div className="col-span-2 flex items-center justify-center p-6 border rounded-lg bg-muted/20">
+                          <Loader2 className="h-5 w-5 animate-spin mr-2 text-primary" />
+                          <span className="text-sm font-medium">Cargando...</span>
+                        </div>
+                      ) : !selectedClienteId ? (
+                        <div className="col-span-2 p-6 border border-dashed rounded-lg text-center bg-muted/5">
+                          <p className="text-sm text-muted-foreground">Selecciona un cliente para ver sus mascotas</p>
+                        </div>
+                      ) : mascotas.length === 0 ? (
+                        <div className="col-span-2 p-6 border border-dashed rounded-lg text-center bg-destructive/5 border-destructive/10">
+                          <p className="text-sm text-destructive font-medium">Sin mascotas registradas</p>
+                        </div>
+                      ) : (
+                        mascotas.map((m) => (
+                          <button
+                            key={m.id}
+                            type="button"
+                            onClick={() => {
+                              field.onChange(m.id);
+                              form.clearErrors("mascota_id");
+                            }}
+                            className={cn(
+                              "relative flex flex-col items-start p-3 text-left border rounded-lg transition-all",
+                              "hover:border-primary/50 hover:bg-accent/50",
+                              field.value === m.id 
+                                ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm" 
+                                : "border-input bg-background"
+                            )}
+                          >
+                            <span className={cn(
+                              "text-sm font-bold truncate w-full",
+                              field.value === m.id ? "text-primary" : "text-foreground"
+                            )}>
+                              {m.nombre}
+                            </span>
+                            <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider mt-1">
+                              Ficha Clínica
+                            </span>
+                            {field.value === m.id && (
+                              <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
+                            )}
+                          </button>
+                        ))
                       )}
-                    </SelectContent>
-                  </Select>
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Crear Orden
-            </Button>
+            <div className="pt-4 border-t">
+              <Button type="submit" disabled={isSubmitting || !selectedClienteId} className="w-full h-11 font-bold shadow-md">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Procesando...
+                  </>
+                ) : (
+                  "Iniciar Atención Médica"
+                )}
+              </Button>
+            </div>
+
           </form>
         </Form>
       </DialogContent>

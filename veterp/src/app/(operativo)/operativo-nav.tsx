@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,24 +13,23 @@ type OperativoNavItem = {
   matchPrefix?: boolean;
   matchTab?: string;
   adminOnly?: boolean;
-  hideForVeterinario?: boolean;
+  hideForCaja?: boolean;
 };
 
 const navItems: OperativoNavItem[] = [
+  { href: "/app", label: "Inicio", matchPath: "/app" },
   { href: "/atenciones", label: "Atenciones", matchPath: "/atenciones" },
   { href: "/colas", label: "Colas", matchPath: "/colas" },
   {
-    href: "/caja_inventario?tab=caja",
+    href: "/caja",
     label: "Caja",
-    matchPath: "/caja_inventario",
-    matchTab: "caja",
-    hideForVeterinario: true,
+    matchPath: "/caja",
+    hideForCaja: true,
   },
   {
-    href: "/caja_inventario?tab=inventario",
+    href: "/inventario",
     label: "Inventario",
-    matchPath: "/caja_inventario",
-    matchTab: "inventario",
+    matchPath: "/inventario",
   },
   { href: "/agenda", label: "Agenda", matchPath: "/agenda" },
   { href: "/clientes", label: "Clientes", matchPath: "/clientes", matchPrefix: true },
@@ -40,37 +39,25 @@ const navItems: OperativoNavItem[] = [
 type OperativoNavProps = {
   mobile?: boolean;
   isAdminOrOwner: boolean;
-  isVeterinario: boolean;
+  hideCaja: boolean;
 };
 
-function isActive(item: OperativoNavItem, pathname: string, tabParam: string | null) {
-  const pathMatches = item.matchPrefix
+function isActive(item: OperativoNavItem, pathname: string) {
+  return item.matchPrefix
     ? pathname === item.matchPath || pathname.startsWith(`${item.matchPath}/`)
     : pathname === item.matchPath;
-
-  if (!pathMatches) {
-    return false;
-  }
-
-  if (!item.matchTab) {
-    return true;
-  }
-
-  return tabParam === item.matchTab;
 }
 
-export function OperativoNav({ mobile = false, isAdminOrOwner, isVeterinario }: OperativoNavProps) {
+export function OperativoNav({ mobile = false, isAdminOrOwner, hideCaja }: OperativoNavProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const tabParam = searchParams.get("tab");
 
   return (
     <>
       {navItems
         .filter((item) => !item.adminOnly || isAdminOrOwner)
-        .filter((item) => !item.hideForVeterinario || !isVeterinario)
+        .filter((item) => !item.hideForCaja || !hideCaja)
         .map((item) => {
-          const active = isActive(item, pathname, tabParam);
+          const active = isActive(item, pathname);
 
           return (
             <Link

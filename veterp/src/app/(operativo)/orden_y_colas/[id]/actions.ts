@@ -2,7 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
-import { entradaClinicaSchema, EntradaClinicaInput } from "@/lib/validators/atencion";
+import { entradaClinicaSchema, EntradaClinicaInput, adjuntoSchema, AdjuntoInput } from "@/lib/validators/atencion";
+import { v4 as uuidv4 } from "uuid";
 
 export async function getOrdenCompleta(id: string) {
   try {
@@ -30,6 +31,13 @@ export async function getOrdenCompleta(id: string) {
           id,
           tipo_text,
           texto_text,
+          motivo_consulta_text,
+          peso_kg_num,
+          temperatura_c_num,
+          frecuencia_cardiaca_num,
+          frecuencia_respiratoria_num,
+          observaciones_text,
+          diagnostico_text,
           fecha_date,
           created_at
         ),
@@ -94,6 +102,13 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
         orden_id: validatedData.orden_id,
         tipo_text: validatedData.tipo_text,
         texto_text: validatedData.texto_text,
+        motivo_consulta_text: validatedData.motivo_consulta_text,
+        peso_kg_num: validatedData.peso_kg_num,
+        temperatura_c_num: validatedData.temperatura_c_num,
+        frecuencia_cardiaca_num: validatedData.frecuencia_cardiaca_num,
+        frecuencia_respiratoria_num: validatedData.frecuencia_respiratoria_num,
+        observaciones_text: validatedData.observaciones_text,
+        diagnostico_text: validatedData.diagnostico_text,
         fecha_date: new Date().toISOString(),
       })
       .select()
@@ -111,8 +126,6 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
   }
 }
 
-import { adjuntoSchema, AdjuntoInput } from "@/lib/validators/atencion";
-import { v4 as uuidv4 } from 'uuid';
 
 export async function uploadAdjunto(formData: FormData, ordenId: string) {
   try {

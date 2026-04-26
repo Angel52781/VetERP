@@ -107,10 +107,12 @@ export function MovimientoStockForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Almacén</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={(val) => field.onChange(val)} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un almacén" />
+                    <SelectValue placeholder="Selecciona un almacén">
+                      {field.value ? almacenes.find(a => a.id === field.value)?.nombre : "Selecciona un almacén"}
+                    </SelectValue>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -147,10 +149,14 @@ export function MovimientoStockForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tipo de Movimiento</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={(val) => field.onChange(val)} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Tipo" />
+                      <SelectValue placeholder="Tipo">
+                        {field.value === "ajuste_manual" ? "Ajuste Manual" : 
+                         field.value === "compra" ? "Compra" : 
+                         field.value === "merma" ? "Merma/Pérdida" : "Tipo"}
+                      </SelectValue>
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

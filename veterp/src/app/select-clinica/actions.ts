@@ -8,7 +8,10 @@ import { clinicaCookieName } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
 const selectClinicaSchema = z.object({
-  clinicaId: z.string().uuid(),
+  clinicaId: z
+    .string()
+    .trim()
+    .min(1, "Clinica requerida"),
 });
 
 export type CreateClinicaState = { error: string | null };
@@ -29,12 +32,12 @@ async function upsertById(table: string, rows: Record<string, unknown>[]) {
 }
 
 async function seedDemoData(clinicaId: string) {
-  const almacenId = "33333333-3333-3333-3333-333333333333";
-  const proveedorId = "44444444-4444-4444-4444-444444444444";
+  const almacenId = "33333333-3333-4333-a333-333333333333";
+  const proveedorId = "44444444-4444-4444-a444-444444444444";
 
-  const itemConsultaId = "55555555-5555-5555-5555-555555555551";
-  const itemVacunaId = "55555555-5555-5555-5555-555555555552";
-  const itemDesparasitanteId = "55555555-5555-5555-5555-555555555553";
+  const itemConsultaId = "55555555-5555-4555-a555-555555555551";
+  const itemVacunaId = "55555555-5555-4555-a555-555555555552";
+  const itemDesparasitanteId = "55555555-5555-4555-a555-555555555553";
 
   await upsertById("almacenes", [
     {
@@ -121,11 +124,68 @@ async function seedDemoData(clinicaId: string) {
       throw new Error(insertStock.error.message);
     }
   }
+
+  // Seed Clientes
+  const cliente1Id = "aa000000-0000-4000-a000-000000000001";
+  const cliente2Id = "aa000000-0000-4000-a000-000000000002";
+  const cliente3Id = "aa000000-0000-4000-a000-000000000003";
+
+  await upsertById("clientes", [
+    { id: cliente1Id, clinica_id: clinicaId, nombre: "María García López", telefono: "555-0101", email: "maria.garcia@email.com" },
+    { id: cliente2Id, clinica_id: clinicaId, nombre: "Carlos Rodríguez Pérez", telefono: "555-0202", email: "carlos.r@email.com" },
+    { id: cliente3Id, clinica_id: clinicaId, nombre: "Ana Martínez Soto", telefono: "555-0303", email: null },
+  ]);
+
+  // Seed Mascotas
+  const mascota1Id = "bb000000-0000-4000-a000-000000000001";
+  const mascota2Id = "bb000000-0000-4000-a000-000000000002";
+  const mascota3Id = "bb000000-0000-4000-a000-000000000003";
+
+  await upsertById("mascotas", [
+    { id: mascota1Id, clinica_id: clinicaId, cliente_id: cliente1Id, nombre: "Luna", especie: "Perro", raza: "Labrador", nacimiento: "2020-03-15" },
+    { id: mascota2Id, clinica_id: clinicaId, cliente_id: cliente1Id, nombre: "Michi", especie: "Gato", raza: "Siamés", nacimiento: "2021-07-20" },
+    { id: mascota3Id, clinica_id: clinicaId, cliente_id: cliente2Id, nombre: "Max", especie: "Perro", raza: "Pastor Alemán", nacimiento: "2019-11-05" },
+  ]);
+
+  // Seed Tipos de Cita
+  const tipoCita1Id = "cc000000-0000-4000-a000-000000000001";
+  const tipoCita2Id = "cc000000-0000-4000-a000-000000000002";
+
+  await upsertById("tipo_citas", [
+    { id: tipoCita1Id, clinica_id: clinicaId, nombre: "Consulta General", duracion_min: 30, color: "#3B82F6" },
+    { id: tipoCita2Id, clinica_id: clinicaId, nombre: "Vacunación", duracion_min: 20, color: "#10B981" },
+  ]);
+
+  // Check if citas exist to avoid overriding today's dates infinitely
+  const existingCitas = await supabase.from("citas").select("id").eq("clinica_id", clinicaId).limit(1);
+  if (!existingCitas.error && !existingCitas.data.length) {
+    const now = new Date();
+    const addHours = (date: Date, h: number) => new Date(date.getTime() + h * 60 * 60 * 1000).toISOString();
+    
+    await supabase.from("citas").insert([
+      { clinica_id: clinicaId, cliente_id: cliente1Id, mascota_id: mascota1Id, tipo_cita_id: tipoCita1Id, estado: "programada", start_date: addHours(now, 1), end_date: addHours(now, 1.5) },
+      { clinica_id: clinicaId, cliente_id: cliente2Id, mascota_id: mascota3Id, tipo_cita_id: tipoCita2Id, estado: "programada", start_date: addHours(now, 24), end_date: addHours(now, 24.3) },
+    ]);
+  }
+
+  // Check if ordenes exist
+  const existingOrdenes = await supabase.from("ordenes_servicio").select("id").eq("clinica_id", clinicaId).limit(1);
+  if (!existingOrdenes.error && !existingOrdenes.data.length) {
+    const orden1Id = "ee000000-0000-4000-a000-000000000001";
+    await supabase.from("ordenes_servicio").insert([
+      { id: orden1Id, clinica_id: clinicaId, cliente_id: cliente1Id, mascota_id: mascota1Id, estado_text: "open", started_at: new Date(Date.now() - 15*60000).toISOString() }
+    ]);
+  }
 }
 
 export async function selectClinica(formData: FormData) {
+  const rawClinicaId =
+    formData.get("clinicaId") ??
+    formData.get("clinica_id") ??
+    formData.get("clinicId");
+
   const parsed = selectClinicaSchema.safeParse({
-    clinicaId: formData.get("clinicaId"),
+    clinicaId: rawClinicaId,
   });
 
   if (!parsed.success) {

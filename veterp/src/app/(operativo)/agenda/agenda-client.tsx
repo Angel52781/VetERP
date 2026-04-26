@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format, isSameDay, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { Plus, Calendar, Clock, User, PawPrint } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -20,6 +21,8 @@ type Cita = {
   id: string;
   start_date: string;
   end_date: string;
+  cliente_id: string;
+  mascota_id: string;
   clientes: { nombre: string } | null;
   mascotas: { nombre: string } | null;
   tipo_citas: { nombre: string; color: string } | null;
@@ -27,7 +30,7 @@ type Cita = {
 
 interface AgendaClientProps {
   citas: Cita[];
-  clientes: { id: string; nombre: string; apellidos: string | null }[];
+  clientes: { id: string; nombre: string }[];
   tiposCita: { id: string; nombre: string; duracion_min: number }[];
 }
 
@@ -128,7 +131,13 @@ export function AgendaClient({ citas, clientes, tiposCita }: AgendaClientProps) 
                         </div>
                         <div className="flex items-center text-muted-foreground">
                           <PawPrint className="mr-2 h-4 w-4" />
-                          {cita.mascotas?.nombre || "Mascota desconocida"}
+                          {cita.mascotas?.nombre ? (
+                            <Link href={`/mascotas/${cita.mascota_id}`} className="hover:text-primary hover:underline transition-colors">
+                              {cita.mascotas.nombre}
+                            </Link>
+                          ) : (
+                            "Mascota desconocida"
+                          )}
                         </div>
                       </CardContent>
                     </Card>

@@ -10,6 +10,18 @@ export async function createOrdenServicio(input: OrdenServicioInput) {
     const validatedData = ordenServicioSchema.parse(input);
     const supabase = await createClient();
 
+    const { data: existingActiveOrder } = await supabase
+      .from("ordenes_servicio")
+      .select("id")
+      .eq("clinica_id", clinicaId)
+      .eq("mascota_id", validatedData.mascota_id)
+      .in("estado_text", ["open", "in_progress"])
+      .maybeSingle();
+
+    if (existingActiveOrder) {
+      return { error: "Esta mascota ya tiene una atención activa en sala de espera o en progreso.", data: null };
+    }
+
     const { data, error } = await supabase
       .from("ordenes_servicio")
       .insert({
@@ -34,7 +46,43 @@ export async function createOrdenServicio(input: OrdenServicioInput) {
   }
 }
 
+/** Devuelve solo órdenes activas (open / in_progress) para la pantalla de Atenciones. */
 export async function getOrdenesServicio() {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("ordenes_servicio")
+      .select(`
+        *,
+        clientes:cliente_id (
+          id,
+          nombre
+        ),
+        mascotas:mascota_id (
+          id,
+          nombre
+        )
+      `)
+      .eq("clinica_id", clinicaId)
+      .in("estado_text", ["open", "in_progress"])
+      .order("started_at", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching ordenes activas:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (error: any) {
+    console.error("Exception in getOrdenesServicio:", error);
+    return { error: error.message || "Error al obtener las órdenes de servicio", data: null };
+  }
+}
+
+/** Devuelve todo el historial de órdenes sin filtrar por estado. */
+export async function getAllOrdenesServicio() {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
@@ -56,14 +104,14 @@ export async function getOrdenesServicio() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching ordenes servicio:", error);
+      console.error("Error fetching historial ordenes:", error);
       return { error: error.message, data: null };
     }
 
     return { error: null, data };
   } catch (error: any) {
-    console.error("Exception in getOrdenesServicio:", error);
-    return { error: error.message || "Error al obtener las órdenes de servicio", data: null };
+    console.error("Exception in getAllOrdenesServicio:", error);
+    return { error: error.message || "Error al obtener el historial de órdenes", data: null };
   }
 }
 

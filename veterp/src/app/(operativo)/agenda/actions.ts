@@ -127,13 +127,13 @@ export async function getClientesParaAgenda() {
 
     const { data, error } = await supabase
       .from("clientes")
-      .select("id, nombre, apellidos")
+      .select("id, nombre")
       .eq("clinica_id", clinicaId)
       .order("nombre");
 
     if (error) {
       console.error("Error fetching clientes:", error);
-      return { error: error.message, data: null };
+      return { error: error?.message || "Error desconocido en BD", data: null };
     }
 
     return { error: null, data };

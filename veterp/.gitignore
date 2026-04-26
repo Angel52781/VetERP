@@ -15,7 +15,15 @@
 
 # next.js
 /.next/
+/.next-build/
+/.next-build-*/
 /out/
+
+# debug / scripts locales
+arreglar_todo.js
+
+# supabase
+supabase/.temp/
 
 # production
 /build
@@ -39,3 +47,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.next-build/
+.next-build-*/
+arreglar_todo.js
+supabase/.temp/

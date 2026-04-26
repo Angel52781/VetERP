@@ -21,6 +21,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo }: { ordenId: str
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [cantidad, setCantidad] = useState<number>(1);
   const [pagoMonto, setPagoMonto] = useState<number>(0);
+  const [metodoPago, setMetodoPago] = useState<string>("efectivo");
 
   const loadVenta = async () => {
     setLoading(true);
@@ -79,7 +80,8 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo }: { ordenId: str
       cliente_id: clienteId,
       orden_id: ordenId,
       monto: pagoMonto,
-      tipo: "pago"
+      tipo: "pago",
+      metodo_pago: metodoPago as any
     });
     
     if (error) {
@@ -140,7 +142,9 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo }: { ordenId: str
                     <label className="text-xs font-medium">Producto/Servicio</label>
                     <Select value={selectedItem} onValueChange={(val) => setSelectedItem(val || "")}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un ítem..." />
+                        <SelectValue placeholder="Selecciona un ítem...">
+                          {selectedItem ? itemsCatalogo.find(i => i.id === selectedItem)?.nombre : "Selecciona un ítem..."}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {itemsCatalogo.map(item => (
@@ -224,7 +228,9 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo }: { ordenId: str
                     {venta.ledger.map((pago: any) => (
                       <TableRow key={pago.id}>
                         <TableCell>{format(new Date(pago.fecha), "dd/MM/yyyy HH:mm", { locale: es })}</TableCell>
-                        <TableCell className="capitalize">{pago.tipo}</TableCell>
+                        <TableCell className="capitalize">
+                          {pago.tipo} {pago.metodo_pago ? `(${pago.metodo_pago})` : ""}
+                        </TableCell>
                         <TableCell className="text-right text-emerald-600 font-medium">${Number(pago.monto).toFixed(2)}</TableCell>
                       </TableRow>
                     ))}
@@ -268,6 +274,19 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo }: { ordenId: str
                       value={pagoMonto} 
                       onChange={e => setPagoMonto(Number(e.target.value))} 
                     />
+                  </div>
+                  <div className="w-40 space-y-1">
+                    <label className="text-xs font-medium">Método</label>
+                    <Select value={metodoPago} onValueChange={(val) => setMetodoPago(val || "efectivo")}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="efectivo">Efectivo</SelectItem>
+                        <SelectItem value="tarjeta">Tarjeta</SelectItem>
+                        <SelectItem value="transferencia">Transferencia</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <Button 
                     className="w-auto shrink-0" 

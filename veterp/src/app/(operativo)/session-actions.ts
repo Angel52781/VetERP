@@ -6,8 +6,12 @@ import { clinicaCookieName } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
 export async function signOutAndClearSession() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch (e) {
+    console.error("Supabase signout error:", e);
+  }
 
   const cookieStore = await cookies();
   cookieStore.delete(clinicaCookieName);

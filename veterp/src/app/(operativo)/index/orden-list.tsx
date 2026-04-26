@@ -14,13 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Loader2, MoreVertical, Play, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
 
@@ -57,16 +57,24 @@ export function OrdenList({ ordenes }: OrdenListProps) {
       return;
     }
 
-    toast.success("Estado actualizado exitosamente");
+    const mensajes: Record<string, string> = {
+      in_progress: "Orden marcada como En progreso.",
+      finished: "Orden finalizada. Ya no aparece en Atenciones activas.",
+      closed: "Orden cerrada. Ya no aparece en Atenciones activas.",
+    };
+    toast.success(mensajes[nuevoEstado] ?? "Estado actualizado.");
     router.refresh();
   }
 
   if (!ordenes || ordenes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg border-dashed">
-        <h3 className="text-lg font-medium">No hay atenciones activas</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Crea una nueva atención para comenzar a registrar servicios.
+      <div className="flex flex-col items-center justify-center p-12 text-center border rounded-xl border-dashed bg-muted/30">
+        <div className="bg-background p-4 rounded-full shadow-sm mb-4">
+          <Clock className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <h3 className="text-xl font-semibold">No hay pacientes en atención</h3>
+        <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
+          Aquí aparecerán las mascotas que están siendo atendidas actualmente en la clínica.
         </p>
       </div>
     );
@@ -79,18 +87,21 @@ export function OrdenList({ ordenes }: OrdenListProps) {
         const Icon = estadoInfo.icon;
 
         return (
-          <Card key={orden.id} className="flex flex-col">
+          <Card key={orden.id} className="flex flex-col shadow-sm hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
-                <CardTitle className="text-base font-semibold">
-                  Mascota: {orden.mascotas?.nombre || "Desconocida"}
+                <CardTitle className="text-base font-bold text-primary">
+                  {orden.mascotas?.nombre || "Mascota"}
                 </CardTitle>
-                <CardDescription>
-                  Cliente: {orden.clientes?.nombre || "Desconocido"}
+                <CardDescription className="font-medium">
+                  Dueño: {orden.clientes?.nombre || "Cliente"}
                 </CardDescription>
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" disabled={loadingId === orden.id} />}>
+                <DropdownMenuTrigger
+                  disabled={loadingId === orden.id}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md p-0 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                >
                   <span className="sr-only">Abrir menú</span>
                   {loadingId === orden.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -101,38 +112,41 @@ export function OrdenList({ ordenes }: OrdenListProps) {
                 <DropdownMenuContent align="end">
                   {orden.estado_text === "open" && (
                     <DropdownMenuItem onClick={() => handleEstadoChange(orden.id, "in_progress")}>
-                      Marcar En Progreso
+                      Comenzar Atención
                     </DropdownMenuItem>
                   )}
                   {orden.estado_text === "in_progress" && (
                     <DropdownMenuItem onClick={() => handleEstadoChange(orden.id, "finished")}>
-                      Marcar Finalizada
+                      Finalizar Atención
                     </DropdownMenuItem>
                   )}
                   {(orden.estado_text === "open" || orden.estado_text === "in_progress") && (
-                    <DropdownMenuItem onClick={() => handleEstadoChange(orden.id, "closed")}>
-                      Cerrar Orden
+                    <DropdownMenuItem onClick={() => handleEstadoChange(orden.id, "closed")} className="text-destructive">
+                      Anular Orden
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-2">
-                <Icon className="h-4 w-4" />
+              <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-2">
+                <Icon className="h-3.5 w-3.5" />
                 <span>
-                  {orden.started_at
-                    ? format(new Date(orden.started_at), "dd MMM yyyy HH:mm", { locale: es })
+                  Iniciada: {orden.started_at
+                    ? format(new Date(orden.started_at), "dd MMM, HH:mm", { locale: es })
                     : "Sin fecha"}
                 </span>
               </div>
             </CardContent>
-            <CardFooter className="mt-auto flex justify-between">
-              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${estadoInfo.bgClass} ${estadoInfo.textClass}`}>
+            <CardFooter className="mt-auto flex justify-between gap-2 pt-4">
+              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${estadoInfo.bgClass} ${estadoInfo.textClass}`}>
                 {estadoInfo.label}
               </span>
-              <Link href={`/orden_y_colas/${orden.id}`} className="inline-flex h-7 items-center justify-center rounded-md border border-border bg-background px-2.5 text-xs font-medium hover:bg-muted hover:text-foreground">
-                Ver Detalle
+              <Link 
+                href={`/orden_y_colas/${orden.id}`} 
+                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-2.5 text-xs font-semibold hover:bg-muted hover:text-foreground transition-colors"
+              >
+                Ver Ficha Clínica
               </Link>
             </CardFooter>
           </Card>

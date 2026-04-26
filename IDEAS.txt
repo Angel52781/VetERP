@@ -1,0 +1,125 @@
+# Idea de funcionalidad: Digitalización de historias médicas veterinarias
+
+## Resumen
+Se propone incorporar al sistema una funcionalidad de digitalización de historias médicas antiguas o externas, con el objetivo de convertir documentación clínica no estructurada en registros digitales reutilizables dentro de VetERP.
+
+Esta funcionalidad estaría pensada principalmente para clínicas veterinarias que ya poseen un historial previo de pacientes en formato físico o en documentos PDF no procesables, y que necesitan migrar esa información al sistema de manera más rápida y ordenada.
+
+## Problema
+Muchas clínicas veterinarias tienen historias médicas en alguno de estos formatos:
+
+1. Escritas a mano sobre papel.
+2. Escritas en computadora, impresas y luego escaneadas.
+3. Guardadas en PDF como imagen, sin texto seleccionable.
+4. Mezclas de texto, tablas, observaciones clínicas y resultados de laboratorio no estructurados.
+
+Esto dificulta enormemente la migración a un sistema digital, ya que obliga a cargar la información manualmente, con alto costo de tiempo y riesgo de error.
+
+## Propuesta de solución
+Crear un módulo de digitalización documental que permita subir archivos PDF escaneados y transformarlos en información digital estructurada o semiestructurada, lista para revisión y posterior incorporación al sistema.
+
+## Flujo propuesto
+### 1. Carga de documentos
+El usuario sube uno o varios archivos PDF escaneados correspondientes a historias médicas anteriores.
+
+### 2. Preprocesamiento
+El sistema valida:
+- formato del archivo
+- calidad mínima del escaneo
+- número de páginas
+- orientación
+- legibilidad general
+
+Si el archivo no cumple requisitos mínimos, se informa al usuario antes de procesarlo.
+
+### 3. OCR
+Se ejecuta un proceso OCR para extraer el texto del PDF.
+Este proceso tendría costo computacional y posiblemente costo por servicio externo, por lo que debe considerarse como funcionalidad premium o de cobro adicional.
+
+### 4. Normalización del contenido
+El texto extraído se limpia y reorganiza para reducir ruido:
+- saltos de línea incorrectos
+- encabezados repetidos
+- errores comunes de OCR
+- separación entre bloques clínicos
+- fechas, nombres, diagnósticos, tratamientos, etc.
+
+### 5. Reconstrucción del documento
+El contenido procesado se transforma a un formato más limpio y estandarizado.
+Una opción es reconstruirlo como documento estructurado usando una plantilla basada en LaTeX para generar un PDF más legible, uniforme y fácil de archivar.
+
+### 6. Revisión humana
+Antes de guardar la información como definitiva, el usuario revisa:
+- texto extraído
+- posibles errores de interpretación
+- campos dudosos
+- datos incompletos o ambiguos
+
+Esto es especialmente importante en documentos manuscritos o con mala calidad.
+
+### 7. Vinculación con el sistema
+Una vez validado, el contenido puede:
+- guardarse como adjunto digitalizado
+- registrarse como entrada clínica histórica
+- asociarse a una mascota existente
+- asociarse a un cliente existente
+- quedar marcado como “importado históricamente”
+
+## Alcance realista
+### Casos más viables
+- PDFs escaneados de documentos impresos por computadora
+- PDFs con texto parcialmente legible
+- informes clínicos, laboratorios y recetas en formato estándar
+
+### Casos complejos
+- documentos manuscritos
+- letra médica difícil de leer
+- escaneos borrosos, inclinados o con baja resolución
+- documentos con mezcla de varias mascotas o varios pacientes en un solo archivo
+
+En estos casos, el sistema debería advertir que la precisión puede ser baja y que será necesaria una revisión manual exhaustiva.
+
+## Valor para el producto
+Esta funcionalidad podría aportar mucho valor porque:
+- reduce el tiempo de migración de clínicas nuevas
+- facilita la adopción del sistema
+- permite rescatar historial antiguo sin reescribir todo manualmente
+- genera una ventaja comercial frente a sistemas que solo aceptan carga manual
+
+## Modelo de monetización posible
+Dado que OCR y procesamiento documental tienen costo, esta funcionalidad podría ofrecerse como:
+
+- servicio adicional por documento
+- paquete de migración inicial
+- funcionalidad premium para planes superiores
+- procesamiento por volumen de páginas
+
+## Riesgos y limitaciones
+- errores de OCR
+- mala calidad del escaneo
+- confusión entre campos clínicos
+- dificultad extrema con documentos manuscritos
+- necesidad de revisión humana antes de guardar información crítica
+
+## Recomendación de implementación
+No intentar resolver todo de una vez.
+
+### MVP recomendado
+Primera versión enfocada solo en:
+- subida de PDF
+- OCR
+- extracción de texto
+- vista de revisión
+- guardado como adjunto histórico o nota clínica histórica
+
+### Versión posterior
+- estructuración automática en campos
+- detección de fechas, diagnósticos y tratamientos
+- vinculación automática con cliente y mascota
+- generación de PDF limpio y estandarizado
+- soporte avanzado para documentos manuscritos
+
+## Conclusión
+La funcionalidad de digitalización de historias médicas puede ser una herramienta de alto valor estratégico para VetERP, especialmente como facilitador de migración y adopción por parte de clínicas que ya tienen archivos históricos.
+
+Sin embargo, debe diseñarse como un flujo asistido y revisable, no como una automatización ciega, especialmente en documentos manuscritos o de baja calidad.

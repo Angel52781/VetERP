@@ -7,8 +7,28 @@ export const ordenServicioSchema = z.object({
 
 export const entradaClinicaSchema = z.object({
   orden_id: z.string().uuid("ID de orden inválido"),
+  // Campos de texto libre legacy (siguen siendo requeridos para notas de evolución)
   tipo_text: z.string().min(1, "El tipo es requerido"),
-  texto_text: z.string().min(1, "El texto es requerido"),
+  texto_text: z.string().default(""),
+  // Campos clínicos estructurados — todos opcionales para retrocompatibilidad
+  motivo_consulta_text:          z.string().optional(),
+  peso_kg_num:                   z.number().positive().max(999).optional(),
+  temperatura_c_num:             z.number().min(30).max(45).optional(),
+  frecuencia_cardiaca_num:       z.number().int().min(1).max(500).optional(),
+  frecuencia_respiratoria_num:   z.number().int().min(1).max(200).optional(),
+  observaciones_text:            z.string().optional(),
+  diagnostico_text:              z.string().optional(),
+});
+
+export const signosVitalesSchema = z.object({
+  orden_id: z.string().uuid("ID de orden inválido"),
+  motivo_consulta_text:          z.string().optional(),
+  peso_kg_num:                   z.number().positive().max(999).optional(),
+  temperatura_c_num:             z.number().min(30).max(45).optional(),
+  frecuencia_cardiaca_num:       z.number().int().min(1).max(500).optional(),
+  frecuencia_respiratoria_num:   z.number().int().min(1).max(200).optional(),
+  observaciones_text:            z.string().optional(),
+  diagnostico_text:              z.string().optional(),
 });
 
 export const adjuntoSchema = z.object({
@@ -19,4 +39,6 @@ export const adjuntoSchema = z.object({
 
 export type OrdenServicioInput = z.infer<typeof ordenServicioSchema>;
 export type EntradaClinicaInput = z.infer<typeof entradaClinicaSchema>;
+export type SignosVitalesInput = z.infer<typeof signosVitalesSchema>;
 export type AdjuntoInput = z.infer<typeof adjuntoSchema>;
+

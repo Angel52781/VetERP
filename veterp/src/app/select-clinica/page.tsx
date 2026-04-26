@@ -100,7 +100,7 @@ export default async function SelectClinicaPage({ searchParams }: SelectClinicaP
                 Rol: {roleByClinica.get(clinica.id) ?? "miembro"}
               </p>
               <form action={selectClinica}>
-                <input type="hidden" name="clinicaId" value={clinica.id} />
+                <input type="hidden" name="clinicaId" value={String(clinica.id)} />
                 <Button type="submit" className="w-full">
                   Entrar
                 </Button>

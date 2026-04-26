@@ -39,7 +39,21 @@ export const ledgerSchema = z.object({
   orden_id: z.string().uuid().optional().nullable(),
   tipo: z.enum(["pago", "cargo", "reembolso"]),
   monto: z.coerce.number().min(0.01, "El monto debe ser mayor a 0"),
+  metodo_pago: z.enum(["efectivo", "tarjeta", "transferencia"]).optional().nullable(),
   fecha: z.string().optional(),
 });
 
 export type LedgerInput = z.infer<typeof ledgerSchema>;
+
+export const abrirCajaSchema = z.object({
+  monto_apertura: z.coerce.number().min(0, "El monto de apertura no puede ser negativo"),
+});
+
+export type AbrirCajaInput = z.infer<typeof abrirCajaSchema>;
+
+export const cerrarCajaSchema = z.object({
+  monto_cierre_efectivo_real: z.coerce.number().min(0, "El monto real no puede ser negativo"),
+  notas: z.string().optional().nullable(),
+});
+
+export type CerrarCajaInput = z.infer<typeof cerrarCajaSchema>;

@@ -2,7 +2,16 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies, requireUserRole } from "@/lib/clinica";
-import { itemVentaSchema, ItemVentaInput, ledgerSchema, LedgerInput } from "@/lib/validators/ventas";
+import { 
+  itemVentaSchema, 
+  ItemVentaInput, 
+  ledgerSchema, 
+  LedgerInput,
+  abrirCajaSchema,
+  AbrirCajaInput,
+  cerrarCajaSchema,
+  CerrarCajaInput
+} from "@/lib/validators/ventas";
 import { revalidatePath } from "next/cache";
 
 export async function getVentaByOrden(ordenId: string) {
@@ -204,6 +213,22 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
 
     if (itemCatalogo.kind === "producto") {
       const almacenId = await getDefaultAlmacen(clinicaId, supabase);
+      
+      // Compute current stock
+      const { data: movs } = await supabase
+        .from("movimientos_stock")
+        .select("qty")
+        .eq("clinica_id", clinicaId)
+        .eq("item_id", validatedData.item_id);
+      
+      const currentStock = (movs || []).reduce((acc: number, mov: any) => acc + Number(mov.qty), 0);
+      
+      if (currentStock < validatedData.cantidad) {
+        // Rollback inserted item_venta
+        await supabase.from("items_venta").delete().eq("id", newItem.id);
+        return { error: "Stock insuficiente para realizar la venta", data: null };
+      }
+
       const { error: stockError } = await supabase
         .from("movimientos_stock")
         .insert({
@@ -217,8 +242,6 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
 
       if (stockError) {
         console.error("Error reducing stock:", stockError);
-        // We might want to rollback the item_venta insertion here if this was a true transaction,
-        // but for now we log it.
       }
     }
 
@@ -344,6 +367,7 @@ export async function registrarPago(ventaId: string, input: LedgerInput) {
         orden_id: validatedData.orden_id,
         tipo: "pago",
         monto: validatedData.monto,
+        metodo_pago: validatedData.metodo_pago,
         fecha: new Date().toISOString(),
       })
       .select()
@@ -475,6 +499,24 @@ export async function addMovimientoStock(input: MovimientoStockInput) {
 
     const validatedData = movimientoStockSchema.parse(input);
 
+    if (!validatedData.almacen_id || validatedData.almacen_id.length !== 36) {
+      return { error: "No hay un almacén válido seleccionado (UUID inválido)", data: null };
+    }
+
+    if (validatedData.qty < 0) {
+      const { data: movs } = await supabase
+        .from("movimientos_stock")
+        .select("qty")
+        .eq("clinica_id", clinicaId)
+        .eq("item_id", validatedData.item_id);
+      
+      const currentStock = (movs || []).reduce((acc: number, mov: any) => acc + Number(mov.qty), 0);
+      
+      if (currentStock + validatedData.qty < 0) {
+        return { error: "Stock insuficiente para realizar esta rebaja", data: null };
+      }
+    }
+
     const { data, error } = await supabase
       .from("movimientos_stock")
       .insert({
@@ -493,5 +535,145 @@ export async function addMovimientoStock(input: MovimientoStockInput) {
     return { error: null, data };
   } catch (err: any) {
     return { error: err.message || "Error al registrar movimiento", data: null };
+  }
+}
+
+export async function getCierreActual() {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("cierres_caja")
+      .select("*")
+      .eq("clinica_id", clinicaId)
+      .eq("estado", "abierta")
+      .maybeSingle();
+
+    if (error) throw error;
+    return { error: null, data };
+  } catch (error: any) {
+    return { error: error.message, data: null };
+  }
+}
+
+export async function abrirCaja(input: AbrirCajaInput) {
+  try {
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const validated = abrirCajaSchema.parse(input);
+
+    // Ver si ya hay una abierta
+    const { data: existing } = await supabase
+      .from("cierres_caja")
+      .select("id")
+      .eq("clinica_id", clinicaId)
+      .eq("estado", "abierta")
+      .maybeSingle();
+
+    if (existing) {
+      return { error: "Ya existe una sesion de caja abierta" };
+    }
+
+    const { data, error } = await supabase
+      .from("cierres_caja")
+      .insert({
+        clinica_id: clinicaId,
+        apertura_por_user_id: user?.id,
+        monto_apertura: validated.monto_apertura,
+        estado: "abierta",
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    
+    revalidatePath("/caja");
+    return { error: null, data };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+}
+
+export async function cerrarCaja(input: CerrarCajaInput) {
+  try {
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const validated = cerrarCajaSchema.parse(input);
+
+    const { data: cierre } = await supabase
+      .from("cierres_caja")
+      .select("*")
+      .eq("clinica_id", clinicaId)
+      .eq("estado", "abierta")
+      .single();
+
+    if (!cierre) return { error: "No hay una caja abierta para cerrar" };
+
+    // Calcular totales del sistema
+    const { data: pagos } = await supabase
+      .from("ledger")
+      .select("monto, metodo_pago")
+      .eq("clinica_id", clinicaId)
+      .eq("tipo", "pago")
+      .is("cierre_id", null); // Pagos no cerrados
+
+    const ef = pagos?.filter(p => p.metodo_pago === "efectivo").reduce((a, b) => a + Number(b.monto), 0) || 0;
+    const tj = pagos?.filter(p => p.metodo_pago === "tarjeta").reduce((a, b) => a + Number(b.monto), 0) || 0;
+    const tr = pagos?.filter(p => p.metodo_pago === "transferencia").reduce((a, b) => a + Number(b.monto), 0) || 0;
+    const total = ef + tj + tr;
+
+    const { error: updateError } = await supabase
+      .from("cierres_caja")
+      .update({
+        estado: "cerrada",
+        fecha_cierre: new Date().toISOString(),
+        cierre_por_user_id: user?.id,
+        monto_cierre_efectivo_real: validated.monto_cierre_efectivo_real,
+        monto_efectivo_sistema: ef,
+        monto_tarjeta_sistema: tj,
+        monto_transferencia_sistema: tr,
+        total_sistema: total,
+        notas: validated.notas
+      })
+      .eq("id", cierre.id);
+
+    if (updateError) throw updateError;
+
+    // Vincular pagos al cierre
+    await supabase
+      .from("ledger")
+      .update({ cierre_id: cierre.id })
+      .eq("clinica_id", clinicaId)
+      .eq("tipo", "pago")
+      .is("cierre_id", null);
+
+    revalidatePath("/caja");
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+}
+
+export async function getCierresHistorial() {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("cierres_caja")
+      .select("*")
+      .eq("clinica_id", clinicaId)
+      .eq("estado", "cerrada")
+      .order("fecha_cierre", { ascending: false });
+
+    if (error) throw error;
+    return { error: null, data };
+  } catch (error: any) {
+    return { error: error.message, data: [] };
   }
 }

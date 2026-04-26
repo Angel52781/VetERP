@@ -17,7 +17,9 @@ interface EntradasListProps {
 }
 
 export function EntradasList({ entradas }: EntradasListProps) {
-  if (!entradas || entradas.length === 0) {
+  const notasEvolucion = entradas.filter(e => e.tipo_text !== "Signos Vitales y Triaje");
+
+  if (!notasEvolucion || notasEvolucion.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         No hay notas clínicas registradas aún.
@@ -26,7 +28,7 @@ export function EntradasList({ entradas }: EntradasListProps) {
   }
 
   // Sort by date descending
-  const sortedEntradas = [...entradas].sort(
+  const sortedEntradas = [...notasEvolucion].sort(
     (a, b) => new Date(b.fecha_date).getTime() - new Date(a.fecha_date).getTime()
   );
 
