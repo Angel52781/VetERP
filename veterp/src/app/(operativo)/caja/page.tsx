@@ -7,6 +7,7 @@ import { DollarSign, TrendingUp, AlertCircle, Receipt, History } from "lucide-re
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CorteCajaClient } from "./corte-caja-client";
 import { createClient } from "@/lib/supabase/server";
+import { formatMoneyPEN } from "@/lib/money";
 
 export const metadata = {
   title: "Caja | VetERP",
@@ -83,7 +84,7 @@ export default async function CajaPage() {
             <DollarSign className="h-4 w-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${ingresosTotales.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatMoneyPEN(ingresosTotales)}</div>
             <p className="text-xs text-muted-foreground">Total en caja</p>
           </CardContent>
         </Card>
@@ -94,7 +95,7 @@ export default async function CajaPage() {
             <AlertCircle className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-600">${montoPorCobrar.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-amber-600">{formatMoneyPEN(montoPorCobrar)}</div>
             <p className="text-xs text-muted-foreground">De {ventasAbiertas} ventas abiertas</p>
           </CardContent>
         </Card>

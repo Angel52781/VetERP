@@ -37,8 +37,8 @@ interface OrdenListProps {
 }
 
 const ESTADOS: Record<string, { label: string; bgClass: string; textClass: string; icon: any }> = {
-  open: { label: "Abierta", bgClass: "bg-secondary", textClass: "text-secondary-foreground", icon: Clock },
-  in_progress: { label: "En Progreso", bgClass: "bg-primary", textClass: "text-primary-foreground", icon: Play },
+  open: { label: "En espera", bgClass: "bg-secondary", textClass: "text-secondary-foreground", icon: Clock },
+  in_progress: { label: "En atencion", bgClass: "bg-primary", textClass: "text-primary-foreground", icon: Play },
   finished: { label: "Finalizada", bgClass: "bg-green-100", textClass: "text-green-800", icon: CheckCircle },
   closed: { label: "Cerrada", bgClass: "bg-muted", textClass: "text-muted-foreground", icon: CheckCircle },
 };
@@ -74,7 +74,7 @@ export function OrdenList({ ordenes }: OrdenListProps) {
         </div>
         <h3 className="text-xl font-semibold">No hay pacientes en atención</h3>
         <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
-          Aquí aparecerán las mascotas que están siendo atendidas actualmente en la clínica.
+          Aqui apareceran los pacientes que estan siendo atendidos actualmente en la clinica.
         </p>
       </div>
     );
@@ -91,10 +91,10 @@ export function OrdenList({ ordenes }: OrdenListProps) {
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
                 <CardTitle className="text-base font-bold text-primary">
-                  {orden.mascotas?.nombre || "Mascota"}
+                  {orden.mascotas?.nombre || "Paciente"}
                 </CardTitle>
                 <CardDescription className="font-medium">
-                  Dueño: {orden.clientes?.nombre || "Cliente"}
+                  Responsable: {orden.clientes?.nombre || "Cliente"}
                 </CardDescription>
               </div>
               <DropdownMenu>

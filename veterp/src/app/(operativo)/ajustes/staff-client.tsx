@@ -252,7 +252,7 @@ export function StaffClient({
                             <SelectItem value="asistente">Asistente</SelectItem>
                             <SelectItem value="admin">Administrador</SelectItem>
                             {currentUserRole === "owner" && (
-                              <SelectItem value="owner">Dueño (Owner)</SelectItem>
+                              <SelectItem value="owner">Owner</SelectItem>
                             )}
                           </SelectContent>
                         </Select>

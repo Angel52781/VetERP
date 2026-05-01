@@ -5,6 +5,7 @@ import { PawPrint, Phone, Mail, Plus, Users } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
+import { formatMoneyPEN } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +53,7 @@ export default async function ClientesPage() {
           <div>
             <p className="font-medium">Aún no hay clientes registrados</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Crea tu primer cliente para comenzar a registrar mascotas y atenciones.
+              Crea tu primer cliente para comenzar a registrar pacientes y atenciones.
             </p>
           </div>
           <Link href="/clientes/nuevo" className={buttonVariants({ size: "sm" })}>
@@ -101,7 +102,7 @@ export default async function ClientesPage() {
                     )}
                     {deudaTotal > 0 && (
                       <span className="shrink-0 text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-medium border border-amber-200">
-                        Deuda: ${deudaTotal.toFixed(2)}
+                        Deuda: {formatMoneyPEN(deudaTotal)}
                       </span>
                     )}
                   </div>
@@ -125,7 +126,7 @@ export default async function ClientesPage() {
                     <p className="font-semibold">{mascotasCount}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <PawPrint className="h-3 w-3" />
-                      {mascotasCount === 1 ? "mascota" : "mascotas"}
+                      {mascotasCount === 1 ? "paciente" : "pacientes"}
                     </p>
                   </div>
                   <div className="text-center min-w-[90px]">

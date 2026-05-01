@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { requireClinicaIdFromCookies } from "@/lib/clinica";
+import { requireUserRole } from "@/lib/clinica";
 
 async function upsertById(supabase: any, table: string, rows: any[]) {
   const { error } = await supabase.from(table).upsert(rows, { onConflict: "id" });
@@ -10,7 +10,11 @@ async function upsertById(supabase: any, table: string, rows: any[]) {
 
 export async function seedFullDemoData() {
   try {
-    const clinicaId = await requireClinicaIdFromCookies();
+    if (process.env.NEXT_PUBLIC_ENABLE_DEMO_SEED !== "true") {
+      return { success: false, error: "Seed demo deshabilitado en este entorno." };
+    }
+
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
     const supabase = await createClient();
 
     // --- RESET EXPLÍCITO ---
@@ -20,6 +24,7 @@ export async function seedFullDemoData() {
     await supabase.from("almacenes").delete().eq("clinica_id", clinicaId);
     await supabase.from("tipo_citas").delete().eq("clinica_id", clinicaId);
     await supabase.from("items_catalogo").delete().eq("clinica_id", clinicaId);
+    await supabase.from("categorias_catalogo").delete().eq("clinica_id", clinicaId);
     // --- FIN RESET ---
 
     // IDs determinísticos
@@ -41,11 +46,20 @@ export async function seedFullDemoData() {
     ];
     await upsertById(supabase, "proveedores", proveedoresData);
 
+    // Categorías
+    const catServiciosId = "66666666-6666-4666-a666-666666666661";
+    const catProductosId = "66666666-6666-4666-a666-666666666662";
+    const categoriasData = [
+      { id: catServiciosId, clinica_id: clinicaId, nombre: "Servicios Clínicos", descripcion: "Consultas y procedimientos" },
+      { id: catProductosId, clinica_id: clinicaId, nombre: "Farmacia", descripcion: "Medicamentos y vacunas" }
+    ];
+    await upsertById(supabase, "categorias_catalogo", categoriasData);
+
     // Catálogo
     const catalogoData = [
-      { id: itemConsultaId, clinica_id: clinicaId, nombre: "Consulta General", descripcion: "Consulta de rutina", kind: "servicio", precio_inc: 50, proveedor_id: null },
-      { id: itemVacunaId, clinica_id: clinicaId, nombre: "Vacuna Antirrábica", descripcion: "Anual", kind: "producto", precio_inc: 25, proveedor_id: proveedorId },
-      { id: itemDesparasitanteId, clinica_id: clinicaId, nombre: "Desparasitante", descripcion: "Pastilla", kind: "producto", precio_inc: 15, proveedor_id: proveedorId },
+      { id: itemConsultaId, clinica_id: clinicaId, nombre: "Consulta General", descripcion: "Consulta de rutina", kind: "servicio", precio_inc: 50, proveedor_id: null, categoria_id: catServiciosId },
+      { id: itemVacunaId, clinica_id: clinicaId, nombre: "Vacuna Antirrábica", descripcion: "Anual", kind: "producto", precio_inc: 25, proveedor_id: proveedorId, categoria_id: catProductosId },
+      { id: itemDesparasitanteId, clinica_id: clinicaId, nombre: "Desparasitante", descripcion: "Pastilla", kind: "producto", precio_inc: 15, proveedor_id: proveedorId, categoria_id: catProductosId },
     ];
     await upsertById(supabase, "items_catalogo", catalogoData);
 
@@ -165,6 +179,7 @@ export async function seedFullDemoData() {
         tiposCita: tiposCitaData.length,
         citas: citasData.length,
         ordenes: ordenesData.length,
+        categorias: categoriasData.length,
         catalogo: catalogoData.length,
         stock: stockData.length,
         ventas: ventasData.length,

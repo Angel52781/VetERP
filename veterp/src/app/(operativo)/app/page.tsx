@@ -1,22 +1,26 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { format, isToday, startOfDay, endOfDay } from "date-fns";
+import { addDays, format, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   Activity,
   CalendarDays,
-  Users,
   PawPrint,
   Clock,
   TrendingUp,
   ArrowRight,
   AlertCircle,
+  Wallet,
+  Stethoscope,
+  ShieldCheck,
 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { getActiveClinicaContext } from "@/lib/clinica";
+import { formatMoneyPEN } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
+import { IniciarAtencionCitaBtn } from "../agenda/iniciar-atencion-cita-btn";
 
 export const dynamic = "force-dynamic";
 
@@ -29,25 +33,28 @@ export default async function DashboardPage() {
   const todayStart = startOfDay(now).toISOString();
   const todayEnd = endOfDay(now).toISOString();
   const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const todayDate = format(now, "yyyy-MM-dd");
+  const day7Date = format(addDays(now, 7), "yyyy-MM-dd");
+  const day8Date = format(addDays(now, 8), "yyyy-MM-dd");
+  const day30Date = format(addDays(now, 30), "yyyy-MM-dd");
 
   const cid = context.clinicaId;
 
   const [
     clinicaRes,
-    clientesRes,
-    mascotasRes,
     ordenesActivasRes,
     citasHoyRes,
     citasProximasRes,
     ventasHoyRes,
+    ventasPendientesRes,
     ordenesRecientesRes,
     citasHoyDetalleRes,
+    seguimientosVencidosRes,
+    seguimientosProximos7Res,
+    seguimientosProximos30Res,
+    seguimientosOperativosRes,
   ] = await Promise.all([
     supabase.from("clinicas").select("nombre").eq("id", cid).maybeSingle(),
-
-    supabase.from("clientes").select("id", { count: "exact", head: true }).eq("clinica_id", cid),
-
-    supabase.from("mascotas").select("id", { count: "exact", head: true }).eq("clinica_id", cid),
 
     supabase
       .from("ordenes_servicio")
@@ -78,6 +85,16 @@ export default async function DashboardPage() {
       .lte("fecha", todayEnd),
 
     supabase
+      .from("ventas")
+      .select(`
+        id,
+        total,
+        ledger ( monto )
+      `)
+      .eq("clinica_id", cid)
+      .neq("estado", "pagada"),
+
+    supabase
       .from("ordenes_servicio")
       .select(`
         id, estado_text, started_at,
@@ -92,7 +109,7 @@ export default async function DashboardPage() {
     supabase
       .from("citas")
       .select(`
-        id, start_date, estado,
+        id, start_date, estado, cliente_id, mascota_id,
         clientes:cliente_id ( nombre ),
         mascotas:mascota_id ( nombre ),
         tipo_citas:tipo_cita_id ( nombre, color )
@@ -102,17 +119,89 @@ export default async function DashboardPage() {
       .lte("start_date", todayEnd)
       .order("start_date")
       .limit(6),
+
+    supabase
+      .from("seguimientos_clinicos")
+      .select("id", { count: "exact", head: true })
+      .eq("clinica_id", cid)
+      .not("proxima_fecha_date", "is", null)
+      .lt("proxima_fecha_date", todayDate),
+
+    supabase
+      .from("seguimientos_clinicos")
+      .select("id", { count: "exact", head: true })
+      .eq("clinica_id", cid)
+      .not("proxima_fecha_date", "is", null)
+      .gte("proxima_fecha_date", todayDate)
+      .lte("proxima_fecha_date", day7Date),
+
+    supabase
+      .from("seguimientos_clinicos")
+      .select("id", { count: "exact", head: true })
+      .eq("clinica_id", cid)
+      .not("proxima_fecha_date", "is", null)
+      .gte("proxima_fecha_date", day8Date)
+      .lte("proxima_fecha_date", day30Date),
+
+    supabase
+      .from("seguimientos_clinicos")
+      .select(`
+        id,
+        tipo_text,
+        nombre_text,
+        proxima_fecha_date,
+        mascotas:mascota_id (
+          id,
+          nombre,
+          clientes:cliente_id ( id, nombre )
+        )
+      `)
+      .eq("clinica_id", cid)
+      .not("proxima_fecha_date", "is", null)
+      .lte("proxima_fecha_date", day30Date)
+      .order("proxima_fecha_date", { ascending: true })
+      .limit(12),
   ]);
 
   const clinicaNombre = clinicaRes.data?.nombre ?? "Clínica activa";
-  const clientesCount = clientesRes.count ?? 0;
-  const mascotasCount = mascotasRes.count ?? 0;
   const ordenesActivasCount = ordenesActivasRes.count ?? 0;
   const citasHoyCount = citasHoyRes.count ?? 0;
   const citasProximasCount = citasProximasRes.count ?? 0;
   const ventasHoy = (ventasHoyRes.data ?? []).reduce((s, r) => s + Number(r.monto), 0);
+  const ventasPendientes = ventasPendientesRes.data ?? [];
+  const cuentasPorCobrar = ventasPendientes.reduce((acc, venta) => {
+    const pagado = (venta.ledger ?? []).reduce((sum: number, mov: any) => sum + Number(mov.monto), 0);
+    return acc + Math.max(0, Number(venta.total) - pagado);
+  }, 0);
   const ordenesRecientes = ordenesRecientesRes.data ?? [];
   const citasHoy = citasHoyDetalleRes.data ?? [];
+  const seguimientosVencidosCount = seguimientosVencidosRes.count ?? 0;
+  const seguimientosProximos7Count = seguimientosProximos7Res.count ?? 0;
+  const seguimientosProximos30Count = seguimientosProximos30Res.count ?? 0;
+  const seguimientosOperativos = seguimientosOperativosRes.data ?? [];
+  const mascotaIdsDeCitasHoy = Array.from(new Set(citasHoy.map((c: any) => c.mascota_id).filter(Boolean)));
+  const ordenActivaByMascota = new Map<string, any>();
+
+  if (mascotaIdsDeCitasHoy.length > 0) {
+    const { data: ordenesActivasDeCitas } = await supabase
+      .from("ordenes_servicio")
+      .select("id, mascota_id, estado_text, started_at")
+      .eq("clinica_id", cid)
+      .in("estado_text", ["open", "in_progress"])
+      .in("mascota_id", mascotaIdsDeCitasHoy);
+
+    for (const orden of ordenesActivasDeCitas ?? []) {
+      const current = ordenActivaByMascota.get(orden.mascota_id);
+      if (!current) {
+        ordenActivaByMascota.set(orden.mascota_id, orden);
+        continue;
+      }
+
+      if (current.estado_text !== "in_progress" && orden.estado_text === "in_progress") {
+        ordenActivaByMascota.set(orden.mascota_id, orden);
+      }
+    }
+  }
 
   const estadoLabel: Record<string, { label: string; cls: string }> = {
     open:        { label: "En espera",  cls: "bg-amber-100 text-amber-800" },
@@ -127,6 +216,15 @@ export default async function DashboardPage() {
         <p className="text-sm text-muted-foreground">
           {clinicaNombre} · {format(now, "EEEE d 'de' MMMM", { locale: es })}
         </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Link href="/agenda" className={buttonVariants({})}>
+          Ir a agenda del día
+        </Link>
+        <Link href="/atenciones" className={buttonVariants({ variant: "outline" })}>
+          Ir a atenciones activas
+        </Link>
       </div>
 
       {/* KPI Cards */}
@@ -159,30 +257,110 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Cobrado hoy</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Cobros pendientes</CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">${ventasHoy.toFixed(2)}</div>
+            <div className="text-3xl font-bold">{formatMoneyPEN(cuentasPorCobrar)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Pagos registrados en ledger hoy
+              {ventasPendientes.length} venta{ventasPendientes.length !== 1 ? "s" : ""} con saldo
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Clientes / Mascotas</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Cobrado hoy</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{clientesCount}</div>
+            <div className="text-3xl font-bold">{formatMoneyPEN(ventasHoy)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {mascotasCount} mascotas registradas
+              Pagos registrados en ledger hoy
             </p>
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="space-y-4">
+          <div className="flex flex-col gap-1">
+            <CardTitle className="text-base">Recordatorios clínicos</CardTitle>
+            <CardDescription>
+              Seguimientos con vencimiento operativo: vencidos, próximos 7 días y próximos 30 días.
+            </CardDescription>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className={`rounded-lg border p-3 ${seguimientosVencidosCount > 0 ? "border-red-200 bg-red-50/40" : "bg-muted/10"}`}>
+              <p className={`text-xs font-medium ${seguimientosVencidosCount > 0 ? "text-red-700" : "text-muted-foreground"}`}>Vencidos</p>
+              <p className={`text-2xl font-bold ${seguimientosVencidosCount > 0 ? "text-red-700" : "text-foreground"}`}>{seguimientosVencidosCount}</p>
+            </div>
+            <div className={`rounded-lg border p-3 ${seguimientosProximos7Count > 0 ? "border-orange-200 bg-orange-50/40" : "bg-muted/10"}`}>
+              <p className={`text-xs font-medium ${seguimientosProximos7Count > 0 ? "text-orange-700" : "text-muted-foreground"}`}>Próximos 7 días</p>
+              <p className={`text-2xl font-bold ${seguimientosProximos7Count > 0 ? "text-orange-700" : "text-foreground"}`}>{seguimientosProximos7Count}</p>
+            </div>
+            <div className={`rounded-lg border p-3 ${seguimientosProximos30Count > 0 ? "border-blue-200 bg-blue-50/40" : "bg-muted/10"}`}>
+              <p className={`text-xs font-medium ${seguimientosProximos30Count > 0 ? "text-blue-700" : "text-muted-foreground"}`}>Próximos 30 días</p>
+              <p className={`text-2xl font-bold ${seguimientosProximos30Count > 0 ? "text-blue-700" : "text-foreground"}`}>{seguimientosProximos30Count}</p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {seguimientosOperativos.length === 0 ? (
+            <div className="text-sm text-muted-foreground py-4 text-center">
+              Sin seguimientos con vencimiento en el rango operativo actual.
+            </div>
+          ) : (
+            <div className="divide-y rounded-md border">
+              {seguimientosOperativos.map((seguimiento: any) => {
+                const proximaFecha = seguimiento.proxima_fecha_date as string;
+                const estado = proximaFecha < todayDate
+                  ? { label: "Vencido", cls: "bg-red-100 text-red-800" }
+                  : proximaFecha <= day7Date
+                    ? { label: "Próximo (7d)", cls: "bg-orange-100 text-orange-800" }
+                    : { label: "Próximo (30d)", cls: "bg-blue-100 text-blue-800" };
+                const mascota = seguimiento.mascotas as any;
+                const cliente = mascota?.clientes as any;
+
+                return (
+                  <div key={seguimiento.id} className="flex items-center gap-3 p-3 hover:bg-muted/40 transition-colors">
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                      seguimiento.tipo_text === "vacuna" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                    }`}>
+                      {seguimiento.tipo_text === "vacuna" ? (
+                        <ShieldCheck className="h-4 w-4" />
+                      ) : (
+                        <Stethoscope className="h-4 w-4" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate">{mascota?.nombre ?? "Paciente sin nombre"}</p>
+                      <p className="text-xs text-muted-foreground truncate">{cliente?.nombre ?? "Responsable no disponible"}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        <span className="uppercase font-medium">{seguimiento.tipo_text}</span> · {seguimiento.nombre_text}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Próxima fecha: {format(new Date(`${proximaFecha}T00:00:00`), "dd/MM/yyyy", { locale: es })}
+                      </p>
+                    </div>
+                    <div className="shrink-0 flex items-center gap-2">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${estado.cls}`}>
+                        {estado.label}
+                      </span>
+                      <Link
+                        href={`/mascotas/${mascota?.id}`}
+                        className={buttonVariants({ variant: "outline", size: "sm" })}
+                      >
+                        Ver paciente
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Sala de espera */}
@@ -224,7 +402,7 @@ export default async function DashboardPage() {
                       <PawPrint className="h-4 w-4 text-muted-foreground shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">
-                          {(o.mascotas as any)?.nombre ?? "Sin mascota"}
+                          {(o.mascotas as any)?.nombre ?? "Sin paciente"}
                         </p>
                         <p className="text-xs text-muted-foreground truncate">
                           {(o.clientes as any)?.nombre ?? "Sin cliente"}
@@ -285,22 +463,59 @@ export default async function DashboardPage() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">
-                          {(c.mascotas as any)?.nombre ?? "Sin mascota"}
+                          {(c.mascotas as any)?.nombre ?? "Sin paciente"}
                           <span className="font-normal text-muted-foreground"> · {(c.clientes as any)?.nombre ?? ""}</span>
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {tipo?.nombre ?? "Sin tipo"} · {format(new Date(c.start_date), "HH:mm", { locale: es })}
                         </p>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        c.estado === "completada"
-                          ? "bg-green-100 text-green-800"
-                          : c.estado === "confirmada"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-secondary text-secondary-foreground"
-                      }`}>
-                        {c.estado === "completada" ? "Completada" : c.estado === "confirmada" ? "Confirmada" : "Programada"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          c.estado === "completada"
+                            ? "bg-green-100 text-green-800"
+                            : c.estado === "en_atencion"
+                            ? "bg-indigo-100 text-indigo-800"
+                            : c.estado === "llego"
+                            ? "bg-amber-100 text-amber-800"
+                            : c.estado === "confirmada"
+                            ? "bg-blue-100 text-blue-800"
+                          : c.estado === "cancelada"
+                            ? "bg-red-100 text-red-800"
+                          : c.estado === "no_asistio"
+                            ? "bg-orange-100 text-orange-800"
+                            : "bg-secondary text-secondary-foreground"
+                        }`}>
+                          {c.estado === "completada"
+                            ? "Completada"
+                            : c.estado === "en_atencion"
+                            ? "En atención"
+                            : c.estado === "llego"
+                            ? "Llegó"
+                            : c.estado === "confirmada"
+                            ? "Confirmada"
+                            : c.estado === "cancelada"
+                            ? "Cancelada"
+                            : c.estado === "no_asistio"
+                            ? "No asistió"
+                            : "Programada"}
+                        </span>
+                        {ordenActivaByMascota.get(c.mascota_id) ? (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                            En atención
+                          </span>
+                        ) : null}
+                        <IniciarAtencionCitaBtn
+                          citaId={c.id}
+                          clienteId={c.cliente_id}
+                          mascotaId={c.mascota_id}
+                          citaEstado={c.estado}
+                          citaStartDate={c.start_date}
+                          activeOrderId={ordenActivaByMascota.get(c.mascota_id)?.id ?? null}
+                          activeOrderEstadoText={ordenActivaByMascota.get(c.mascota_id)?.estado_text ?? null}
+                          compact
+                        />
+                      </div>
                     </div>
                   );
                 })}

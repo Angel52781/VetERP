@@ -18,6 +18,8 @@ export const metadata = {
 };
 
 export default async function AjustesPage() {
+  const enableDemoSeed = process.env.NEXT_PUBLIC_ENABLE_DEMO_SEED === "true";
+
   // Fetch context and guard FIRST before any admin-only actions
   const [context, itemsRes, proveedoresRes, almacenesRes, clinicaRes, categoriasRes] = await Promise.all([
     getActiveClinicaContext(),
@@ -64,19 +66,21 @@ export default async function AjustesPage() {
         <TabsContent value="general" className="mt-6">
           {clinica && <ClinicaGeneralForm clinica={clinica} />}
           
-          <div className="mt-8 pt-8 border-t">
-            <Card className="bg-muted/30">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium">Herramientas de Desarrollador</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <SeedDemoButton />
-                <p className="text-[10px] text-muted-foreground mt-2">
-                  CUIDADO: Esto borrara tus datos actuales de esta clinica y los reemplazara por el set demo.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          {enableDemoSeed && (
+            <div className="mt-8 pt-8 border-t">
+              <Card className="bg-muted/30">
+                <CardHeader>
+                  <CardTitle className="text-sm font-medium">Herramientas de Desarrollador</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SeedDemoButton />
+                  <p className="text-[10px] text-muted-foreground mt-2">
+                    CUIDADO: Esto borrará tus datos actuales de esta clínica y los reemplazará por el set demo.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </TabsContent>
         <TabsContent value="staff" className="mt-6">
           <Card>

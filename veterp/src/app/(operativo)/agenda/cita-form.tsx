@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { citaSchema, CitaInput } from "@/lib/validators/agenda";
-import { createCita, getMascotasDeCliente } from "./actions";
+import { createCita, getMascotasDeCliente, updateCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -34,6 +34,17 @@ interface CitaFormProps {
   tiposCita: { id: string; nombre: string; duracion_min: number }[];
   onSuccess?: () => void;
   initialDate?: string;
+  initialClienteId?: string;
+  citaId?: string;
+  initialValues?: Partial<CitaInput>;
+}
+
+function toDateTimeLocalInput(value?: string, fallbackNow = false) {
+  if (!value && fallbackNow) return format(new Date(), "yyyy-MM-dd'T'HH:mm");
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return fallbackNow ? format(new Date(), "yyyy-MM-dd'T'HH:mm") : "";
+  return format(date, "yyyy-MM-dd'T'HH:mm");
 }
 
 export function CitaForm({
@@ -41,22 +52,32 @@ export function CitaForm({
   tiposCita,
   onSuccess,
   initialDate,
+  initialClienteId,
+  citaId,
+  initialValues,
 }: CitaFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mascotas, setMascotas] = useState<{ id: string; nombre: string }[]>([]);
   const [loadingMascotas, setLoadingMascotas] = useState(false);
 
-  const defaultStartDate = initialDate || format(new Date(), "yyyy-MM-dd'T'HH:mm");
+  const defaultStartDate = toDateTimeLocalInput(initialValues?.start_date || initialDate, true);
   // Default end date +30 min
-  const defaultEndDate = format(addMinutes(new Date(defaultStartDate), 30), "yyyy-MM-dd'T'HH:mm");
+  const defaultEndDate = initialValues?.end_date
+    ? toDateTimeLocalInput(initialValues.end_date)
+    : format(addMinutes(new Date(defaultStartDate), 30), "yyyy-MM-dd'T'HH:mm");
+  const safeInitialClienteId =
+    (initialValues?.cliente_id || initialClienteId) &&
+    clientes.some((c) => c.id === (initialValues?.cliente_id || initialClienteId))
+      ? (initialValues?.cliente_id || initialClienteId)!
+      : "";
 
   const form = useForm<CitaInput>({
     resolver: zodResolver(citaSchema),
     defaultValues: {
-      cliente_id: "",
-      mascota_id: "",
-      tipo_cita_id: "",
+      cliente_id: safeInitialClienteId,
+      mascota_id: initialValues?.mascota_id || "",
+      tipo_cita_id: initialValues?.tipo_cita_id || "",
       start_date: defaultStartDate,
       end_date: defaultEndDate,
     },
@@ -112,7 +133,7 @@ export function CitaForm({
 
   async function onSubmit(data: CitaInput) {
     setIsSubmitting(true);
-    const { error } = await createCita(data);
+    const { error } = citaId ? await updateCita(citaId, data) : await createCita(data);
     setIsSubmitting(false);
 
     if (error) {
@@ -120,8 +141,14 @@ export function CitaForm({
       return;
     }
 
-    toast.success("Cita creada exitosamente");
-    form.reset();
+    toast.success(citaId ? "Cita actualizada exitosamente" : "Cita creada exitosamente");
+    form.reset({
+      cliente_id: safeInitialClienteId,
+      mascota_id: initialValues?.mascota_id || "",
+      tipo_cita_id: initialValues?.tipo_cita_id || "",
+      start_date: defaultStartDate,
+      end_date: defaultEndDate,
+    });
     router.refresh();
     if (onSuccess) onSuccess();
   }
@@ -134,7 +161,7 @@ export function CitaForm({
           name="cliente_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Cliente</FormLabel>
+              <FormLabel>Responsable</FormLabel>
               <Select 
                 onValueChange={(val) => {
                   field.onChange(val || "");
@@ -144,8 +171,8 @@ export function CitaForm({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un cliente">
-                      {field.value ? clientes.find(c => c.id === field.value)?.nombre : "Selecciona un cliente"}
+                    <SelectValue placeholder="Selecciona un responsable">
+                      {field.value ? clientes.find(c => c.id === field.value)?.nombre : "Selecciona un responsable"}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
@@ -167,7 +194,7 @@ export function CitaForm({
           name="mascota_id"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel>Mascota</FormLabel>
+              <FormLabel>Paciente</FormLabel>
               <FormControl>
                 <div className="grid grid-cols-2 gap-2">
                   {loadingMascotas ? (
@@ -177,11 +204,11 @@ export function CitaForm({
                     </div>
                   ) : !selectedClienteId ? (
                     <div className="col-span-2 p-4 border border-dashed rounded-md text-center bg-muted/10">
-                      <p className="text-xs text-muted-foreground italic">Selecciona un cliente primero</p>
+                      <p className="text-xs text-muted-foreground italic">Selecciona un responsable primero</p>
                     </div>
                   ) : mascotas.length === 0 ? (
                     <div className="col-span-2 p-4 border border-dashed rounded-md text-center bg-destructive/5 border-destructive/20">
-                      <p className="text-xs text-destructive">El cliente no tiene mascotas</p>
+                      <p className="text-xs text-destructive">El responsable no tiene pacientes</p>
                     </div>
                   ) : (
                     mascotas.map((m) => (

@@ -28,6 +28,7 @@ function getErrorMessage(errorCode?: string) {
 export default async function SelectClinicaPage({ searchParams }: SelectClinicaPageProps) {
   const { error } = await searchParams;
   const errorMessage = getErrorMessage(error);
+  const enableDemoSeed = process.env.NEXT_PUBLIC_ENABLE_DEMO_SEED === "true";
 
   const supabase = await createClient();
   const {
@@ -58,11 +59,13 @@ export default async function SelectClinicaPage({ searchParams }: SelectClinicaP
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-muted-foreground">
             <p>Tu cuenta no tiene clinicas asignadas. Solicita acceso al administrador de tu organizacion.</p>
-            <form action={bootstrapDemoAccess}>
-              <Button type="submit" className="w-full">
-                Crear entorno demo y entrar
-              </Button>
-            </form>
+            {enableDemoSeed ? (
+              <form action={bootstrapDemoAccess}>
+                <Button type="submit" className="w-full">
+                  Crear entorno demo y entrar
+                </Button>
+              </form>
+            ) : null}
             <form action={signOutFromSelectClinica}>
               <Button type="submit" variant="outline" className="w-full">
                 Cerrar sesion

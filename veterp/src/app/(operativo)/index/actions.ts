@@ -10,6 +10,31 @@ export async function createOrdenServicio(input: OrdenServicioInput) {
     const validatedData = ordenServicioSchema.parse(input);
     const supabase = await createClient();
 
+    const [{ data: cliente }, { data: mascota }] = await Promise.all([
+      supabase
+        .from("clientes")
+        .select("id")
+        .eq("id", validatedData.cliente_id)
+        .eq("clinica_id", clinicaId)
+        .maybeSingle(),
+      supabase
+        .from("mascotas")
+        .select("id, cliente_id")
+        .eq("id", validatedData.mascota_id)
+        .eq("clinica_id", clinicaId)
+        .maybeSingle(),
+    ]);
+
+    if (!cliente) {
+      return { error: "El cliente no pertenece a la clínica activa.", data: null };
+    }
+    if (!mascota) {
+      return { error: "La mascota no pertenece a la clínica activa.", data: null };
+    }
+    if (mascota.cliente_id !== validatedData.cliente_id) {
+      return { error: "La mascota no pertenece al cliente seleccionado.", data: null };
+    }
+
     const { data: existingActiveOrder } = await supabase
       .from("ordenes_servicio")
       .select("id")
@@ -19,7 +44,7 @@ export async function createOrdenServicio(input: OrdenServicioInput) {
       .maybeSingle();
 
     if (existingActiveOrder) {
-      return { error: "Esta mascota ya tiene una atención activa en sala de espera o en progreso.", data: null };
+      return { error: "Esta mascota ya tiene una atención activa en sala de espera o en progreso.", data: existingActiveOrder };
     }
 
     const { data, error } = await supabase
@@ -136,6 +161,44 @@ export async function updateEstadoOrden(id: string, estado: string) {
     if (error) {
       console.error("Error updating estado orden:", error);
       return { error: error.message, data: null };
+    }
+
+    // Hardening beta: al finalizar una atención, reflejamos la cita operativa como completada.
+    if (estado === "finished" && data?.mascota_id) {
+      const { data: citaEnAtencion } = await supabase
+        .from("citas")
+        .select("id")
+        .eq("clinica_id", clinicaId)
+        .eq("mascota_id", data.mascota_id)
+        .eq("estado", "en_atencion")
+        .order("start_date", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const citaObjetivo = citaEnAtencion
+        ? citaEnAtencion
+        : await supabase
+            .from("citas")
+            .select("id")
+            .eq("clinica_id", clinicaId)
+            .eq("mascota_id", data.mascota_id)
+            .eq("estado", "llego")
+            .order("start_date", { ascending: false })
+            .limit(1)
+            .maybeSingle()
+            .then((res) => res.data);
+
+      if (citaObjetivo?.id) {
+        const { error: citaError } = await supabase
+          .from("citas")
+          .update({ estado: "completada" })
+          .eq("id", citaObjetivo.id)
+          .eq("clinica_id", clinicaId);
+
+        if (citaError) {
+          console.error("Error syncing cita completada from orden:", citaError);
+        }
+      }
     }
 
     return { error: null, data };

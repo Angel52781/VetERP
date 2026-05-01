@@ -102,7 +102,7 @@ export default async function ColasPage() {
                     </span>
                     <div className="min-w-0">
                       <p className="font-medium text-sm truncate">
-                        {(orden.mascotas as any)?.nombre ?? "Sin mascota"}
+                        {(orden.mascotas as any)?.nombre ?? "Sin paciente"}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {(orden.clientes as any)?.nombre ?? "Sin cliente"}
@@ -149,7 +149,7 @@ export default async function ColasPage() {
                     <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
                     <div className="min-w-0">
                       <p className="font-medium text-sm truncate">
-                        {(orden.mascotas as any)?.nombre ?? "Sin mascota"}
+                        {(orden.mascotas as any)?.nombre ?? "Sin paciente"}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {(orden.clientes as any)?.nombre ?? "Sin cliente"}

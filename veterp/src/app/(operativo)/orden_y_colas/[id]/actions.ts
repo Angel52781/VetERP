@@ -5,6 +5,17 @@ import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { entradaClinicaSchema, EntradaClinicaInput, adjuntoSchema, AdjuntoInput } from "@/lib/validators/atencion";
 import { v4 as uuidv4 } from "uuid";
 
+async function ensureOrdenInClinica(supabase: any, clinicaId: string, ordenId: string) {
+  const { data: orden } = await supabase
+    .from("ordenes_servicio")
+    .select("id")
+    .eq("id", ordenId)
+    .eq("clinica_id", clinicaId)
+    .maybeSingle();
+
+  return orden;
+}
+
 export async function getOrdenCompleta(id: string) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
@@ -38,6 +49,8 @@ export async function getOrdenCompleta(id: string) {
           frecuencia_respiratoria_num,
           observaciones_text,
           diagnostico_text,
+          anamnesis_text,
+          plan_tratamiento_text,
           fecha_date,
           created_at
         ),
@@ -94,6 +107,50 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
     const clinicaId = await requireClinicaIdFromCookies();
     const validatedData = entradaClinicaSchema.parse(input);
     const supabase = await createClient();
+    const orden = await ensureOrdenInClinica(supabase, clinicaId, validatedData.orden_id);
+    if (!orden) {
+      return { error: "La orden no pertenece a la clínica activa.", data: null };
+    }
+
+    if (validatedData.tipo_text === "Nota Clínica de Evolución") {
+      const { data: existingRows } = await supabase
+        .from("entradas_clinicas")
+        .select("id")
+        .eq("orden_id", validatedData.orden_id)
+        .eq("clinica_id", clinicaId)
+        .in("tipo_text", ["Nota Clínica de Evolución", "Signos Vitales y Triaje"])
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      const existing = existingRows && existingRows.length > 0 ? existingRows[0] : null;
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from("entradas_clinicas")
+          .update({
+            tipo_text: "Nota Clínica de Evolución",
+            texto_text: validatedData.texto_text,
+            motivo_consulta_text: validatedData.motivo_consulta_text,
+            peso_kg_num: validatedData.peso_kg_num,
+            temperatura_c_num: validatedData.temperatura_c_num,
+            frecuencia_cardiaca_num: validatedData.frecuencia_cardiaca_num,
+            frecuencia_respiratoria_num: validatedData.frecuencia_respiratoria_num,
+            observaciones_text: validatedData.observaciones_text,
+            diagnostico_text: validatedData.diagnostico_text,
+            anamnesis_text: validatedData.anamnesis_text,
+            plan_tratamiento_text: validatedData.plan_tratamiento_text,
+          })
+          .eq("id", existing.id)
+          .select()
+          .single();
+
+        if (error) {
+          console.error("Error updating entrada clinica:", error);
+          return { error: error.message, data: null };
+        }
+        return { error: null, data };
+      }
+    }
 
     const { data, error } = await supabase
       .from("entradas_clinicas")
@@ -109,6 +166,8 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
         frecuencia_respiratoria_num: validatedData.frecuencia_respiratoria_num,
         observaciones_text: validatedData.observaciones_text,
         diagnostico_text: validatedData.diagnostico_text,
+        anamnesis_text: validatedData.anamnesis_text,
+        plan_tratamiento_text: validatedData.plan_tratamiento_text,
         fecha_date: new Date().toISOString(),
       })
       .select()
@@ -138,6 +197,10 @@ export async function uploadAdjunto(formData: FormData, ordenId: string) {
 
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
+    const orden = await ensureOrdenInClinica(supabase, clinicaId, ordenId);
+    if (!orden) {
+      return { error: "La orden no pertenece a la clínica activa.", data: null };
+    }
 
     // 1. Upload to Supabase Storage 'adjuntos' bucket
     const fileExt = file.name.split('.').pop();

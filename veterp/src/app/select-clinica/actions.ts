@@ -222,6 +222,10 @@ export async function selectClinica(formData: FormData) {
 }
 
 export async function bootstrapDemoAccess() {
+  if (process.env.NEXT_PUBLIC_ENABLE_DEMO_SEED !== "true") {
+    redirect("/select-clinica?error=no_access");
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

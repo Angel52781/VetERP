@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ExternalLink, Search } from "lucide-react";
+import { formatMoneyPEN } from "@/lib/money";
 
 export function VentasList({ ventas }: { ventas: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,9 +73,9 @@ export function VentasList({ ventas }: { ventas: any[] }) {
                         {venta.estado}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right font-medium">${total.toFixed(2)}</TableCell>
-                    <TableCell className="text-right text-emerald-600">${pagado.toFixed(2)}</TableCell>
-                    <TableCell className="text-right text-amber-600 font-bold">${deuda.toFixed(2)}</TableCell>
+                    <TableCell className="text-right font-medium">{formatMoneyPEN(total)}</TableCell>
+                    <TableCell className="text-right text-emerald-600">{formatMoneyPEN(pagado)}</TableCell>
+                    <TableCell className="text-right text-amber-600 font-bold">{formatMoneyPEN(deuda)}</TableCell>
                     <TableCell className="text-center">
                       {venta.orden_id ? (
                         <Link href={`/orden_y_colas/${venta.orden_id}?tab=venta`}>

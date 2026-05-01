@@ -13,22 +13,26 @@ export const entradaClinicaSchema = z.object({
   // Campos clínicos estructurados — todos opcionales para retrocompatibilidad
   motivo_consulta_text:          z.string().optional(),
   peso_kg_num:                   z.number().positive().max(999).optional(),
-  temperatura_c_num:             z.number().min(30).max(45).optional(),
+  temperatura_c_num:             z.number().min(0).max(60).optional(),
   frecuencia_cardiaca_num:       z.number().int().min(1).max(500).optional(),
   frecuencia_respiratoria_num:   z.number().int().min(1).max(200).optional(),
   observaciones_text:            z.string().optional(),
   diagnostico_text:              z.string().optional(),
+  anamnesis_text:                z.string().optional(),
+  plan_tratamiento_text:         z.string().optional(),
 });
 
 export const signosVitalesSchema = z.object({
   orden_id: z.string().uuid("ID de orden inválido"),
   motivo_consulta_text:          z.string().optional(),
   peso_kg_num:                   z.number().positive().max(999).optional(),
-  temperatura_c_num:             z.number().min(30).max(45).optional(),
+  temperatura_c_num:             z.number().min(0).max(60).optional(),
   frecuencia_cardiaca_num:       z.number().int().min(1).max(500).optional(),
   frecuencia_respiratoria_num:   z.number().int().min(1).max(200).optional(),
   observaciones_text:            z.string().optional(),
   diagnostico_text:              z.string().optional(),
+  anamnesis_text:                z.string().optional(),
+  plan_tratamiento_text:         z.string().optional(),
 });
 
 export const adjuntoSchema = z.object({

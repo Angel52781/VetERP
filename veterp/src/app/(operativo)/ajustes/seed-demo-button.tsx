@@ -30,7 +30,7 @@ export function SeedDemoButton() {
         <div>
           <h3 className="text-lg font-medium">Cargar Datos de Prueba</h3>
           <p className="text-sm text-muted-foreground">
-            Inyecta clientes, mascotas, citas, órdenes de servicio, catálogo y stock.
+            Inyecta clientes, pacientes, citas, ordenes de servicio, catalogo y stock.
             Usa esto para poblar un entorno vacío y poder probar todas las áreas del ERP.
           </p>
         </div>
@@ -45,11 +45,12 @@ export function SeedDemoButton() {
           <h4 className="font-semibold mb-2">Resultados de inserción:</h4>
           <ul className="grid grid-cols-2 gap-2">
             <li>Clientes: <strong>{results.clientes}</strong></li>
-            <li>Mascotas: <strong>{results.mascotas}</strong></li>
+            <li>Pacientes: <strong>{results.mascotas}</strong></li>
             <li>Tipos de Cita: <strong>{results.tiposCita}</strong></li>
             <li>Citas: <strong>{results.citas}</strong></li>
             <li>Órdenes de Servicio: <strong>{results.ordenes}</strong></li>
             <li>Items Catálogo: <strong>{results.catalogo}</strong></li>
+            <li>Categorías: <strong>{results.categorias}</strong></li>
             <li>Movimientos Stock: <strong>{results.stock}</strong></li>
             <li>Ventas: <strong>{results.ventas}</strong></li>
           </ul>

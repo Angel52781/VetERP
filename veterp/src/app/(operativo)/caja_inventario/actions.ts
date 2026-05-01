@@ -13,6 +13,27 @@ import {
   CerrarCajaInput
 } from "@/lib/validators/ventas";
 import { revalidatePath } from "next/cache";
+import { formatMoneyPEN } from "@/lib/money";
+
+async function ensureClienteInClinica(supabase: any, clinicaId: string, clienteId: string) {
+  const { data: cliente } = await supabase
+    .from("clientes")
+    .select("id")
+    .eq("id", clienteId)
+    .eq("clinica_id", clinicaId)
+    .maybeSingle();
+  return cliente;
+}
+
+async function ensureOrdenInClinica(supabase: any, clinicaId: string, ordenId: string) {
+  const { data: orden } = await supabase
+    .from("ordenes_servicio")
+    .select("id, cliente_id")
+    .eq("id", ordenId)
+    .eq("clinica_id", clinicaId)
+    .maybeSingle();
+  return orden;
+}
 
 export async function getVentaByOrden(ordenId: string) {
   const clinicaId = await requireClinicaIdFromCookies();
@@ -52,12 +73,11 @@ export async function getVentaByOrden(ordenId: string) {
   return { error: null, data: venta };
 }
 
-export async function getOrCreateVenta(ordenId: string, clienteId: string) {
+export async function getVentasDeOrden(ordenId: string) {
   const clinicaId = await requireClinicaIdFromCookies();
   const supabase = await createClient();
 
-  // Try to find existing
-  let { data: venta, error } = await supabase
+  const { data: ventas, error } = await supabase
     .from("ventas")
     .select(`
       *,
@@ -76,40 +96,95 @@ export async function getOrCreateVenta(ordenId: string, clienteId: string) {
         id,
         tipo,
         monto,
-        fecha
+        fecha,
+        metodo_pago
       )
     `)
     .eq("clinica_id", clinicaId)
     .eq("orden_id", ordenId)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching ventas de orden:", error);
+    return { error: error.message, data: [] };
+  }
+
+  return { error: null, data: ventas || [] };
+}
+
+export async function crearVenta(ordenId: string, clienteId: string) {
+  const clinicaId = await requireClinicaIdFromCookies();
+  const supabase = await createClient();
+
+  const [orden, cliente] = await Promise.all([
+    ensureOrdenInClinica(supabase, clinicaId, ordenId),
+    ensureClienteInClinica(supabase, clinicaId, clienteId),
+  ]);
+  if (!orden) {
+    return { error: "La orden no pertenece a la clínica activa.", data: null };
+  }
+  if (!cliente) {
+    return { error: "El cliente no pertenece a la clínica activa.", data: null };
+  }
+  if (orden.cliente_id !== clienteId) {
+    return { error: "La orden no corresponde al cliente seleccionado.", data: null };
+  }
+
+  const { data: existingOpenVenta, error: existingOpenError } = await supabase
+    .from("ventas")
+    .select("id, estado, orden_id")
+    .eq("clinica_id", clinicaId)
+    .eq("orden_id", ordenId)
+    .eq("estado", "abierta")
+    .maybeSingle();
+
+  if (existingOpenError) {
+    console.error("Error checking existing open venta:", existingOpenError);
+    return { error: existingOpenError.message, data: null };
+  }
+
+  if (existingOpenVenta) {
+    return { error: null, data: existingOpenVenta, reused: true };
+  }
+
+  const { data: newVenta, error: insertError } = await supabase
+    .from("ventas")
+    .insert({
+      clinica_id: clinicaId,
+      cliente_id: clienteId,
+      orden_id: ordenId,
+      estado: "abierta",
+      total: 0,
+    })
+    .select(`
+      *,
+      items_venta (
+        id,
+        cantidad,
+        precio_unitario,
+        total_linea,
+        items_catalogo (
+          id,
+          nombre,
+          kind
+        )
+      ),
+      ledger (
+        id,
+        tipo,
+        monto,
+        fecha,
+        metodo_pago
+      )
+    `)
     .single();
 
-  if (error && error.code !== "PGRST116") {
-    console.error("Error fetching venta:", error);
-    return { error: error.message, data: null };
+  if (insertError) {
+    console.error("Error creating venta:", insertError);
+    return { error: insertError.message, data: null };
   }
 
-  if (!venta) {
-    // Create new
-    const { data: newVenta, error: insertError } = await supabase
-      .from("ventas")
-      .insert({
-        clinica_id: clinicaId,
-        cliente_id: clienteId,
-        orden_id: ordenId,
-        estado: "abierta",
-        total: 0,
-      })
-      .select()
-      .single();
-
-    if (insertError) {
-      console.error("Error creating venta:", insertError);
-      return { error: insertError.message, data: null };
-    }
-    venta = { ...newVenta, items_venta: [], ledger: [] };
-  }
-
-  return { error: null, data: venta };
+  return { error: null, data: newVenta };
 }
 
 export async function getItemsCatalogo() {
@@ -177,6 +252,21 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
       venta_id: ventaId,
     });
 
+    const { data: venta, error: ventaError } = await supabase
+      .from("ventas")
+      .select("id, estado")
+      .eq("id", ventaId)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (ventaError || !venta) {
+      return { error: "No se encontró la venta activa", data: null };
+    }
+
+    if (venta.estado === "pagada") {
+      return { error: "No se pueden agregar ítems a una venta pagada", data: null };
+    }
+
     // 1. Obtener precio actual del item desde el catálogo (seguridad backend)
     const { data: itemCatalogo, error: itemError } = await supabase
       .from("items_catalogo")
@@ -190,31 +280,14 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
     }
 
     const precioUnitario = itemCatalogo.precio_inc;
-    const totalLinea = precioUnitario * validatedData.cantidad;
+    const totalLineaAdicional = precioUnitario * validatedData.cantidad;
 
-    // 2. Insertar item_venta
-    const { data: newItem, error: insertError } = await supabase
-      .from("items_venta")
-      .insert({
-        clinica_id: clinicaId,
-        venta_id: ventaId,
-        item_id: validatedData.item_id,
-        cantidad: validatedData.cantidad,
-        precio_unitario: precioUnitario,
-        total_linea: totalLinea,
-      })
-      .select()
-      .single();
+    let almacenId = null;
 
-    if (insertError) {
-      console.error("Error inserting item_venta:", insertError);
-      return { error: insertError.message, data: null };
-    }
-
+    // 2. Verificar stock ANTES de insertar nada si es producto
     if (itemCatalogo.kind === "producto") {
-      const almacenId = await getDefaultAlmacen(clinicaId, supabase);
+      almacenId = await getDefaultAlmacen(clinicaId, supabase);
       
-      // Compute current stock
       const { data: movs } = await supabase
         .from("movimientos_stock")
         .select("qty")
@@ -224,11 +297,65 @@ export async function addItemToVenta(ventaId: string, input: Omit<ItemVentaInput
       const currentStock = (movs || []).reduce((acc: number, mov: any) => acc + Number(mov.qty), 0);
       
       if (currentStock < validatedData.cantidad) {
-        // Rollback inserted item_venta
-        await supabase.from("items_venta").delete().eq("id", newItem.id);
         return { error: "Stock insuficiente para realizar la venta", data: null };
       }
+    }
 
+    // 3. Buscar si el ítem ya existe en la venta actual
+    const { data: existingItem } = await supabase
+      .from("items_venta")
+      .select("id, cantidad, total_linea")
+      .eq("venta_id", ventaId)
+      .eq("item_id", validatedData.item_id)
+      .eq("clinica_id", clinicaId)
+      .maybeSingle();
+
+    let newItem;
+
+    if (existingItem) {
+      // 3a. Agrupar (aumentar cantidad)
+      const newCantidad = Number(existingItem.cantidad) + validatedData.cantidad;
+      const newTotalLinea = Number(existingItem.total_linea) + totalLineaAdicional;
+
+      const { data: updatedItem, error: updateError } = await supabase
+        .from("items_venta")
+        .update({
+          cantidad: newCantidad,
+          total_linea: newTotalLinea,
+        })
+        .eq("id", existingItem.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error("Error updating item_venta:", updateError);
+        return { error: updateError.message, data: null };
+      }
+      newItem = updatedItem;
+    } else {
+      // 3b. Insertar nueva fila
+      const { data: insertedItem, error: insertError } = await supabase
+        .from("items_venta")
+        .insert({
+          clinica_id: clinicaId,
+          venta_id: ventaId,
+          item_id: validatedData.item_id,
+          cantidad: validatedData.cantidad,
+          precio_unitario: precioUnitario,
+          total_linea: totalLineaAdicional,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Error inserting item_venta:", insertError);
+        return { error: insertError.message, data: null };
+      }
+      newItem = insertedItem;
+    }
+
+    // 4. Si es producto, registrar el movimiento de salida (solo por la cantidad nueva)
+    if (itemCatalogo.kind === "producto" && almacenId) {
       const { error: stockError } = await supabase
         .from("movimientos_stock")
         .insert({
@@ -283,6 +410,21 @@ export async function removeVentaItem(itemId: string, ventaId: string) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
+
+    const { data: venta, error: ventaError } = await supabase
+      .from("ventas")
+      .select("id, estado")
+      .eq("id", ventaId)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (ventaError || !venta) {
+      return { error: "No se encontró la venta activa" };
+    }
+
+    if (venta.estado === "pagada") {
+      return { error: "No se pueden remover ítems de una venta pagada" };
+    }
 
     // 1. Obtener item_venta para revertir stock
     const { data: itemVenta, error: fetchError } = await supabase
@@ -358,13 +500,51 @@ export async function registrarPago(ventaId: string, input: LedgerInput) {
       tipo: "pago", // Forzar tipo pago
     });
 
+    const { data: venta, error: ventaError } = await supabase
+      .from("ventas")
+      .select("id, total, estado, cliente_id, orden_id")
+      .eq("id", ventaId)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (ventaError || !venta) {
+      return { error: "No se encontró la venta para registrar el pago", data: null };
+    }
+
+    if (venta.estado === "pagada") {
+      return { error: "La venta ya está pagada", data: null };
+    }
+    if (validatedData.cliente_id !== venta.cliente_id) {
+      return { error: "El cliente del pago no coincide con la venta.", data: null };
+    }
+    if (validatedData.orden_id && venta.orden_id && validatedData.orden_id !== venta.orden_id) {
+      return { error: "La orden del pago no coincide con la venta.", data: null };
+    }
+
+    const { data: pagosPrevios, error: pagosError } = await supabase
+      .from("ledger")
+      .select("monto")
+      .eq("venta_id", ventaId)
+      .eq("tipo", "pago")
+      .eq("clinica_id", clinicaId);
+
+    if (pagosError) {
+      return { error: pagosError.message, data: null };
+    }
+
+    const totalPagadoPrevio = (pagosPrevios || []).reduce((acc: number, p: any) => acc + Number(p.monto), 0);
+    const saldoPendiente = Math.max(0, Number(venta.total) - totalPagadoPrevio);
+    if (validatedData.monto > saldoPendiente) {
+      return { error: `El pago excede el saldo pendiente (${formatMoneyPEN(saldoPendiente)})`, data: null };
+    }
+
     const { data: newPago, error: insertError } = await supabase
       .from("ledger")
       .insert({
         clinica_id: clinicaId,
-        cliente_id: validatedData.cliente_id,
+        cliente_id: venta.cliente_id,
         venta_id: ventaId,
-        orden_id: validatedData.orden_id,
+        orden_id: venta.orden_id,
         tipo: "pago",
         monto: validatedData.monto,
         metodo_pago: validatedData.metodo_pago,
@@ -379,13 +559,6 @@ export async function registrarPago(ventaId: string, input: LedgerInput) {
     }
 
     // Verificar si la venta ya está pagada por completo
-    const { data: venta } = await supabase
-      .from("ventas")
-      .select("total")
-      .eq("id", ventaId)
-      .eq("clinica_id", clinicaId)
-      .single();
-
     const { data: pagos } = await supabase
       .from("ledger")
       .select("monto")

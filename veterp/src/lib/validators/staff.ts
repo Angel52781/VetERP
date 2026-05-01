@@ -3,29 +3,33 @@ import { z } from "zod";
 export const roles = ["owner", "admin", "veterinario", "asistente"] as const;
 export type StaffRole = (typeof roles)[number];
 
+const normalizedRoleSchema = z
+  .string()
+  .trim()
+  .transform((value) => value.toLowerCase())
+  .pipe(
+    z.enum(roles, {
+      message: "Rol invalido seleccionado",
+    }),
+  );
+
 export const invitationSchema = z.object({
   email: z.string().email("Debe ser un correo electronico valido"),
-  role: z.enum(roles, {
-    message: "Rol invalido seleccionado",
-  }),
+  role: normalizedRoleSchema,
 });
 
 export type InvitationInput = z.infer<typeof invitationSchema>;
 
 export const updateRoleSchema = z.object({
   userId: z.string().trim().uuid("ID de usuario invalido"),
-  role: z.enum(roles, {
-    message: "Rol invalido seleccionado",
-  }),
+  role: normalizedRoleSchema,
 });
 
 export type UpdateRoleInput = z.infer<typeof updateRoleSchema>;
 
 export const staffMemberRowSchema = z.object({
   user_id: z.string().trim().uuid("ID de usuario invalido"),
-  role: z.enum(roles, {
-    message: "Rol invalido seleccionado",
-  }),
+  role: normalizedRoleSchema,
   email: z.string().trim().nullish(),
   created_at: z.string(),
 });

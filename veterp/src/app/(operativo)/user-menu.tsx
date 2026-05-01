@@ -20,7 +20,7 @@ export function AppUserMenu({ email, isAdminOrOwner }: { email: string; isAdminO
         {isAdminOrOwner ? (
           <DropdownMenuItem render={<Link href="/ajustes" />}>
             <Settings2 />
-            Settings
+            Ajustes
           </DropdownMenuItem>
         ) : null}
 

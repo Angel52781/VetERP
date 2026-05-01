@@ -9,6 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SPECIES_OPTIONS } from "@/lib/patient-labels";
 import { mascotaSchema, type MascotaFormValues } from "@/lib/validators/clientes";
 
 import { createMascota } from "../actions";
@@ -39,7 +47,7 @@ export default function MascotaForm({ clienteId }: { clienteId: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Nueva mascota</CardTitle>
+        <CardTitle className="text-base">Nuevo paciente</CardTitle>
       </CardHeader>
       <CardContent>
         <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -56,11 +64,25 @@ export default function MascotaForm({ clienteId }: { clienteId: string }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="especie">Especie</Label>
-              <Input id="especie" {...form.register("especie")} />
+              <Select
+                value={form.watch("especie") || ""}
+                onValueChange={(value) => form.setValue("especie", value ?? "", { shouldDirty: true })}
+              >
+                <SelectTrigger id="especie" className="w-full">
+                  <SelectValue placeholder="Selecciona especie" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SPECIES_OPTIONS.map((species) => (
+                    <SelectItem key={species.value} value={species.value}>
+                      {species.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="raza">Raza</Label>
-              <Input id="raza" {...form.register("raza")} />
+              <Input id="raza" placeholder="Ej. mestizo, labrador, siames" {...form.register("raza")} />
             </div>
           </div>
 
@@ -72,7 +94,7 @@ export default function MascotaForm({ clienteId }: { clienteId: string }) {
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
           <Button type="submit" disabled={pending}>
-            Crear mascota
+            Crear paciente
           </Button>
         </form>
       </CardContent>

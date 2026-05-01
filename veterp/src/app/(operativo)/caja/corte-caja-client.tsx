@@ -31,6 +31,7 @@ import {
 import { abrirCaja, cerrarCaja } from "../caja_inventario/actions";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { formatMoneyPEN } from "@/lib/money";
 
 interface CierreCaja {
   id: string;
@@ -148,7 +149,7 @@ export function CorteCajaClient({
           <CardContent>
             <div className="flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-emerald-600" />
-              <span className="text-2xl font-bold">${resumenActual.efectivo.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{formatMoneyPEN(resumenActual.efectivo)}</span>
             </div>
           </CardContent>
         </Card>
@@ -159,7 +160,7 @@ export function CorteCajaClient({
           <CardContent>
             <div className="flex items-center gap-2">
               <CreditCard className="w-4 h-4 text-blue-600" />
-              <span className="text-2xl font-bold">${resumenActual.tarjeta.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{formatMoneyPEN(resumenActual.tarjeta)}</span>
             </div>
           </CardContent>
         </Card>
@@ -170,7 +171,7 @@ export function CorteCajaClient({
           <CardContent>
             <div className="flex items-center gap-2">
               <ArrowRightLeft className="w-4 h-4 text-amber-600" />
-              <span className="text-2xl font-bold">${resumenActual.transferencia.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{formatMoneyPEN(resumenActual.transferencia)}</span>
             </div>
           </CardContent>
         </Card>
@@ -181,7 +182,7 @@ export function CorteCajaClient({
           <CardContent>
             <div className="flex items-center gap-2">
               <Calculator className="w-4 h-4 text-primary" />
-              <span className="text-2xl font-bold text-primary">${resumenActual.total.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-primary">{formatMoneyPEN(resumenActual.total)}</span>
             </div>
           </CardContent>
         </Card>
@@ -203,12 +204,12 @@ export function CorteCajaClient({
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="p-3 border rounded-lg bg-muted/20">
               <p className="text-muted-foreground">Fondo Inicial</p>
-              <p className="font-semibold text-lg">${Number(cierreActual.monto_apertura).toFixed(2)}</p>
+              <p className="font-semibold text-lg">{formatMoneyPEN(cierreActual.monto_apertura)}</p>
             </div>
             <div className="p-3 border rounded-lg bg-muted/20">
               <p className="text-muted-foreground">Efectivo en Caja (Esperado)</p>
               <p className="font-semibold text-lg text-emerald-600">
-                ${(Number(cierreActual.monto_apertura) + resumenActual.efectivo).toFixed(2)}
+                {formatMoneyPEN(Number(cierreActual.monto_apertura) + resumenActual.efectivo)}
               </p>
             </div>
           </div>
@@ -234,11 +235,11 @@ export function CorteCajaClient({
                 <div className="grid grid-cols-2 gap-4 bg-muted/30 p-3 rounded-lg text-sm mb-4">
                   <div>
                     <p className="text-muted-foreground">Total Sistema</p>
-                    <p className="font-bold text-lg">${resumenActual.total.toFixed(2)}</p>
+                    <p className="font-bold text-lg">{formatMoneyPEN(resumenActual.total)}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Efectivo Esperado</p>
-                    <p className="font-bold text-lg">${(Number(cierreActual.monto_apertura) + resumenActual.efectivo).toFixed(2)}</p>
+                    <p className="font-bold text-lg">{formatMoneyPEN(Number(cierreActual.monto_apertura) + resumenActual.efectivo)}</p>
                   </div>
                 </div>
 
@@ -253,7 +254,7 @@ export function CorteCajaClient({
                   />
                   <p className="text-[10px] text-muted-foreground">
                     Diferencia: <span className={montoReal - (Number(cierreActual.monto_apertura) + resumenActual.efectivo) !== 0 ? "text-red-600 font-bold" : "text-emerald-600"}>
-                      ${(montoReal - (Number(cierreActual.monto_apertura) + resumenActual.efectivo)).toFixed(2)}
+                      {formatMoneyPEN(montoReal - (Number(cierreActual.monto_apertura) + resumenActual.efectivo))}
                     </span>
                   </p>
                 </div>
@@ -261,7 +262,7 @@ export function CorteCajaClient({
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Notas / Observaciones</label>
                   <Textarea 
-                    placeholder="Ej. Faltante de $5 por cambio, etc." 
+                    placeholder="Ej. Faltante de S/ 5.00 por cambio, etc." 
                     value={notas}
                     onChange={e => setNotas(e.target.value)}
                   />
@@ -301,9 +302,9 @@ export function CorteCajaClient({
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">${Number(h.total_sistema).toFixed(2)}</p>
+                  <p className="font-bold">{formatMoneyPEN(h.total_sistema)}</p>
                   <p className={`text-[10px] ${Number(h.monto_cierre_efectivo_real) - (Number(h.monto_apertura) + Number(h.monto_efectivo_sistema)) !== 0 ? "text-red-500" : "text-emerald-500"}`}>
-                    Dif: ${(Number(h.monto_cierre_efectivo_real) - (Number(h.monto_apertura) + Number(h.monto_efectivo_sistema))).toFixed(2)}
+                    Dif: {formatMoneyPEN(Number(h.monto_cierre_efectivo_real) - (Number(h.monto_apertura) + Number(h.monto_efectivo_sistema)))}
                   </p>
                 </div>
               </div>

@@ -33,7 +33,8 @@ const navItems: OperativoNavItem[] = [
   },
   { href: "/agenda", label: "Agenda", matchPath: "/agenda" },
   { href: "/clientes", label: "Clientes", matchPath: "/clientes", matchPrefix: true },
-  { href: "/ajustes", label: "Settings", matchPath: "/ajustes", adminOnly: true },
+  { href: "/pacientes", label: "Pacientes", matchPath: "/pacientes", matchPrefix: true },
+  { href: "/ajustes", label: "Ajustes", matchPath: "/ajustes", adminOnly: true },
 ];
 
 type OperativoNavProps = {

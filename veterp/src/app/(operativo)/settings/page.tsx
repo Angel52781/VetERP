@@ -14,7 +14,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
       <Card>
         <CardHeader>
           <CardTitle>Acceso restringido</CardTitle>
