@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { registrarMovimientoInventario } from "./actions";
 
@@ -50,6 +50,8 @@ export function MovimientoForm({ tipoMovimiento, itemId, itemNombre, stockActual
   const [loading, setLoading] = useState(false);
   const motivos = MOTIVOS_POR_TIPO[tipoMovimiento];
   const tipoLabel = tipoMovimiento === "entrada" ? "Entrada" : "Salida";
+  const getMotivoLabel = (value: string | null | undefined) =>
+    motivos.find((motivo) => motivo.value === value)?.label;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(movimientoInventarioSchema),
@@ -162,7 +164,9 @@ export function MovimientoForm({ tipoMovimiento, itemId, itemNombre, stockActual
                 <Select onValueChange={field.onChange} value={field.value || motivos[0]?.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecciona motivo" />
+                      <span className={`line-clamp-1 flex-1 text-left ${field.value ? "" : "text-muted-foreground"}`}>
+                        {getMotivoLabel(field.value) ?? "Selecciona motivo"}
+                      </span>
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
