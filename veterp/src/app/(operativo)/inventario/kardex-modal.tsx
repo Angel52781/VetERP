@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getKardexProducto } from "./actions";
-import type { MovimientoKardex } from "./types";
+import { formatMotivoMovimiento, type MovimientoKardex } from "./types";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -46,7 +46,7 @@ export function KardexModal({ itemId, itemNombre }: Props) {
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
           <ArrowLeftRight className="h-5 w-5 text-primary" />
-          Kardex — {itemNombre}
+          Historial de stock — {itemNombre}
         </DialogTitle>
         <DialogDescription>Últimos 50 movimientos de stock registrados.</DialogDescription>
       </DialogHeader>
@@ -105,7 +105,7 @@ export function KardexModal({ itemId, itemNombre }: Props) {
                       {m.stock_nuevo ?? "—"}
                     </TableCell>
                     <TableCell className="text-xs max-w-[160px]">
-                      <div className="truncate">{m.motivo ?? m.notas ?? "—"}</div>
+                      <div className="truncate">{formatMotivoMovimiento(m.motivo) ?? m.notas ?? "—"}</div>
                       {m.lote && <div className="text-[10px] text-muted-foreground">Lote: {m.lote}</div>}
                       {m.fecha_vencimiento && (
                         <div className="text-[10px] text-orange-600">Vence: {format(new Date(m.fecha_vencimiento), "dd/MM/yyyy")}</div>

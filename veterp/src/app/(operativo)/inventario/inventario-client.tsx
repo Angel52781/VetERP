@@ -172,7 +172,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
                             <ArrowDownToLine className="h-4 w-4" />
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-md">
-                            <MovimientoForm itemId={p.id} itemNombre={p.nombre} stockActual={p.stock} almacenes={almacenes} onSuccess={cerrar} />
+                            <MovimientoForm tipoMovimiento="entrada" itemId={p.id} itemNombre={p.nombre} stockActual={p.stock} almacenes={almacenes} onSuccess={cerrar} />
                           </DialogContent>
                         </Dialog>
 
@@ -182,7 +182,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
                             <ArrowUpFromLine className="h-4 w-4" />
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-md">
-                            <MovimientoForm itemId={p.id} itemNombre={p.nombre} stockActual={p.stock} almacenes={almacenes} onSuccess={cerrar} />
+                            <MovimientoForm tipoMovimiento="salida" itemId={p.id} itemNombre={p.nombre} stockActual={p.stock} almacenes={almacenes} onSuccess={cerrar} />
                           </DialogContent>
                         </Dialog>
 
