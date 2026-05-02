@@ -1,0 +1,8 @@
+
+*.pem
+backup_*.sql
+IDEAS.txt
+ROADMAP_VETERP.md
+.env.local
+.env.production
+check_almacenes.js

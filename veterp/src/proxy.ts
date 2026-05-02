@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { clinicaCookieName, supabaseAnonKey, supabaseUrl } from "@/lib/supabase/env";
+import { assertSupabaseEnv, clinicaCookieName, supabaseAnonKey, supabaseUrl } from "@/lib/supabase/env";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const publicPaths = new Set<string>([
@@ -12,6 +12,7 @@ const publicPaths = new Set<string>([
 ]);
 
 async function getUserClinicas(request: NextRequest, response: NextResponse, userId: string) {
+  assertSupabaseEnv();
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {

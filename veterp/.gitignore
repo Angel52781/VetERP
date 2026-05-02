@@ -21,6 +21,7 @@
 
 # debug / scripts locales
 arreglar_todo.js
+check_almacenes.js
 
 # supabase
 supabase/.temp/
@@ -30,7 +31,6 @@ supabase/.temp/
 
 # misc
 .DS_Store
-*.pem
 
 # debug
 npm-debug.log*
@@ -48,16 +48,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.next-build/
-.next-build-*/
-arreglar_todo.js
-supabase/.temp/
-
+# veterinary project specific
 ROADMAP_VETERP.md
 ROADMAP_VETERP_ACTUALIZADO.md
 AUDITORIA_AVANCE_VETERP_VS_ROADMAP.md
-
 implementation_plan.md
 task.md
 walkthrough.md
-Pasted text.txt
+"Pasted text.txt"
+
+*.pem
+backup_*.sql
+IDEAS.txt
+.env.local
+.env.production

@@ -1,11 +1,10 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { clinicaCookieName } from '@/lib/supabase/env';
+import { getPublicBaseUrl } from '@/lib/http/public-url';
 
 export async function GET(request: Request) {
-  const { origin } = new URL(request.url);
-
   try {
     const supabase = await createClient();
     await supabase.auth.signOut();
@@ -16,5 +15,5 @@ export async function GET(request: Request) {
   const cookieStore = await cookies();
   cookieStore.delete(clinicaCookieName);
 
-  return NextResponse.redirect(`${origin}/login`);
+  return NextResponse.redirect(`${getPublicBaseUrl(request)}/login`);
 }
