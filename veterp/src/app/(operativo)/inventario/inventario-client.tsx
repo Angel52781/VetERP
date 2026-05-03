@@ -34,6 +34,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
   const [filtroEstado, setFiltroEstado] = useState("activos");
 
   const cerrar = () => setDialog(null);
+  const productoDialogClassName = "max-h-[90vh] overflow-y-auto sm:max-w-[500px]";
 
   const productosFiltrados = useMemo(() => {
     return productos.filter((p) => {
@@ -102,7 +103,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
             <Plus className="h-4 w-4" />
             Nuevo producto
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className={productoDialogClassName}>
             <ProductoForm proveedores={proveedores} categorias={categorias} almacenes={almacenes} onSuccess={cerrar} />
           </DialogContent>
         </Dialog>
@@ -203,7 +204,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
                           <DialogTrigger render={<Button variant="ghost" size="icon" className="h-7 w-7" title="Editar" />} onClick={() => setDialog({ tipo: "editar", producto: p })}>
                             <Edit2 className="h-4 w-4" />
                           </DialogTrigger>
-                          <DialogContent className="sm:max-w-[500px]">
+                          <DialogContent className={productoDialogClassName}>
                             {dialog?.tipo === "editar" && dialog.producto.id === p.id && (
                               <ProductoForm initialData={p} proveedores={proveedores} categorias={categorias} almacenes={almacenes} onSuccess={cerrar} />
                             )}

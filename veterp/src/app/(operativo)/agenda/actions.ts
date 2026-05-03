@@ -130,6 +130,7 @@ export async function getTiposCita() {
       .from("tipo_citas")
       .select("*")
       .eq("clinica_id", clinicaId)
+      .order("area")
       .order("nombre");
 
     if (error) {
@@ -163,7 +164,7 @@ export async function getCitas(startDate: string, endDate: string) {
         mascota_id,
         clientes ( nombre ),
         mascotas ( nombre ),
-        tipo_citas ( nombre, color )
+        tipo_citas ( nombre, color, area )
       `)
       .eq("clinica_id", clinicaId)
       .gte("start_date", start)

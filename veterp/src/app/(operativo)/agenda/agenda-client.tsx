@@ -6,6 +6,7 @@ import { es } from "date-fns/locale";
 import { Plus, Calendar, Clock, User, PawPrint } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -22,44 +23,50 @@ import { CitaEstadoControl } from "./cita-estado-control";
 import { EditarCitaBtn } from "./editar-cita-btn";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { List, Calendar as CalendarIcon } from "lucide-react";
+import {
+  AREA_META,
+  AREA_ORDER,
+  getCitaAreaLabel,
+  normalizeCitaArea,
+  type CitaAgenda,
+  type CitaArea,
+  type TipoCitaAgenda,
+} from "./types";
 
-type Cita = {
-  id: string;
-  start_date: string;
-  end_date: string;
-  estado?: string | null;
-  tipo_cita_id: string;
-  cliente_id: string;
-  mascota_id: string;
-  active_order_id?: string | null;
-  active_order_estado_text?: string | null;
-  clientes: { nombre: string } | null;
-  mascotas: { nombre: string } | null;
-  tipo_citas: { nombre: string; color: string } | null;
-};
+type AreaFilter = "todas" | CitaArea;
 
 interface AgendaClientProps {
-  citas: Cita[];
+  citas: CitaAgenda[];
   clientes: { id: string; nombre: string }[];
-  tiposCita: { id: string; nombre: string; duracion_min: number }[];
+  tiposCita: TipoCitaAgenda[];
 }
 
 export function AgendaClient({ citas, clientes, tiposCita }: AgendaClientProps) {
   const [citaDialogOpen, setCitaDialogOpen] = useState(false);
   const [tipoCitaDialogOpen, setTipoCitaDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [areaFilter, setAreaFilter] = useState<AreaFilter>("todas");
+
+  const filteredCitas = areaFilter === "todas"
+    ? citas
+    : citas.filter((cita) => normalizeCitaArea(cita.tipo_citas?.area) === areaFilter);
 
   // Group citas by day
-  const groupedCitas = citas.reduce((acc, cita) => {
+  const groupedCitas = filteredCitas.reduce((acc, cita) => {
     const dateStr = cita.start_date.split("T")[0];
     if (!acc[dateStr]) {
       acc[dateStr] = [];
     }
     acc[dateStr].push(cita);
     return acc;
-  }, {} as Record<string, Cita[]>);
+  }, {} as Record<string, CitaAgenda[]>);
 
   const sortedDates = Object.keys(groupedCitas).sort();
+  const areaCounts = citas.reduce((acc, cita) => {
+    const area = normalizeCitaArea(cita.tipo_citas?.area);
+    acc[area] = (acc[area] ?? 0) + 1;
+    return acc;
+  }, {} as Record<CitaArea, number>);
 
   return (
     <div className="space-y-6">
@@ -112,13 +119,24 @@ export function AgendaClient({ citas, clientes, tiposCita }: AgendaClientProps) 
       </div>
       </div>
 
+      <Tabs value={areaFilter} onValueChange={(v) => setAreaFilter(v as AreaFilter)}>
+        <TabsList className="flex h-auto flex-wrap justify-start gap-1">
+          <TabsTrigger value="todas">Todas ({citas.length})</TabsTrigger>
+          {AREA_ORDER.filter((area) => area !== "otro").map((area) => (
+            <TabsTrigger key={area} value={area}>
+              {AREA_META[area].label} ({areaCounts[area] ?? 0})
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+
       {viewMode === "calendar" ? (
-        <AgendaCalendarView citas={citas} clientes={clientes} tiposCita={tiposCita} />
+        <AgendaCalendarView citas={filteredCitas} clientes={clientes} tiposCita={tiposCita} />
       ) : (
         <div className="space-y-8">
           {sortedDates.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              No hay citas programadas para el periodo seleccionado.
+              No hay citas programadas para el filtro seleccionado.
             </div>
           ) : (
             sortedDates.map((dateStr) => {
@@ -140,7 +158,7 @@ export function AgendaClient({ citas, clientes, tiposCita }: AgendaClientProps) 
                         />
                         <CardHeader className="p-4 pb-2">
                           <CardTitle className="text-lg flex justify-between items-center">
-                            <span>{cita.tipo_citas?.nombre || "Cita"}</span>
+                            <span className="min-w-0 truncate">{cita.tipo_citas?.nombre || "Cita"}</span>
                             <span className="text-sm font-normal text-muted-foreground flex items-center">
                               <Clock className="mr-1 h-3 w-3" />
                               {format(parseISO(cita.start_date), "HH:mm")}
@@ -148,6 +166,9 @@ export function AgendaClient({ citas, clientes, tiposCita }: AgendaClientProps) 
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0 text-sm space-y-2">
+                          <Badge variant="secondary" className="w-fit">
+                            {getCitaAreaLabel(cita.tipo_citas?.area)}
+                          </Badge>
                           <div className="flex items-center text-muted-foreground">
                             <User className="mr-2 h-4 w-4" />
                             {cita.clientes?.nombre || "Responsable desconocido"}

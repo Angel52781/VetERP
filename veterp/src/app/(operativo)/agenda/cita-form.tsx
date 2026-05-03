@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,13 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AREA_META, AREA_ORDER, normalizeCitaArea, type TipoCitaAgenda } from "./types";
 
 import { format, addMinutes } from "date-fns";
 
 interface CitaFormProps {
   clientes: { id: string; nombre: string }[];
-  tiposCita: { id: string; nombre: string; duracion_min: number }[];
+  tiposCita: TipoCitaAgenda[];
   onSuccess?: () => void;
   initialDate?: string;
   initialClienteId?: string;
@@ -86,6 +87,14 @@ export function CitaForm({
   const selectedClienteId = form.watch("cliente_id");
   const selectedTipoCitaId = form.watch("tipo_cita_id");
   const selectedStartDate = form.watch("start_date");
+  const tiposCitaOrdenados = useMemo(() => {
+    return [...tiposCita].sort((a, b) => {
+      const areaA = normalizeCitaArea(a.area);
+      const areaB = normalizeCitaArea(b.area);
+      const areaDiff = AREA_ORDER.indexOf(areaA) - AREA_ORDER.indexOf(areaB);
+      return areaDiff || a.nombre.localeCompare(b.nombre, "es");
+    });
+  }, [tiposCita]);
 
   // Track if end_date was modified manually by the user
   const [isEndDateManual, setIsEndDateManual] = useState(false);
@@ -275,9 +284,9 @@ export function CitaForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {tiposCita.map((t) => (
+                  {tiposCitaOrdenados.map((t) => (
                     <SelectItem key={t.id} value={t.id}>
-                      {t.nombre} ({t.duracion_min} min)
+                      {AREA_META[normalizeCitaArea(t.area)].shortLabel} · {t.nombre} ({t.duracion_min} min)
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -17,6 +17,7 @@ import { ChevronLeft, ChevronRight, Clock, PawPrint, User } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
   Dialog,
@@ -29,26 +30,12 @@ import {
 import { IniciarAtencionCitaBtn } from "./iniciar-atencion-cita-btn";
 import { CitaEstadoControl } from "./cita-estado-control";
 import { EditarCitaBtn } from "./editar-cita-btn";
-
-type Cita = {
-  id: string;
-  start_date: string;
-  end_date: string;
-  estado?: string | null;
-  tipo_cita_id: string;
-  cliente_id: string;
-  mascota_id: string;
-  active_order_id?: string | null;
-  active_order_estado_text?: string | null;
-  clientes: { nombre: string } | null;
-  mascotas: { nombre: string } | null;
-  tipo_citas: { nombre: string; color: string } | null;
-};
+import { getCitaAreaLabel, type CitaAgenda, type TipoCitaAgenda } from "./types";
 
 interface AgendaCalendarViewProps {
-  citas: Cita[];
+  citas: CitaAgenda[];
   clientes: { id: string; nombre: string }[];
-  tiposCita: { id: string; nombre: string; duracion_min: number }[];
+  tiposCita: TipoCitaAgenda[];
 }
 
 const HOURS_IN_DAY = 24;
@@ -67,11 +54,11 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function citasOverlap(a: Cita, b: Cita) {
+function citasOverlap(a: CitaAgenda, b: CitaAgenda) {
   return parseISO(a.start_date) < parseISO(b.end_date) && parseISO(a.end_date) > parseISO(b.start_date);
 }
 
-function getCitaTimestamp(cita: Cita) {
+function getCitaTimestamp(cita: CitaAgenda) {
   return parseISO(cita.start_date).getTime();
 }
 
@@ -90,7 +77,7 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
   }, [citas, weekStart, weekEnd]);
 
   const citasByDay = useMemo(() => {
-    const map = new Map<string, Cita[]>();
+    const map = new Map<string, CitaAgenda[]>();
 
     daysInWeek.forEach((day) => {
       const dateStr = format(day, "yyyy-MM-dd");
@@ -111,7 +98,7 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
   const nextWeek = () => setCurrentDate((date) => addWeeks(date, 1));
   const goToToday = () => setCurrentDate(new Date());
 
-  const getEventStyle = (cita: Cita, dayCitas: Cita[]): CSSProperties => {
+  const getEventStyle = (cita: CitaAgenda, dayCitas: CitaAgenda[]): CSSProperties => {
     const start = parseISO(cita.start_date);
     const end = parseISO(cita.end_date);
     const startMinutes = clamp(minutesFromDate(start), 0, MINUTES_IN_DAY);
@@ -254,12 +241,15 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                               />
                             }
                           >
-                            <div className="flex h-full min-h-0 flex-col justify-center overflow-hidden text-white">
+                          <div className="flex h-full min-h-0 flex-col justify-center overflow-hidden text-white">
                               <span className="truncate text-[11px] font-semibold leading-tight text-white/90">
                                 {format(parseISO(cita.start_date), "HH:mm")}
                               </span>
                               <span className="truncate text-xs font-semibold leading-tight">
-                                {cita.mascotas?.nombre || "Paciente"}
+                              {cita.mascotas?.nombre || "Paciente"}
+                              </span>
+                              <span className="truncate text-[10px] font-medium leading-tight text-white/85">
+                                {getCitaAreaLabel(cita.tipo_citas?.area)}
                               </span>
                             </div>
                           </DialogTrigger>
@@ -278,6 +268,9 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                           </DialogHeader>
 
                           <div className="space-y-3 py-3 text-xs">
+                            <Badge variant="secondary" className="w-fit">
+                              {getCitaAreaLabel(cita.tipo_citas?.area)}
+                            </Badge>
                             <div className="flex items-start gap-2.5">
                               <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                               <div>

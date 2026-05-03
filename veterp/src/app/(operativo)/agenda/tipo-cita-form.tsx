@@ -13,11 +13,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { tipoCitaSchema, TipoCitaInput } from "@/lib/validators/agenda";
 import { createTipoCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { AREA_META, AREA_ORDER } from "./types";
 
 interface TipoCitaFormProps {
   onSuccess?: () => void;
@@ -33,6 +35,7 @@ export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
       nombre: "",
       duracion_min: 30,
       color: "#3b82f6",
+      area: "clinica",
       is_disabled: false,
     },
   });
@@ -70,6 +73,31 @@ export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
           )}
         />
         
+        <FormField
+          control={form.control}
+          name="area"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Área operativa</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {AREA_ORDER.map((area) => (
+                    <SelectItem key={area} value={area}>
+                      {AREA_META[area].label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="duracion_min"

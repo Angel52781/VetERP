@@ -4,6 +4,7 @@ export const tipoCitaSchema = z.object({
   nombre: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres" }),
   duracion_min: z.number().min(1, { message: "La duración debe ser de al menos 1 minuto" }),
   color: z.string().min(4, { message: "El color no es válido" }),
+  area: z.enum(["clinica", "banos", "grooming", "cirugia", "movilidad", "otro"]).default("clinica"),
   is_disabled: z.boolean().optional(),
 });
 
@@ -15,5 +16,5 @@ export const citaSchema = z.object({
   end_date: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Fecha de fin inválida" }),
 });
 
-export type TipoCitaInput = z.infer<typeof tipoCitaSchema>;
+export type TipoCitaInput = z.input<typeof tipoCitaSchema>;
 export type CitaInput = z.infer<typeof citaSchema>;

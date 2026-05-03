@@ -105,7 +105,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
         <DialogTitle>{initialData ? "Editar producto" : "Nuevo producto"}</DialogTitle>
       </DialogHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-3">
             <FormField control={form.control} name="nombre" render={({ field }) => (
               <FormItem className="col-span-2">
@@ -218,10 +218,10 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
             )}
 
             {!initialData && form.watch("kind") === "producto" && (
-              <div className="col-span-2 mt-4 space-y-4 rounded-md border p-4 bg-muted/20">
+              <div className="col-span-2 mt-2 flex flex-col gap-3 rounded-md border bg-muted/20 p-3">
                 <h4 className="text-sm font-medium leading-none">Stock Inicial (Opcional)</h4>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <FormField control={form.control} name="stock_inicial" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Cantidad inicial</FormLabel>
@@ -269,7 +269,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
               </div>
             )}
           </div>
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end pt-1">
             <Button type="submit" disabled={loading}>
               {loading ? "Guardando..." : (initialData ? "Guardar cambios" : "Crear producto")}
             </Button>
