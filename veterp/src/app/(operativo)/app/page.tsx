@@ -295,24 +295,33 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader className="space-y-4">
           <div className="flex flex-col gap-1">
-            <CardTitle className="text-base">Recordatorios clínicos</CardTitle>
+            <CardTitle className="text-base">Recordatorios</CardTitle>
             <CardDescription>
               Seguimientos con vencimiento operativo: vencidos, próximos 7 días y próximos 30 días.
             </CardDescription>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className={`rounded-lg border p-3 ${seguimientosVencidosCount > 0 ? "border-red-200 bg-red-50/40" : "bg-muted/10"}`}>
+            <Link
+              href="/recordatorios?filtro=vencidos"
+              className={`rounded-lg border p-3 transition-colors hover:bg-muted/40 ${seguimientosVencidosCount > 0 ? "border-red-200 bg-red-50/40" : "bg-muted/10"}`}
+            >
               <p className={`text-xs font-medium ${seguimientosVencidosCount > 0 ? "text-red-700" : "text-muted-foreground"}`}>Vencidos</p>
               <p className={`text-2xl font-bold ${seguimientosVencidosCount > 0 ? "text-red-700" : "text-foreground"}`}>{seguimientosVencidosCount}</p>
-            </div>
-            <div className={`rounded-lg border p-3 ${seguimientosProximos7Count > 0 ? "border-orange-200 bg-orange-50/40" : "bg-muted/10"}`}>
+            </Link>
+            <Link
+              href="/recordatorios?filtro=7d"
+              className={`rounded-lg border p-3 transition-colors hover:bg-muted/40 ${seguimientosProximos7Count > 0 ? "border-orange-200 bg-orange-50/40" : "bg-muted/10"}`}
+            >
               <p className={`text-xs font-medium ${seguimientosProximos7Count > 0 ? "text-orange-700" : "text-muted-foreground"}`}>Próximos 7 días</p>
               <p className={`text-2xl font-bold ${seguimientosProximos7Count > 0 ? "text-orange-700" : "text-foreground"}`}>{seguimientosProximos7Count}</p>
-            </div>
-            <div className={`rounded-lg border p-3 ${seguimientosProximos30Count > 0 ? "border-blue-200 bg-blue-50/40" : "bg-muted/10"}`}>
+            </Link>
+            <Link
+              href="/recordatorios?filtro=30d"
+              className={`rounded-lg border p-3 transition-colors hover:bg-muted/40 ${seguimientosProximos30Count > 0 ? "border-blue-200 bg-blue-50/40" : "bg-muted/10"}`}
+            >
               <p className={`text-xs font-medium ${seguimientosProximos30Count > 0 ? "text-blue-700" : "text-muted-foreground"}`}>Próximos 30 días</p>
               <p className={`text-2xl font-bold ${seguimientosProximos30Count > 0 ? "text-blue-700" : "text-foreground"}`}>{seguimientosProximos30Count}</p>
-            </div>
+            </Link>
           </div>
         </CardHeader>
         <CardContent>
