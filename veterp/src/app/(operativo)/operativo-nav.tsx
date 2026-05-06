@@ -18,8 +18,10 @@ type OperativoNavItem = {
 
 const navItems: OperativoNavItem[] = [
   { href: "/app", label: "Inicio", matchPath: "/app" },
-  { href: "/atenciones", label: "Atenciones", matchPath: "/atenciones" },
-  { href: "/colas", label: "Colas", matchPath: "/colas" },
+  { href: "/recepcion", label: "Recepción", matchPath: "/recepcion" },
+  { href: "/agenda", label: "Agenda", matchPath: "/agenda" },
+  { href: "/grooming", label: "Grooming", matchPath: "/grooming" },
+  { href: "/hospitalizaciones", label: "Hospitalizaciones", matchPath: "/hospitalizaciones" },
   {
     href: "/caja",
     label: "Caja",
@@ -31,7 +33,6 @@ const navItems: OperativoNavItem[] = [
     label: "Inventario",
     matchPath: "/inventario",
   },
-  { href: "/agenda", label: "Agenda", matchPath: "/agenda" },
   { href: "/clientes", label: "Clientes", matchPath: "/clientes", matchPrefix: true },
   { href: "/pacientes", label: "Pacientes", matchPath: "/pacientes", matchPrefix: true },
   { href: "/ajustes", label: "Ajustes", matchPath: "/ajustes", adminOnly: true },
