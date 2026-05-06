@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -34,6 +35,8 @@ type MascotaEditDialogProps = {
     especie: string | null;
     raza: string | null;
     nacimiento: string | null;
+    alertas_criticas: string | null;
+    notas_manejo: string | null;
   };
 };
 
@@ -50,6 +53,8 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
       especie: mascota.especie ?? "",
       raza: mascota.raza ?? "",
       nacimiento: mascota.nacimiento ?? "",
+      alertas_criticas: mascota.alertas_criticas ?? "",
+      notas_manejo: mascota.notas_manejo ?? "",
     },
   });
 
@@ -62,6 +67,8 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
         especie: mascota.especie ?? "",
         raza: mascota.raza ?? "",
         nacimiento: mascota.nacimiento ?? "",
+        alertas_criticas: mascota.alertas_criticas ?? "",
+        notas_manejo: mascota.notas_manejo ?? "",
       });
     }
   }
@@ -126,6 +133,33 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
           <div className="space-y-2">
             <Label htmlFor="edit-mascota-nacimiento">Nacimiento</Label>
             <Input id="edit-mascota-nacimiento" type="date" {...form.register("nacimiento")} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-mascota-alertas" className="text-destructive font-semibold">
+              Alertas críticas
+            </Label>
+            <Textarea
+              id="edit-mascota-alertas"
+              rows={3}
+              placeholder="Ej: muerde, convulsiona, alergia a X, no usar Bravecto"
+              className="resize-none text-sm"
+              {...form.register("alertas_criticas")}
+            />
+            <p className="text-xs text-muted-foreground">
+              Se mostrará como advertencia en atenciones y grooming.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-mascota-notas-manejo">Notas de manejo</Label>
+            <Textarea
+              id="edit-mascota-notas-manejo"
+              rows={3}
+              placeholder="Ej: se estresa, solo se deja cortar uñas con el responsable"
+              className="resize-none text-sm"
+              {...form.register("notas_manejo")}
+            />
           </div>
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}

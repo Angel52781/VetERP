@@ -9,6 +9,7 @@ import {
   UserPlus,
   Clock,
   Activity,
+  AlertTriangle,
 } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -48,7 +49,7 @@ export default async function RecepcionPage() {
     .select(
       `id, start_date, end_date, estado,
        clientes:cliente_id (nombre),
-       mascotas:mascota_id (nombre),
+       mascotas:mascota_id (nombre, alertas_criticas),
        tipo_citas:tipo_cita_id (nombre, color)`
     )
     .eq("clinica_id", clinicaId)
@@ -199,7 +200,10 @@ export default async function RecepcionPage() {
                     />
                   )}
                   <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">
+                    <p className="font-medium text-sm truncate flex items-center gap-1">
+                      {cita.mascotas?.alertas_criticas?.trim() && (
+                        <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" />
+                      )}
                       {cita.mascotas?.nombre ?? "Sin paciente"}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">

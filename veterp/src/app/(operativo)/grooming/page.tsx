@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { format, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
-import { Scissors, CalendarDays, ShoppingBag, Info } from "lucide-react";
+import { Scissors, CalendarDays, ShoppingBag, Info, AlertTriangle } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -36,7 +36,7 @@ export default async function GroomingPage() {
     .select(
       `id, start_date, end_date, estado,
        clientes:cliente_id (nombre),
-       mascotas:mascota_id (nombre),
+       mascotas:mascota_id (nombre, alertas_criticas),
        tipo_citas:tipo_cita_id (nombre, color, area)`
     )
     .eq("clinica_id", clinicaId)
@@ -144,7 +144,10 @@ export default async function GroomingPage() {
                     />
                   )}
                   <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">
+                    <p className="font-medium text-sm truncate flex items-center gap-1">
+                      {cita.mascotas?.alertas_criticas?.trim() && (
+                        <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" />
+                      )}
                       {cita.mascotas?.nombre ?? "Sin paciente"}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">

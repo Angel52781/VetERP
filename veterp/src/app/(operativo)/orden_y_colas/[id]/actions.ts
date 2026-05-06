@@ -36,7 +36,9 @@ export async function getOrdenCompleta(id: string) {
           nombre,
           especie,
           raza,
-          nacimiento
+          nacimiento,
+          alertas_criticas,
+          notas_manejo
         ),
         entradas_clinicas (
           id,

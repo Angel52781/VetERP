@@ -18,7 +18,10 @@ export const mascotaSchema = z.object({
   especie: z.string().optional(),
   raza: z.string().optional(),
   nacimiento: z.string().optional(),
+  alertas_criticas: z.string().optional().nullable(),
+  notas_manejo: z.string().optional().nullable(),
 });
 
 export type MascotaFormValues = z.infer<typeof mascotaSchema>;
+
 

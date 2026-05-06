@@ -140,13 +140,16 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
 
             return (
               <div key={mascota.id} className="flex flex-col gap-4 px-4 py-4 xl:flex-row xl:items-center">
-                <div className="flex min-w-0 flex-1 items-start gap-3">
-                  <div className="mt-0.5 h-10 w-10 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                <Link 
+                  href={`/mascotas/${mascota.id}?returnTo=${encodeURIComponent("/pacientes")}`}
+                  className="flex min-w-0 flex-1 items-start gap-3 group cursor-pointer"
+                >
+                  <div className="mt-0.5 h-10 w-10 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <PawPrint className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-sm font-semibold">{mascota.nombre}</p>
+                      <p className="truncate text-sm font-semibold group-hover:text-primary group-hover:underline transition-colors">{mascota.nombre}</p>
                       <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase">
                         {formatSpeciesLabel(mascota.especie)}
                       </span>
@@ -159,7 +162,7 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
                       {responsable?.nombre || "Responsable no disponible"}
                     </p>
                   </div>
-                </div>
+                </Link>
 
                 <div className="grid gap-3 sm:grid-cols-2 xl:min-w-[320px]">
                   <div>

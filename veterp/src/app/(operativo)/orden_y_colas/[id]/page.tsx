@@ -16,6 +16,7 @@ import { ArrowLeft } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions";
 import { SeguimientosCard } from "../../seguimientos-card";
+import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 
 interface PageProps {
   params: Promise<{
@@ -92,6 +93,9 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
         </div>
       </div>
 
+      {/* Alertas críticas del paciente */}
+      <AlertasCriticasBanner alertas={(orden.mascotas as any)?.alertas_criticas} />
+
       <Tabs defaultValue="resumen" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="resumen">Resumen</TabsTrigger>
@@ -150,6 +154,12 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
                       : "N/A"}
                   </span>
                 </div>
+                {(orden.mascotas as any)?.notas_manejo?.trim() && (
+                  <div className="mt-3 pt-3 border-t">
+                    <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-1">Notas de manejo</p>
+                    <p className="text-xs text-amber-800 whitespace-pre-wrap break-words">{(orden.mascotas as any).notas_manejo}</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

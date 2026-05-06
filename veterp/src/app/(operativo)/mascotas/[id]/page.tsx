@@ -9,8 +9,9 @@ import { MascotaEditDialog } from "./mascota-edit-dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buttonVariants } from "@/components/ui/button";
-import { Clock, Calendar, Activity, ClipboardList, Stethoscope, FileText, ArrowLeft } from "lucide-react";
+import { Clock, Calendar, Activity, ClipboardList, Stethoscope, FileText, ArrowLeft, NotebookPen } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
+import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 
 const CITA_ESTADO_META: Record<string, { label: string; className: string }> = {
   programada: { label: "Programada", className: "bg-blue-100 text-blue-800" },
@@ -100,10 +101,28 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
           <Link href={seguimientosHref} className={buttonVariants({ variant: "outline" })}>
             Seguimientos
           </Link>
-          <MascotaEditDialog mascota={mascota} />
+          <MascotaEditDialog mascota={{
+            ...mascota,
+            alertas_criticas: mascota.alertas_criticas ?? null,
+            notas_manejo: mascota.notas_manejo ?? null,
+          }} />
           <BtnNuevaAtencion clienteId={mascota.cliente_id} mascotaId={mascota.id} />
         </div>
       </div>
+
+      {/* Alertas críticas */}
+      <AlertasCriticasBanner alertas={mascota.alertas_criticas} />
+
+      {/* Notas de manejo */}
+      {mascota.notas_manejo?.trim() && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-4 py-3">
+          <NotebookPen className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="min-w-0">
+            <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wider">Notas de manejo</p>
+            <p className="text-sm text-amber-800 dark:text-amber-200 mt-0.5 whitespace-pre-wrap break-words">{mascota.notas_manejo}</p>
+          </div>
+        </div>
+      )}
 
       {/* Resumen Clínico Rápido */}
       <div className="grid md:grid-cols-4 gap-4">
