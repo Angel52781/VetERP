@@ -11,8 +11,6 @@ import {
   ArrowRight,
   AlertCircle,
   Wallet,
-  Stethoscope,
-  ShieldCheck,
 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -21,8 +19,39 @@ import { getActiveClinicaContext } from "@/lib/clinica";
 import { formatMoneyPEN } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
 import { IniciarAtencionCitaBtn } from "../agenda/iniciar-atencion-cita-btn";
+import { RecordatoriosPanel, type DashboardRecordatorio } from "./recordatorios-panel";
 
 export const dynamic = "force-dynamic";
+
+type RawRecordatorioMascota = Omit<NonNullable<DashboardRecordatorio["mascotas"]>, "clientes"> & {
+  clientes: NonNullable<DashboardRecordatorio["mascotas"]>["clientes"] | NonNullable<DashboardRecordatorio["mascotas"]>["clientes"][] | null;
+};
+
+type RawDashboardRecordatorio = Omit<DashboardRecordatorio, "mascotas"> & {
+  mascotas: RawRecordatorioMascota | RawRecordatorioMascota[] | null;
+};
+
+function firstRelation<T>(value: T | T[] | null | undefined): T | null {
+  return Array.isArray(value) ? value[0] ?? null : value ?? null;
+}
+
+function normalizeRecordatorios(data: unknown): DashboardRecordatorio[] {
+  return ((data ?? []) as RawDashboardRecordatorio[]).map((recordatorio) => {
+    const mascota = firstRelation(recordatorio.mascotas);
+    const cliente = firstRelation(mascota?.clientes);
+
+    return {
+      ...recordatorio,
+      mascotas: mascota
+        ? {
+            id: mascota.id,
+            nombre: mascota.nombre,
+            clientes: cliente,
+          }
+        : null,
+    };
+  });
+}
 
 export default async function DashboardPage() {
   const context = await getActiveClinicaContext();
@@ -52,7 +81,9 @@ export default async function DashboardPage() {
     seguimientosVencidosRes,
     seguimientosProximos7Res,
     seguimientosProximos30Res,
-    seguimientosOperativosRes,
+    seguimientosVencidosDetalleRes,
+    seguimientosProximos7DetalleRes,
+    seguimientosProximos30DetalleRes,
   ] = await Promise.all([
     supabase.from("clinicas").select("nombre").eq("id", cid).maybeSingle(),
 
@@ -124,6 +155,7 @@ export default async function DashboardPage() {
       .from("seguimientos_clinicos")
       .select("id", { count: "exact", head: true })
       .eq("clinica_id", cid)
+      .eq("estado_text", "pendiente")
       .not("proxima_fecha_date", "is", null)
       .lt("proxima_fecha_date", todayDate),
 
@@ -131,6 +163,7 @@ export default async function DashboardPage() {
       .from("seguimientos_clinicos")
       .select("id", { count: "exact", head: true })
       .eq("clinica_id", cid)
+      .eq("estado_text", "pendiente")
       .not("proxima_fecha_date", "is", null)
       .gte("proxima_fecha_date", todayDate)
       .lte("proxima_fecha_date", day7Date),
@@ -139,6 +172,7 @@ export default async function DashboardPage() {
       .from("seguimientos_clinicos")
       .select("id", { count: "exact", head: true })
       .eq("clinica_id", cid)
+      .eq("estado_text", "pendiente")
       .not("proxima_fecha_date", "is", null)
       .gte("proxima_fecha_date", day8Date)
       .lte("proxima_fecha_date", day30Date),
@@ -157,10 +191,53 @@ export default async function DashboardPage() {
         )
       `)
       .eq("clinica_id", cid)
+      .eq("estado_text", "pendiente")
       .not("proxima_fecha_date", "is", null)
+      .lt("proxima_fecha_date", todayDate)
+      .order("proxima_fecha_date", { ascending: true })
+      .limit(8),
+
+    supabase
+      .from("seguimientos_clinicos")
+      .select(`
+        id,
+        tipo_text,
+        nombre_text,
+        proxima_fecha_date,
+        mascotas:mascota_id (
+          id,
+          nombre,
+          clientes:cliente_id ( id, nombre )
+        )
+      `)
+      .eq("clinica_id", cid)
+      .eq("estado_text", "pendiente")
+      .not("proxima_fecha_date", "is", null)
+      .gte("proxima_fecha_date", todayDate)
+      .lte("proxima_fecha_date", day7Date)
+      .order("proxima_fecha_date", { ascending: true })
+      .limit(8),
+
+    supabase
+      .from("seguimientos_clinicos")
+      .select(`
+        id,
+        tipo_text,
+        nombre_text,
+        proxima_fecha_date,
+        mascotas:mascota_id (
+          id,
+          nombre,
+          clientes:cliente_id ( id, nombre )
+        )
+      `)
+      .eq("clinica_id", cid)
+      .eq("estado_text", "pendiente")
+      .not("proxima_fecha_date", "is", null)
+      .gte("proxima_fecha_date", day8Date)
       .lte("proxima_fecha_date", day30Date)
       .order("proxima_fecha_date", { ascending: true })
-      .limit(12),
+      .limit(8),
   ]);
 
   const clinicaNombre = clinicaRes.data?.nombre ?? "Clínica activa";
@@ -178,7 +255,9 @@ export default async function DashboardPage() {
   const seguimientosVencidosCount = seguimientosVencidosRes.count ?? 0;
   const seguimientosProximos7Count = seguimientosProximos7Res.count ?? 0;
   const seguimientosProximos30Count = seguimientosProximos30Res.count ?? 0;
-  const seguimientosOperativos = seguimientosOperativosRes.data ?? [];
+  const seguimientosVencidos = normalizeRecordatorios(seguimientosVencidosDetalleRes.data);
+  const seguimientosProximos7 = normalizeRecordatorios(seguimientosProximos7DetalleRes.data);
+  const seguimientosProximos30 = normalizeRecordatorios(seguimientosProximos30DetalleRes.data);
   const mascotaIdsDeCitasHoy = Array.from(new Set(citasHoy.map((c: any) => c.mascota_id).filter(Boolean)));
   const ordenActivaByMascota = new Map<string, any>();
 
@@ -292,94 +371,18 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="space-y-4">
-          <div className="flex flex-col gap-1">
-            <CardTitle className="text-base">Recordatorios</CardTitle>
-            <CardDescription>
-              Seguimientos con vencimiento operativo: vencidos, próximos 7 días y próximos 30 días.
-            </CardDescription>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Link
-              href="/recordatorios?filtro=vencidos"
-              className={`rounded-lg border p-3 transition-colors hover:bg-muted/40 ${seguimientosVencidosCount > 0 ? "border-red-200 bg-red-50/40" : "bg-muted/10"}`}
-            >
-              <p className={`text-xs font-medium ${seguimientosVencidosCount > 0 ? "text-red-700" : "text-muted-foreground"}`}>Vencidos</p>
-              <p className={`text-2xl font-bold ${seguimientosVencidosCount > 0 ? "text-red-700" : "text-foreground"}`}>{seguimientosVencidosCount}</p>
-            </Link>
-            <Link
-              href="/recordatorios?filtro=7d"
-              className={`rounded-lg border p-3 transition-colors hover:bg-muted/40 ${seguimientosProximos7Count > 0 ? "border-orange-200 bg-orange-50/40" : "bg-muted/10"}`}
-            >
-              <p className={`text-xs font-medium ${seguimientosProximos7Count > 0 ? "text-orange-700" : "text-muted-foreground"}`}>Próximos 7 días</p>
-              <p className={`text-2xl font-bold ${seguimientosProximos7Count > 0 ? "text-orange-700" : "text-foreground"}`}>{seguimientosProximos7Count}</p>
-            </Link>
-            <Link
-              href="/recordatorios?filtro=30d"
-              className={`rounded-lg border p-3 transition-colors hover:bg-muted/40 ${seguimientosProximos30Count > 0 ? "border-blue-200 bg-blue-50/40" : "bg-muted/10"}`}
-            >
-              <p className={`text-xs font-medium ${seguimientosProximos30Count > 0 ? "text-blue-700" : "text-muted-foreground"}`}>Próximos 30 días</p>
-              <p className={`text-2xl font-bold ${seguimientosProximos30Count > 0 ? "text-blue-700" : "text-foreground"}`}>{seguimientosProximos30Count}</p>
-            </Link>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {seguimientosOperativos.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-4 text-center">
-              Sin seguimientos con vencimiento en el rango operativo actual.
-            </div>
-          ) : (
-            <div className="divide-y rounded-md border">
-              {seguimientosOperativos.map((seguimiento: any) => {
-                const proximaFecha = seguimiento.proxima_fecha_date as string;
-                const estado = proximaFecha < todayDate
-                  ? { label: "Vencido", cls: "bg-red-100 text-red-800" }
-                  : proximaFecha <= day7Date
-                    ? { label: "Próximo (7d)", cls: "bg-orange-100 text-orange-800" }
-                    : { label: "Próximo (30d)", cls: "bg-blue-100 text-blue-800" };
-                const mascota = seguimiento.mascotas as any;
-                const cliente = mascota?.clientes as any;
-
-                return (
-                  <div key={seguimiento.id} className="flex items-center gap-3 p-3 hover:bg-muted/40 transition-colors">
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                      seguimiento.tipo_text === "vacuna" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
-                    }`}>
-                      {seguimiento.tipo_text === "vacuna" ? (
-                        <ShieldCheck className="h-4 w-4" />
-                      ) : (
-                        <Stethoscope className="h-4 w-4" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">{mascota?.nombre ?? "Paciente sin nombre"}</p>
-                      <p className="text-xs text-muted-foreground truncate">{cliente?.nombre ?? "Responsable no disponible"}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        <span className="uppercase font-medium">{seguimiento.tipo_text}</span> · {seguimiento.nombre_text}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Próxima fecha: {format(new Date(`${proximaFecha}T00:00:00`), "dd/MM/yyyy", { locale: es })}
-                      </p>
-                    </div>
-                    <div className="shrink-0 flex items-center gap-2">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${estado.cls}`}>
-                        {estado.label}
-                      </span>
-                      <Link
-                        href={`/mascotas/${mascota?.id}`}
-                        className={buttonVariants({ variant: "outline", size: "sm" })}
-                      >
-                        Ver paciente
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <RecordatoriosPanel
+        todayDate={todayDate}
+        day7Date={day7Date}
+        counts={{
+          vencidos: seguimientosVencidosCount,
+          proximos7: seguimientosProximos7Count,
+          proximos30: seguimientosProximos30Count,
+        }}
+        vencidos={seguimientosVencidos}
+        proximos7={seguimientosProximos7}
+        proximos30={seguimientosProximos30}
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Sala de espera */}

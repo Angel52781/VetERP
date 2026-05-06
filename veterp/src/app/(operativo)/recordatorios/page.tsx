@@ -27,6 +27,7 @@ import { getActiveClinicaContext } from "@/lib/clinica";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
+import { RecordatorioActions } from "./recordatorio-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,7 @@ type FiltroRecordatorios = "vencidos" | "7d" | "30d";
 type RecordatorioRow = {
   id: string;
   tipo_text: string;
+  estado_text: string | null;
   nombre_text: string;
   proxima_fecha_date: string;
   notas_text: string | null;
@@ -153,6 +155,7 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
     .select(`
       id,
       tipo_text,
+      estado_text,
       nombre_text,
       proxima_fecha_date,
       notas_text,
@@ -166,6 +169,7 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
       )
     `)
     .eq("clinica_id", context.clinicaId)
+    .eq("estado_text", "pendiente")
     .not("proxima_fecha_date", "is", null)
     .order("proxima_fecha_date", { ascending: true });
 
@@ -311,6 +315,10 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
                           Ver atencion
                         </Link>
                       ) : null}
+                      <RecordatorioActions
+                        id={recordatorio.id}
+                        fechaActual={recordatorio.proxima_fecha_date}
+                      />
                     </div>
                   </div>
                 );

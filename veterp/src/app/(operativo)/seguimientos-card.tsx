@@ -54,11 +54,13 @@ import { useRouter } from "next/navigation";
 
 interface Seguimiento {
   id: string;
-  tipo_text: "vacuna" | "control";
+  tipo_text: string;
+  estado_text?: string | null;
   nombre_text: string;
   fecha_aplicacion_date: string;
   proxima_fecha_date: string | null;
   notas_text: string | null;
+  resolucion_notas_text?: string | null;
   created_at: string;
 }
 
@@ -81,7 +83,9 @@ export function SeguimientosCard({
   const router = useRouter();
   const now = startOfDay(new Date());
 
-  const getStatus = (proximaFecha: string | null) => {
+  const getStatus = (proximaFecha: string | null, estado?: string | null) => {
+    if (estado === "resuelto") return { label: "Resuelto", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle2 };
+    if (estado === "cancelado") return { label: "Cancelado", color: "bg-muted text-muted-foreground", icon: AlertCircle };
     if (!proximaFecha) return { label: "Al día", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle2 };
     
     const date = parseISO(proximaFecha);
@@ -186,7 +190,7 @@ export function SeguimientosCard({
           ) : (
             <div className="space-y-4">
               {seguimientos.map((s) => {
-                const status = getStatus(s.proxima_fecha_date);
+                const status = getStatus(s.proxima_fecha_date, s.estado_text);
                 const StatusIcon = status.icon;
                 
                 return (

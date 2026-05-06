@@ -1,8 +1,14 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
-import { seguimientoClinicoSchema, SeguimientoClinicoInput } from "@/lib/validators/seguimiento";
+import {
+  seguimientoClinicoSchema,
+  seguimientoReprogramacionSchema,
+  seguimientoResolucionSchema,
+  SeguimientoClinicoInput,
+} from "@/lib/validators/seguimiento";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
 const SEGUIMIENTOS_TABLE = "seguimientos_clinicos";
@@ -22,6 +28,120 @@ function isTableOrSchemaError(error: PostgrestError | null) {
   );
 }
 
+function revalidateSeguimientoPaths(row?: { mascota_id?: string | null; orden_id?: string | null } | null) {
+  revalidatePath("/app");
+  revalidatePath("/recordatorios");
+  if (row?.mascota_id) {
+    revalidatePath(`/mascotas/${row.mascota_id}`);
+  }
+  if (row?.orden_id) {
+    revalidatePath(`/orden_y_colas/${row.orden_id}`);
+  }
+}
+
+async function getCurrentUserId(supabase: SupabaseClient) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user?.id ?? null;
+}
+
+export async function resolverSeguimientoClinico(id: string, notas?: string) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = seguimientoResolucionSchema.parse({ id, notas });
+    const userId = await getCurrentUserId(supabase);
+
+    const { data, error } = await supabase
+      .from(SEGUIMIENTOS_TABLE)
+      .update({
+        estado_text: "resuelto",
+        resuelto_at: new Date().toISOString(),
+        resuelto_por: userId,
+        resolucion_notas_text: validated.notas?.trim() || null,
+      })
+      .eq("id", validated.id)
+      .eq("clinica_id", clinicaId)
+      .eq("estado_text", "pendiente")
+      .select("id, mascota_id, orden_id")
+      .maybeSingle();
+
+    if (error) return { error: error.message, data: null };
+    if (!data) return { error: "Solo se pueden resolver recordatorios pendientes de la clinica activa.", data: null };
+
+    revalidateSeguimientoPaths(data);
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al resolver recordatorio", data: null };
+  }
+}
+
+export async function cancelarSeguimientoClinico(id: string, notas?: string) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = seguimientoResolucionSchema.parse({ id, notas });
+    const userId = await getCurrentUserId(supabase);
+
+    const { data, error } = await supabase
+      .from(SEGUIMIENTOS_TABLE)
+      .update({
+        estado_text: "cancelado",
+        cancelado_at: new Date().toISOString(),
+        cancelado_por: userId,
+        resolucion_notas_text: validated.notas?.trim() || null,
+      })
+      .eq("id", validated.id)
+      .eq("clinica_id", clinicaId)
+      .eq("estado_text", "pendiente")
+      .select("id, mascota_id, orden_id")
+      .maybeSingle();
+
+    if (error) return { error: error.message, data: null };
+    if (!data) return { error: "Solo se pueden cancelar recordatorios pendientes de la clinica activa.", data: null };
+
+    revalidateSeguimientoPaths(data);
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al cancelar recordatorio", data: null };
+  }
+}
+
+export async function reprogramarSeguimientoClinico(id: string, nuevaFecha: string) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = seguimientoReprogramacionSchema.parse({ id, nuevaFecha });
+
+    const { data, error } = await supabase
+      .from(SEGUIMIENTOS_TABLE)
+      .update({
+        proxima_fecha_date: validated.nuevaFecha,
+        estado_text: "pendiente",
+      })
+      .eq("id", validated.id)
+      .eq("clinica_id", clinicaId)
+      .eq("estado_text", "pendiente")
+      .select("id, mascota_id, orden_id")
+      .maybeSingle();
+
+    if (error) return { error: error.message, data: null };
+    if (!data) {
+      return {
+        error: "Solo se pueden reprogramar recordatorios pendientes de la clinica activa.",
+        data: null,
+      };
+    }
+
+    revalidateSeguimientoPaths(data);
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al reprogramar recordatorio", data: null };
+  }
+}
+
 function isMissingRpcFunctionError(error: PostgrestError | null) {
   if (!error) return false;
   return error.code === "PGRST202" || /Could not find the function/i.test(error.message);
@@ -35,8 +155,9 @@ async function querySeguimientos(
   return supabase
     .from(SEGUIMIENTOS_TABLE)
     .select(`
-      id, orden_id, tipo_text, nombre_text,
-      fecha_aplicacion_date, proxima_fecha_date, notas_text, created_at
+      id, orden_id, tipo_text, nombre_text, estado_text,
+      fecha_aplicacion_date, proxima_fecha_date, notas_text, resolucion_notas_text,
+      resuelto_at, cancelado_at, created_at
     `)
     .eq("clinica_id", clinicaId)
     .eq("mascota_id", mascotaId)
@@ -225,6 +346,7 @@ export async function createSeguimientoClinico(input: SeguimientoClinicoInput) {
       fecha_aplicacion_date: validated.fecha_aplicacion_date,
       proxima_fecha_date: validated.proxima_fecha_date ?? null,
       notas_text: validated.notas_text?.trim() || null,
+      estado_text: validated.estado_text ?? "pendiente",
     };
 
     const firstAttempt = await supabase
