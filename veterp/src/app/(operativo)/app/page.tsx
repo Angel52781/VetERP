@@ -218,12 +218,22 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      {/* Acciones rápidas */}
       <div className="flex flex-wrap gap-2">
-        <Link href="/agenda" className={buttonVariants({})}>
-          Ir a agenda del día
+        <Link href="/recepcion" className={buttonVariants({})}>
+          Ir a Recepción
         </Link>
-        <Link href="/atenciones" className={buttonVariants({ variant: "outline" })}>
-          Ir a atenciones activas
+        <Link href="/agenda" className={buttonVariants({ variant: "outline" })}>
+          Agenda
+        </Link>
+        <Link href="/grooming" className={buttonVariants({ variant: "outline" })}>
+          Grooming
+        </Link>
+        <Link href="/caja" className={buttonVariants({ variant: "outline" })}>
+          Caja
+        </Link>
+        <Link href="/inventario" className={buttonVariants({ variant: "outline" })}>
+          Inventario
         </Link>
       </div>
 
@@ -371,10 +381,10 @@ export default async function DashboardPage() {
               <CardDescription>Órdenes activas ahora</CardDescription>
             </div>
             <Link
-              href="/atenciones"
+              href="/recepcion"
               className={buttonVariants({ variant: "ghost", size: "sm" })}
             >
-              Ver todas <ArrowRight className="ml-1 h-3 w-3" />
+              Ver en Recepción <ArrowRight className="ml-1 h-3 w-3" />
             </Link>
           </CardHeader>
           <CardContent className="flex-1">
@@ -382,8 +392,8 @@ export default async function DashboardPage() {
               <div className="flex flex-col items-center justify-center py-8 text-center text-sm text-muted-foreground gap-2">
                 <AlertCircle className="h-8 w-8 opacity-30" />
                 <p>No hay atenciones activas en este momento.</p>
-                <Link href="/atenciones" className={buttonVariants({ size: "sm" })}>
-                  Nueva atención
+                <Link href="/recepcion" className={buttonVariants({ size: "sm" })}>
+                  Ir a Recepción
                 </Link>
               </div>
             ) : (
@@ -525,29 +535,7 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      {/* Acciones rápidas */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Acciones rápidas</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          <Link href="/atenciones" className={buttonVariants({})}>
-            Nueva atención
-          </Link>
-          <Link href="/agenda" className={buttonVariants({ variant: "outline" })}>
-            Ver agenda
-          </Link>
-          <Link href="/clientes/nuevo" className={buttonVariants({ variant: "outline" })}>
-            Registrar cliente
-          </Link>
-          <Link href="/caja" className={buttonVariants({ variant: "outline" })}>
-            Revisar caja
-          </Link>
-          <Link href="/colas" className={buttonVariants({ variant: "outline" })}>
-            Ver sala de espera
-          </Link>
-        </CardContent>
-      </Card>
+
     </div>
   );
 }

@@ -124,6 +124,53 @@ export default async function RecepcionPage() {
         </Card>
       </div>
 
+      {/* Accesos rápidos */}
+      <section className="space-y-3">
+        <h2 className="text-base font-semibold tracking-tight">Accesos rápidos</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/clientes"
+            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
+          >
+            <Users className="h-5 w-5 text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Buscar cliente</p>
+              <p className="text-xs text-muted-foreground">Responsables</p>
+            </div>
+          </Link>
+          <Link
+            href="/pacientes"
+            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
+          >
+            <PawPrint className="h-5 w-5 text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Buscar paciente</p>
+              <p className="text-xs text-muted-foreground">Mascotas</p>
+            </div>
+          </Link>
+          <Link
+            href="/clientes/nuevo"
+            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
+          >
+            <UserPlus className="h-5 w-5 text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Crear cliente/paciente</p>
+              <p className="text-xs text-muted-foreground">Registro nuevo</p>
+            </div>
+          </Link>
+          <Link
+            href="/atenciones"
+            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
+          >
+            <ClipboardList className="h-5 w-5 text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Atenciones abiertas</p>
+              <p className="text-xs text-muted-foreground">Flujo legacy/transición</p>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* Programados hoy */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
@@ -228,53 +275,6 @@ export default async function RecepcionPage() {
           </div>
         </section>
       )}
-
-      {/* Accesos rápidos */}
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">Accesos rápidos</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            href="/clientes"
-            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-          >
-            <Users className="h-5 w-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-medium">Buscar responsable</p>
-              <p className="text-xs text-muted-foreground">Clientes registrados</p>
-            </div>
-          </Link>
-          <Link
-            href="/pacientes"
-            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-          >
-            <PawPrint className="h-5 w-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-medium">Buscar paciente</p>
-              <p className="text-xs text-muted-foreground">Mascotas registradas</p>
-            </div>
-          </Link>
-          <Link
-            href="/atenciones"
-            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-          >
-            <ClipboardList className="h-5 w-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-medium">Todas las atenciones</p>
-              <p className="text-xs text-muted-foreground">Vista completa</p>
-            </div>
-          </Link>
-          <Link
-            href="/agenda"
-            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-          >
-            <CalendarDays className="h-5 w-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-medium">Agenda</p>
-              <p className="text-xs text-muted-foreground">Citas programadas</p>
-            </div>
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }
