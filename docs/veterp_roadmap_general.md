@@ -1,541 +1,593 @@
-# VetERP — Roadmap General de Producto y Desarrollo
+# VetERP - Roadmap General de Producto
 
-## 1. Propósito del documento
+Fecha de actualizacion: 2026-05-06
+Estado: beta controlada / pre-AWS operativa
 
-Este documento sirve como guía maestra para el desarrollo de VetERP.  
-Su objetivo es alinear a cualquier herramienta, desarrollador o asistente que trabaje sobre el proyecto, dejando claro:
+## 1. Proposito del documento
 
-- qué es VetERP
-- qué problema resuelve
-- qué módulos existen
-- qué módulos faltan
-- cuál es el estado aproximado de cada área
-- cuál es el orden recomendado de implementación
-- qué ideas estratégicas deben conservarse para futuras iteraciones
+Este documento es la guia maestra de producto para VetERP. Su objetivo es dejar claras las decisiones recientes, el estado actual y el orden recomendado de desarrollo sin convertir cada idea en una feature inmediata.
 
----
+VetERP es un ERP/EMR veterinario construido con Next.js App Router, TypeScript y Supabase. El producto busca centralizar la operacion diaria de una clinica veterinaria: clientes, pacientes, agenda, recepcion, atenciones, caja, inventario, grooming, hospitalizaciones, staff y configuracion.
 
-## 2. Qué es VetERP
+## 2. Estado actual
 
-VetERP es un ERP veterinario orientado a clínicas y hospitales veterinarios.
+La beta ya tiene una base funcional amplia:
 
-Su propósito es centralizar en un solo sistema la operación diaria de una clínica, incluyendo:
+- Deploy en AWS EC2 funcionando.
+- Auth, seleccion de clinica y staff basico.
+- Clientes y pacientes.
+- Agenda por areas.
+- Tipos de cita, incluyendo consulta, banos, grooming, movilidad y cirugias programadas.
+- Servicios de grooming, banos, movilidad y promociones editables.
+- Atencion clinica / orden de servicio.
+- Caja y cobro basico.
+- Estado de cuenta basico.
+- Seguimientos basicos.
+- Inventario MVP con movimientos e historial de stock.
+- Catalogo de productos y servicios.
 
-- acceso multiusuario y multiclinica
-- gestión de clientes y mascotas
-- agenda y citas
-- atenciones / órdenes de servicio
-- historia clínica
-- caja, cobros y ventas
-- inventario y stock
-- configuración operativa de la clínica
-- flujos de migración y digitalización de historial antiguo
+La lectura actual es clara: VetERP ya no esta en fase de demo tecnica. Esta en una beta controlada que necesita reorganizacion operativa y cierre de flujos antes de agregar features grandes.
 
-No debe entenderse solo como un “software administrativo”, sino como una plataforma operativa para apoyar el trabajo clínico, administrativo y comercial de una veterinaria.
+## 3. Principios vigentes
 
----
+1. Agenda es para lo programado.
+2. Recepcion es para el ingreso real del dia.
+3. Paciente debe ser la historia longitudinal del animal, no solo una ficha basica.
+4. Grooming debe separarse visual y operativamente de consulta clinica.
+5. Hospitalizaciones debe ser modulo propio.
+6. Cirugias se programan en Agenda por ahora; no van en navegacion principal todavia.
+7. Recordatorios deben ser generales, no solo clinicos.
+8. Inventario conectado a servicios es posterior al cierre operativo base.
+9. No se deben abrir modulos gigantes si el flujo diario aun puede simplificarse.
+10. Prioridad: beta usable en clinica real controlada antes que sofisticacion.
 
-## 3. Visión del producto
+## 4. Navegacion objetivo
 
-### Visión base
-Construir un sistema veterinario usable, moderno y operativo, que permita a una clínica trabajar su día a día desde un solo lugar.
+La navegacion objetivo del producto es:
 
-### Visión extendida
-Convertir VetERP en una plataforma con valor diferencial real frente a software más básico, incorporando con el tiempo:
+- Inicio
+- Recepcion
+- Agenda
+- Grooming
+- Hospitalizaciones
+- Caja
+- Inventario
+- Clientes
+- Pacientes
+- Ajustes
 
-- mejor historia clínica longitudinal
-- flujos de caja y cobro más completos
-- digitalización de historial previo
-- automatización de procesos operativos
-- herramientas de soporte para crecimiento de la clínica
+Atenciones y Colas se ocultaran eventualmente del nav principal. No deben borrarse rutas todavia porque siguen soportando flujos existentes y pueden servir como base interna para Recepcion y Ordenes.
 
----
+## 5. Decisiones tomadas
 
-## 4. Principios del proyecto
+### Agenda
 
-1. **Primero estabilidad, luego polish**
-   - La prioridad es que funcione de verdad.
-   - Luego se mejora UX/UI.
+Agenda queda como hub de eventos programados:
 
-2. **Producto B2B, no autoservicio libre**
-   - El acceso ideal no es signup abierto sin control.
-   - El sistema debe permitir acceso administrado por clínica.
+- consultas agendadas
+- grooming y banos programados
+- movilidad programada
+- cirugias programadas
+- otros eventos programados
 
-3. **No depender de hacks manuales**
-   - La app debe quedar usable sin SQL raro para pruebas básicas.
-   - Demo data, onboarding y rutas deben ser explícitos y repetibles.
+Agenda no debe cargar con el flujo de ingreso espontaneo del dia. Ese rol pasa a Recepcion.
 
-4. **Paridad operativa antes que fantasía técnica**
-   - Primero cubrir bien los módulos operativos reales.
-   - Luego agregar extras.
+### Recepcion
 
-5. **Una sola fuente de verdad**
-   - El roadmap debe guiar a cualquier herramienta futura.
-   - No se debe improvisar sin revisar este documento.
+Recepcion sera el punto de entrada operativo del dia:
 
----
+- buscar cliente y paciente
+- crear cliente o paciente si no existe
+- registrar motivo libre
+- marcar destino: clinica, grooming o emergencia
+- abrir atencion clinica cuando corresponda
+- reemplazar visualmente Atenciones y Colas en la navegacion principal
 
-## 5. Estado actual del proyecto
+La implementacion debe ser incremental. Primero se crea la experiencia visible de Recepcion; luego se decide que rutas internas siguen vivas, se renombran o se encapsulan.
 
-## Lectura honesta del estado
-VetERP ya tiene gran parte del motor técnico reconstruido, pero todavía no debe considerarse “producto final”.
+### Grooming
 
-### Lo que ya existe en algún grado
-- autenticación
-- selección de clínica
-- shell operativa
-- clientes y mascotas
-- agenda y tipos de cita
-- atenciones / órdenes
-- caja y ventas
-- inventario y movimientos de stock
-- ajustes base
-- RBAC base
-- seed/demo parcial
-- protección de rutas y contexto tenant
+Grooming sera modulo propio. Debe cubrir:
 
-### Lo que todavía falta cerrar
-- estabilidad total de sesión y cambio de clínica
-- demo data confiable y suficiente
-- mejor densidad de información en pantallas clave
-- paridad real con algunos flujos de Bubble
-- historia clínica longitudinal como módulo fuerte
-- settings más completos
-- flujos administrativos más robustos
-- polish general de UX/UI
+- banos
+- grooming
+- cortes
+- deslanado
+- desmotado
+- servicios y combos configurables
+- observaciones importantes del paciente
+- notas relevantes para manejo del animal
 
----
+El uso de productos desde inventario queda para una fase posterior. No debe bloquear el primer modulo real de Grooming.
 
-## 6. Estado estimado por áreas
+### Hospitalizaciones
 
-> Estos porcentajes son orientativos.  
-> No significan “listo para producción”, sino una estimación del avance relativo de cada módulo.
-
-| Área | Estado estimado | Comentario |
-|---|---:|---|
-| Auth / sesión / acceso | 70% | Funciona en gran parte, pero todavía requiere estabilización fina |
-| Multi-clínica / contexto tenant | 70% | Base construida, pero cambio de clínica y estados ambiguos deben pulirse |
-| Shell / navegación / rutas | 75% | Mucho mejor que al inicio, pero aún con inconsistencias a resolver |
-| Clientes y Mascotas | 65% | Base funcional, pero aún poco “producto” y poca densidad |
-| Agenda y Citas | 60% | Estructura existe, pero todavía necesita mejor flujo y mejor demo data |
-| Atenciones / Órdenes | 65% | Bastante avanzadas, pero pueden enriquecerse mucho más |
-| Colas | 35% | Hay una versión básica, pero aún no es la paridad real deseada |
-| Caja / Ventas | 60% | Núcleo hecho, pero aún falta UX y reglas más completas |
-| Inventario / Kardex | 65% | Base sólida, aún con mejoras pendientes en uso real |
-| Ajustes / Configuración | 45% | Existe, pero sigue incompleto como panel real de administración |
-| Seed / datos demo | 40% | Todavía necesita consolidación y repetibilidad clara |
-| UX/UI general | 35% | Muy por detrás del backend; sigue sintiéndose scaffold |
-| Historia clínica longitudinal | 20% | Idea clara, implementación todavía temprana o incompleta |
-| Digitalización OCR / historial antiguo | 5% | Idea estratégica, aún no implementada |
-
----
-
-## 7. Módulos del producto
-
-## 7.1 Núcleo operativo
-
-### A. Acceso y sesión
-Incluye:
-- login
-- logout
-- cambio de clínica
-- selección de clínica
-- protección de rutas
-- RBAC base
-
-### B. Clientes y mascotas
-Incluye:
-- listado de clientes
-- listado y vínculo de mascotas
-- creación de cliente
-- creación de mascota
-- detalle de cliente
-- futuras fichas más completas
-
-### C. Agenda y citas
-Incluye:
-- tipos de cita
-- crear cita
-- ver agenda
-- gestión básica del calendario
-- relación cita ↔ cliente ↔ mascota
-
-### D. Atenciones / Órdenes de servicio
-Incluye:
-- creación de atención
-- seguimiento de orden
-- resumen de orden
-- entradas clínicas
-- adjuntos
-- futura evolución clínica más fuerte
-
-### E. Colas
-Incluye:
-- sala de espera / atención activa
-- futuro modelo real con ItemCola
-- futura separación por carriles
-- posible grooming / médica / laboratorio
-
-### F. Caja y ventas
-Incluye:
-- ventas
-- ítems de venta
-- estados de pago
-- cuentas por cobrar
-- ledger / movimientos de cobro
-- futura ampliación de caja
-
-### G. Inventario
-Incluye:
-- catálogo
-- stock
-- almacenes
-- proveedores
-- kardex / movimientos
-- rebaja por venta
-- ajustes manuales
-
-### H. Ajustes
-Incluye:
-- configuración general
-- catálogo
-- proveedores
-- almacenes
-- futura administración de clínica y usuarios
-
----
-
-## 7.2 Módulos estratégicos futuros
-
-### I. Historia clínica longitudinal
-Objetivo:
-separar la visita/orden del expediente histórico permanente de la mascota.
+Hospitalizaciones sera modulo propio, no una subpantalla escondida dentro de atenciones.
 
 Debe incluir:
-- ficha médica longitudinal
-- peso, temperatura, signos vitales
-- motivo de consulta
-- anamnesis
-- diagnóstico
-- plan terapéutico
-- evolución
-- historial por mascota, no solo por orden
 
-### J. Digitalización de historial antiguo
-Objetivo:
-permitir migrar documentos y PDF escaneados a historial clínico usable.
+- diagnostico presuntivo
+- temperatura
+- frecuencia respiratoria
+- frecuencia cardiaca
+- peso
+- fecha y hora de internamiento
+- tiempo estimado
+- medico tratante
+- suero
+- farmacos, dosis y frecuencia
+- comida
+- orina
+- heces
+- observaciones
+- TLC
+- mucosas
+- deshidratacion
+- alta
 
-Ver idea detallada en el apartado 13.
+### Cirugias
 
-### K. Configuración avanzada y administración
-Objetivo:
-dar a owner/admin herramientas reales para operar la clínica sin SQL.
+Cirugias no va en la navegacion principal por ahora.
 
-Debe incluir:
-- datos de clínica
-- branding básico
-- usuarios e invitaciones
-- permisos por rol
-- configuración operativa
-- parámetros de catálogo y agenda
+En la fase actual se maneja como programacion dentro de Agenda. Mas adelante tendra logica propia:
 
-### L. Reportes y analítica
-Objetivo:
-dar visibilidad operativa y financiera.
+- tipo de cirugia
+- medico
+- asistentes
+- precio
+- examenes prequirurgicos
+- riesgo
+- materiales
+- anestesia
+- inventario consumido
 
-Posibles reportes:
-- ventas por rango
-- citas por periodo
-- ingresos por médico
-- productos más vendidos
+### Paciente 360
+
+Pacientes debe evolucionar hacia una historia longitudinal completa:
+
+- resumen del paciente
+- responsables
+- observaciones y notas importantes
+- alertas y alergias
+- historial clinico
+- historial grooming
+- historial hospitalizaciones
+- laboratorios
+- datos de control
+- procedimientos
+- diagnosticos
+- prescripciones
+- archivos adjuntos
+- vacunas
+- recordatorios
+- actividad
+
+### Notas importantes del paciente
+
+Las notas importantes del paciente pasan a ser una capacidad transversal. Ejemplos:
+
+- muerde
+- convulsiona
+- se estresa
+- alergias
+- no usar cierto medicamento
+- solo se deja cortar unas con el responsable
+
+Deben ser editables y visibles o accesibles desde:
+
+- Paciente
+- Recepcion
+- Atencion clinica
+- Grooming
+- Hospitalizaciones
+
+### Recordatorios generales
+
+Recordatorios deja de ser solo clinico. Debe soportar:
+
+- llamar responsable
+- aplicar dosis
+- muestra pendiente
+- control
+- vacuna
+- revision
+
+Filtros necesarios:
+
+- vencidos
+- proximos 7 dias
+- proximos 30 dias
+
+Al hacer clic en un filtro, el usuario debe ver la lista correspondiente.
+
+### Inicio
+
+Inicio debe subir de utilidad operativa:
+
+- acciones rapidas mas arriba
+- grooming y banos de hoy
+- cirugias proximas
+- recordatorios vencidos y proximos
 - stock bajo
-- clientes activos/inactivos
-- deuda pendiente
-
----
-
-## 8. Roadmap general por etapas
-
-## Etapa 0 — Estabilización base
-Objetivo:
-que la app deje de romperse en flujos esenciales.
-
-Incluye:
-- login confiable
-- logout confiable
-- cambio de clínica
-- select clínica
-- sidebar coherente
-- rutas canónicas
-- build limpio
-- shell sin errores críticos
-
-**Estado:** avanzado, pero todavía necesita validación continua.
-
----
-
-## Etapa 1 — Beta interna usable
-Objetivo:
-que el sistema pueda probarse de verdad dentro de un entorno controlado.
-
-Incluye:
-- seed demo usable y repetible
-- dashboard real
-- clientes más producto
-- agenda probables
-- atenciones con flujo claro
-- caja/inventario mínimamente útiles
-- ajustes visibles y navegables
-- empty states honestos
-- menos dependencia de SQL manual
-
-**Meta:** primera beta interna utilizable.
-
----
-
-## Etapa 2 — Paridad operativa fuerte
-Objetivo:
-acercarse de verdad a la promesa del Bubble original, pero con mejor base técnica.
-
-Incluye:
-- colas más reales
-- mejor agenda
-- mejor detalle de orden
-- mejor ficha cliente
-- mejor ficha mascota
-- coherencia total entre módulos
-- densidad de información clínica y administrativa
-
-**Meta:** producto usable de verdad para operaciones reales controladas.
-
----
-
-## Etapa 3 — Valor médico real
-Objetivo:
-dejar de ser solo un admin ERP y convertirse en sistema clínico serio.
-
-Incluye:
-- historia clínica longitudinal
-- expediente por mascota
-- mejores formularios clínicos
-- mejores entradas médicas
-- evolución histórica
-- diagnósticos y tratamientos más estructurados
-
-**Meta:** valor clínico real, no solo administrativo.
-
----
-
-## Etapa 4 — Administración avanzada
-Objetivo:
-dar autonomía completa a la clínica.
-
-Incluye:
-- settings completos
-- usuarios y permisos
-- invitaciones
-- más configuración por clínica
-- más control administrativo
-- más métricas y reportes
-
----
-
-## Etapa 5 — Diferenciadores
-Objetivo:
-crear ventajas competitivas frente a otros sistemas.
-
-Incluye:
-- digitalización OCR de historias previas
-- migración asistida
-- automatizaciones
-- reportes avanzados
-- mejores integraciones
-- posibles módulos premium
-
----
-
-## 9. Próximos sprints recomendados
-
-## Sprint recomendado inmediato
-### Sprint A — Logout real + demo data verificable
-Objetivo:
-resolver dos bloqueos operativos muy concretos:
-- cerrar sesión y cambiar clínica funcionando de verdad
-- demo data explícita, repetible y suficiente
-
-### Resultado esperado
-- se puede entrar, salir y cambiar clínica
-- la app ya no se ve vacía
-- se puede probar agenda, clientes, caja e inventario
-
----
-
-## Sprint siguiente
-### Sprint B — Dashboard real + clientes más producto
-Objetivo:
-que Inicio y Clientes se sientan útiles.
-
-Incluye:
-- métricas reales
-- resúmenes
-- tarjetas operativas
-- más densidad en clientes
-- mejor detalle de cliente
-- mejor acción de crear cliente
-
----
-
-## Sprint siguiente
-### Sprint C — Agenda + colas más sólidas
-Objetivo:
-que las citas y la sala de espera se sientan más reales.
-
-Incluye:
-- mejor data demo
-- mejor separación entre agenda y colas
-- colas menos “placeholder”
-- posible transición hacia ItemCola real
-
----
-
-## Sprint siguiente
-### Sprint D — Orden y clínica más rica
-Objetivo:
-mejorar la calidad del trabajo médico dentro de la orden.
-
-Incluye:
-- mejor resumen de orden
-- mejores entradas
-- mejor flujo clínico
-- más datos operativos en una atención
-
----
-
-## Sprint siguiente
-### Sprint E — Historia clínica longitudinal
-Objetivo:
-crear la primera gran capa médica de verdad.
-
----
-
-## 10. Backlog priorizado
-
-## Prioridad alta
-- logout estable
-- cambiar clínica estable
-- demo data repetible
-- clientes suficientes para probar agenda
-- seed con órdenes, citas y ventas
-- agenda sin errores
-- shell sin incoherencias
-- dashboard real
-- clientes más densos
-- detalle de cliente útil
-
-## Prioridad media
-- colas reales
-- mejor orden y colas
-- mejores filtros
-- mejores tablas
-- ajustes más completos
-- caja más rica
-- métricas más completas
-- control más fino por rol
-
-## Prioridad baja / posterior
-- OCR
-- migración documental avanzada
-- reportes premium
-- automatizaciones complejas
-- features experimentales
-
----
-
-## 11. Qué NO hacer
-
-- no abrir ramas nuevas sin necesidad
-- no reescribir todo el proyecto
-- no ocultar errores sin arreglar causa raíz
-- no depender de hacks de seed ocultos
-- no mezclar demasiados objetivos en un solo sprint
-- no desarrollar módulos enormes sin antes cerrar la estabilidad básica
-- no asumir que “backend hecho = producto listo”
-
----
-
-## 12. Criterios de calidad para cualquier cambio futuro
-
-Todo sprint futuro debería dejar:
-
-1. **causa raíz identificada**
-2. **archivos modificados claros**
-3. **build en verde**
-4. **typecheck en verde**
-5. **sin ramas nuevas**
-6. **sin basura local en commit**
-7. **flujo funcional probado**
-8. **entrega clara de lo pendiente**
-
----
-
-## 13. Idea estratégica: digitalización de historias médicas veterinarias
-
-### Resumen
-Se propone incorporar al sistema una funcionalidad de digitalización de historias médicas antiguas o externas, con el objetivo de convertir documentación clínica no estructurada en registros digitales reutilizables dentro de VetERP.
-
-### Problema
-Muchas clínicas veterinarias tienen historias médicas en alguno de estos formatos:
-1. Escritas a mano sobre papel.
-2. Escritas en computadora, impresas y luego escaneadas.
-3. Guardadas en PDF como imagen, sin texto seleccionable.
-4. Mezclas de texto, tablas, observaciones clínicas y resultados de laboratorio no estructurados.
-
-Esto dificulta enormemente la migración a un sistema digital, ya que obliga a cargar la información manualmente, con alto costo de tiempo y riesgo de error.
-
-### Propuesta
-Crear un módulo de digitalización documental que permita subir archivos PDF escaneados y transformarlos en información digital estructurada o semiestructurada, lista para revisión y posterior incorporación al sistema.
-
-### Flujo propuesto
-1. Carga de documentos PDF.
-2. Preprocesamiento del archivo.
-3. OCR.
-4. Limpieza y normalización.
-5. Reconstrucción del contenido.
-6. Revisión humana.
-7. Vinculación con cliente / mascota / historial clínico.
-
-### Alcance realista
-Más viable para:
-- PDFs escaneados de documentos impresos por computadora
-- informes clínicos y laboratorios
-
-Más complejo para:
-- manuscritos
-- letra médica difícil
-- escaneos de mala calidad
-
-### Modelo de monetización posible
-- servicio adicional por documento
-- paquete de migración inicial
-- funcionalidad premium
-- cobro por volumen de páginas
-
-### Recomendación
-No implementarlo todavía.  
-Primero cerrar la beta operativa del producto base.
-
----
-
-## 14. Conclusión
-
-VetERP ya tiene una base técnica importante, pero todavía no debe tratarse como producto terminado.
-
-La prioridad actual no es “agregar cualquier feature nueva”, sino:
-
-1. estabilizar
-2. poblar demo data útil
-3. convertir las pantallas base en producto usable
-4. consolidar agenda, clientes, atenciones y caja
-5. luego avanzar a historia clínica, configuración avanzada y OCR
-
-Este roadmap debe usarse como guía central para cualquier nueva iteración del proyecto.
+- caja si el rol tiene permiso
+
+## 6. Mapa de modulos actual
+
+| Modulo | Estado | Observacion |
+|---|---|---|
+| Auth / Clinica | Beta usable | Deploy y flujo base funcionando. |
+| Staff | Beta usable | Roles basicos e invitaciones; falta profundidad de permisos. |
+| Inicio | Usable, incompleto | Necesita convertirse en panel operativo real. |
+| Recepcion | Falta como modulo visible | Atenciones/Colas existen, pero no como experiencia de recepcion. |
+| Agenda | Beta usable | Ya soporta areas; debe consolidarse como programacion. |
+| Clientes | Beta usable | Flujo base funcionando. |
+| Pacientes | Usable, incompleto | Debe evolucionar a Paciente 360. |
+| Atencion / Orden | Beta usable | Base clinica y comercial ya existe. |
+| Grooming | Parcial | Hay tipos/servicios; falta modulo operativo propio. |
+| Hospitalizaciones | Falta | Debe ser modulo separado. |
+| Cirugias | Parcial por Agenda | Programable, sin flujo quirurgico propio. |
+| Caja / Cobro | Beta usable | Cobro basico y estado de cuenta inicial. |
+| Inventario | Beta usable MVP | Movimientos e historial; falta conexion con servicios y consumo. |
+| Catalogo | Beta usable | Productos/servicios editables. |
+| Seguimientos | Basico | Debe evolucionar a recordatorios generales. |
+| Ajustes | Usable | Configuracion base; faltan maestros mas completos. |
+
+## 7. Roadmap por fases
+
+## Fase 0 - Beta base cerrada
+
+### Objetivo
+
+Conservar y estabilizar lo ya funcional sin abrir modulos grandes.
+
+### Entra
+
+- Validar deploy EC2.
+- Mantener flujos actuales de clientes, pacientes, agenda, orden, caja e inventario.
+- Cerrar bugs P0/P1 de beta.
+- Mantener agenda por areas.
+- Confirmar que grooming/banos/movilidad/cirugias programadas aparecen correctamente.
+- Mantener servicios editables.
+- Mantener inventario MVP.
+
+### No entra
+
+- Redisenar navegacion completa.
+- Crear hospitalizaciones.
+- Crear modulo quirurgico completo.
+- Conectar inventario a cada servicio.
+
+### Valor
+
+Permite seguir usando la beta sin desordenar la base que ya funciona.
+
+## Fase 1 - Reorganizacion operativa
+
+### Objetivo
+
+Separar lo programado de lo que entra hoy por recepcion.
+
+### Entra
+
+- Crear modulo visible de Recepcion.
+- Flujo: buscar o crear cliente/paciente.
+- Registrar motivo libre.
+- Marcar destino: clinica, grooming o emergencia.
+- Abrir atencion clinica desde recepcion.
+- Ajustar navegacion objetivo.
+- Ocultar progresivamente Atenciones y Colas del nav principal sin borrar rutas.
+- Mejorar Inicio con acciones rapidas mas visibles.
+
+### No entra
+
+- Motor complejo de triage.
+- Reglas avanzadas de sala de espera.
+- Redisenar toda Orden de Servicio.
+
+### Dependencias
+
+- Clientes.
+- Pacientes.
+- Ordenes existentes.
+- Agenda actual.
+
+### Riesgo
+
+Duplicar flujos si Recepcion no se define como la entrada operativa principal.
+
+### Valor
+
+Muy alto. Ordena el uso diario y hace que el sistema se entienda mejor en clinica real.
+
+## Fase 2 - Paciente 360
+
+### Objetivo
+
+Convertir Pacientes en la historia longitudinal central del animal.
+
+### Entra
+
+- Resumen clinico del paciente.
+- Responsables.
+- Notas importantes.
+- Alertas y alergias.
+- Historial clinico.
+- Historial grooming.
+- Historial hospitalizaciones.
+- Laboratorios.
+- Datos de control.
+- Procedimientos.
+- Diagnosticos.
+- Prescripciones.
+- Archivos adjuntos.
+- Vacunas.
+- Recordatorios.
+- Actividad.
+
+### No entra
+
+- Motor medico experto.
+- Codificacion clinica exhaustiva.
+- Portal externo para responsables.
+
+### Dependencias
+
+- Ficha de paciente actual.
+- Ordenes clinicas.
+- Seguimientos.
+- Futura recepcion.
+
+### Riesgo
+
+Sobrecargar la ficha si se intenta meter todo en una sola pantalla sin jerarquia.
+
+### Valor
+
+Muy alto. Es el corazon clinico del producto.
+
+## Fase 3 - Recordatorios generales
+
+### Objetivo
+
+Pasar de seguimientos clinicos basicos a recordatorios operativos generales.
+
+### Entra
+
+- Tipos de recordatorio generales.
+- Vencidos.
+- Proximos 7 dias.
+- Proximos 30 dias.
+- Lista navegable al hacer clic.
+- Visibilidad desde Inicio.
+- Relacion con paciente y cliente cuando aplique.
+
+### No entra
+
+- WhatsApp automatico.
+- Email automatico.
+- Campanas masivas.
+
+### Dependencias
+
+- Paciente.
+- Clientes.
+- Inicio.
+
+### Riesgo
+
+Confundir recordatorio con cita si no se mantiene clara la diferencia entre tarea pendiente y evento programado.
+
+### Valor
+
+Alto. Mejora retencion, seguimiento y operacion diaria.
+
+## Fase 4 - Grooming real
+
+### Objetivo
+
+Crear el modulo operativo de grooming separado de consulta clinica.
+
+### Entra
+
+- Lista/tablero de grooming.
+- Banos, grooming, cortes, deslanado y desmotado.
+- Servicios y combos configurables.
+- Estado del servicio.
+- Observaciones del paciente visibles.
+- Notas de manejo.
+- Entrada desde Agenda y Recepcion.
+
+### No entra
+
+- Consumo automatico de inventario.
+- Comisiones complejas.
+- Rutas de movilidad.
+
+### Dependencias
+
+- Agenda por areas.
+- Recepcion.
+- Catalogo de servicios.
+- Notas importantes del paciente.
+
+### Riesgo
+
+Tratar grooming como una cita clinica mas y perder su operacion propia.
+
+### Valor
+
+Alto. Responde a una necesidad operativa real y separa visualmente areas de trabajo.
+
+## Fase 5 - Hospitalizaciones
+
+### Objetivo
+
+Crear un modulo propio para pacientes internados.
+
+### Entra
+
+- Alta de internamiento.
+- Diagnostico presuntivo.
+- Signos vitales: temperatura, FR, FC, peso.
+- Fecha/hora de ingreso.
+- Tiempo estimado.
+- Medico tratante.
+- Suero.
+- Farmacos, dosis y frecuencia.
+- Registros de comida, orina y heces.
+- TLC, mucosas y deshidratacion.
+- Observaciones.
+- Alta.
+- Visibilidad desde Paciente 360.
+
+### No entra
+
+- Camas/jaulas avanzadas.
+- Facturacion hospitalaria compleja.
+- Protocolos automatizados.
+
+### Dependencias
+
+- Paciente 360.
+- Recepcion.
+- Orden clinica.
+
+### Riesgo
+
+Abrir demasiada complejidad hospitalaria antes de cerrar el flujo minimo.
+
+### Valor
+
+Medio-alto. Es clave para clinicas con internamiento, pero debe venir despues de ordenar recepcion y paciente.
+
+## Fase 6 - Cirugias
+
+### Objetivo
+
+Agregar logica quirurgica propia sin poner Cirugias en el nav principal al inicio.
+
+### Entra
+
+- Cirugias como eventos programados en Agenda.
+- Tipo de cirugia.
+- Medico.
+- Asistentes.
+- Precio.
+- Examenes.
+- Riesgo.
+- Materiales.
+- Anestesia.
+- Inventario consumido en una fase posterior.
+
+### No entra
+
+- Modulo visible en nav principal en el corto plazo.
+- Sala quirurgica avanzada.
+- Protocolos quirurgicos complejos desde el primer corte.
+
+### Dependencias
+
+- Agenda.
+- Paciente 360.
+- Inventario conectado a servicios.
+
+### Riesgo
+
+Crear un modulo quirurgico demasiado pronto y duplicar ordenes clinicas.
+
+### Valor
+
+Medio. Importante, pero no debe desplazar Recepcion, Paciente 360 o Grooming.
+
+## Fase 7 - Inventario conectado a servicios
+
+### Objetivo
+
+Conectar consumo de productos con servicios reales, sin romper el Inventario MVP.
+
+### Entra
+
+- Productos usados por servicio de grooming.
+- Productos usados por procedimientos.
+- Consumo manual asistido desde orden/servicio.
+- Historial claro de stock.
+- Alertas por stock bajo en Inicio.
+
+### No entra
+
+- Lotes y vencimientos avanzados en primera iteracion.
+- Compras complejas.
+- Costeo avanzado.
+
+### Dependencias
+
+- Inventario MVP.
+- Catalogo de servicios.
+- Grooming real.
+- Orden clinica.
+
+### Riesgo
+
+Descontar stock automaticamente sin que el usuario entienda o confirme el consumo.
+
+### Valor
+
+Alto. Convierte inventario en parte real de la operacion y no solo en almacen aislado.
+
+## 8. Prioridad recomendada
+
+1. Reorganizacion operativa: Recepcion + navegacion objetivo.
+2. Inicio operativo: acciones rapidas, grooming de hoy, cirugias proximas, recordatorios y stock bajo.
+3. Notas importantes del paciente como capacidad transversal.
+4. Paciente 360 incremental.
+5. Recordatorios generales.
+6. Grooming real.
+7. Hospitalizaciones.
+8. Cirugias con logica propia.
+9. Inventario conectado a servicios.
+
+## 9. Pendientes abiertos
+
+- Definir si Recepcion crea una orden inmediatamente o primero crea un ingreso/cola liviana.
+- Definir si emergencia entra como destino propio o como prioridad dentro de clinica.
+- Definir modelo minimo de notas importantes del paciente.
+- Definir si recordatorios generales viven como tabla nueva o evolucionan desde seguimientos existentes.
+- Definir como se relaciona Grooming con Orden de Servicio actual.
+- Definir si Hospitalizaciones factura por orden, por estancia o por eventos.
+- Definir cuanto de Cirugias se modela antes de conectar inventario.
+- Definir permisos por rol para ver caja, editar servicios, gestionar staff y operar hospitalizaciones.
+
+## 10. Que no hacer todavia
+
+- No crear modulo completo de cirugias en navegacion principal.
+- No abrir hospitalizaciones antes de Recepcion y Paciente 360.
+- No conectar inventario automaticamente a todos los servicios sin flujo de confirmacion.
+- No crear WhatsApp automatico antes de cerrar recordatorios generales.
+- No abrir reportes avanzados antes de ordenar datos base.
+- No borrar rutas de Atenciones o Colas hasta que Recepcion absorba su uso real.
+- No convertir Agenda en una mezcla de todo; debe quedar para eventos programados.
+
+## 11. Criterio de exito para beta v1
+
+VetERP estara listo como beta v1 mas solida cuando:
+
+- el usuario pueda entrar por Recepcion o Agenda sin dudar;
+- Inicio muestre lo importante del dia;
+- Grooming y clinica esten separados visualmente;
+- las notas importantes del paciente aparezcan donde importan;
+- los recordatorios vencidos/proximos sean accionables;
+- Paciente empiece a funcionar como historia longitudinal;
+- caja, inventario y catalogo sigan funcionando sin regresiones.
+
+## 12. Resumen ejecutivo
+
+El producto ya tiene suficiente base para dejar de pensar solo en pantallas aisladas. La siguiente etapa debe ordenar la operacion real:
+
+- Agenda para programacion.
+- Recepcion para ingreso del dia.
+- Paciente como historia longitudinal.
+- Grooming y Hospitalizaciones como modulos propios.
+- Cirugias primero como programacion, luego como flujo especializado.
+- Inventario conectado a servicios solo cuando los servicios esten bien modelados.
+
+El siguiente bloque recomendado es Reorganizacion operativa: Recepcion + navegacion objetivo + mejoras de Inicio.
