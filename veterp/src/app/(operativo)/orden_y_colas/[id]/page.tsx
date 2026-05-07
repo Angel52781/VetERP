@@ -17,6 +17,7 @@ import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions";
 import { SeguimientosCard } from "../../seguimientos-card";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
+import { getAgeFromDateOnly } from "@/lib/date-only";
 
 interface PageProps {
   params: Promise<{
@@ -50,6 +51,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
     ? returnTo
     : "/atenciones";
   const mascotaReturnTo = encodeURIComponent(`/orden_y_colas/${id}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`);
+  const pacienteAge = getAgeFromDateOnly((orden.mascotas as any)?.nacimiento);
 
   return (
     <div className="container mx-auto py-8 max-w-5xl space-y-6">
@@ -146,12 +148,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
 
                   <span className="font-medium text-muted-foreground">Edad:</span>
                   <span className="col-span-2">
-                    {orden.mascotas?.nacimiento
-                      ? `${Math.floor(
-                          (new Date().getTime() - new Date(orden.mascotas.nacimiento).getTime()) /
-                            (1000 * 60 * 60 * 24 * 365.25)
-                        )} años`
-                      : "N/A"}
+                    {pacienteAge !== null ? `${pacienteAge} años` : "N/A"}
                   </span>
                 </div>
                 {(orden.mascotas as any)?.notas_manejo?.trim() && (

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { differenceInYears, format } from "date-fns";
+import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PawPrint, Search, User } from "lucide-react";
 
@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NuevaAtencionForm } from "../index/nueva-atencion-form";
 import { AgendarCitaPacienteBtn } from "./agendar-cita-paciente-btn";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
+import { getAgeFromDateOnly } from "@/lib/date-only";
 
 export const dynamic = "force-dynamic";
 
@@ -132,9 +133,8 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
         <div className="divide-y rounded-lg border">
           {mascotasFiltradas.map((mascota: any) => {
             const responsable = mascota.clientes as any;
-            const edad = mascota.nacimiento
-              ? `${Math.max(0, differenceInYears(now, new Date(mascota.nacimiento)))} año${Math.max(0, differenceInYears(now, new Date(mascota.nacimiento))) === 1 ? "" : "s"}`
-              : "Edad no registrada";
+            const edadYears = getAgeFromDateOnly(mascota.nacimiento, now);
+            const edad = edadYears === null ? "Edad no registrada" : `${edadYears} año${edadYears === 1 ? "" : "s"}`;
             const proximaCita = proximaCitaByMascota.get(mascota.id);
             const ultimaAtencion = ultimaAtencionByMascota.get(mascota.id);
 

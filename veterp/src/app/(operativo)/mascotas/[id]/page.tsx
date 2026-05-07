@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { format, differenceInYears, isBefore, parseISO, startOfDay } from "date-fns";
+import { format, isBefore, parseISO, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 import { BtnNuevaAtencion } from "./btn-nueva-atencion";
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
+import { formatDateOnly, getAgeFromDateOnly } from "@/lib/date-only";
 
 const CITA_ESTADO_META: Record<string, { label: string; className: string }> = {
   programada: { label: "Programada", className: "bg-blue-100 text-blue-800" },
@@ -61,9 +62,9 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const lastOrden = ordenes?.[0];
   const activeOrden = ordenes?.find((o) => ["open", "in_progress"].includes(o.estado_text));
 
-  const ageString = mascota.nacimiento
-    ? `${Math.max(0, differenceInYears(now, new Date(mascota.nacimiento)))} años`
-    : null;
+  const ageYears = getAgeFromDateOnly(mascota.nacimiento, now);
+  const ageString = ageYears === null ? null : `${ageYears} años`;
+  const birthDateString = formatDateOnly(mascota.nacimiento);
 
   const rawEntradas = ordenes?.flatMap((o) => o.entradas_clinicas || [])
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) || [];
@@ -132,7 +133,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               <p className="text-sm text-muted-foreground mt-0.5">
                 {formatBreedLabel(mascota.raza)}
                 {ageString && ` · ${ageString}`}
-                {mascota.nacimiento && ` · Nac. ${format(new Date(mascota.nacimiento), "dd/MM/yyyy")}`}
+                {mascota.nacimiento && ` · Nac. ${birthDateString}`}
               </p>
               <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
                 <User className="h-3.5 w-3.5" />

@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SPECIES_OPTIONS } from "@/lib/patient-labels";
+import { toDateOnlyInputValue } from "@/lib/date-only";
 import { mascotaSchema, type MascotaFormValues } from "@/lib/validators/clientes";
 
 type MascotaEditDialogProps = {
@@ -52,7 +53,7 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
       nombre: mascota.nombre,
       especie: mascota.especie ?? "",
       raza: mascota.raza ?? "",
-      nacimiento: mascota.nacimiento ?? "",
+      nacimiento: toDateOnlyInputValue(mascota.nacimiento),
       alertas_criticas: mascota.alertas_criticas ?? "",
       notas_manejo: mascota.notas_manejo ?? "",
     },
@@ -66,7 +67,7 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
         nombre: mascota.nombre,
         especie: mascota.especie ?? "",
         raza: mascota.raza ?? "",
-        nacimiento: mascota.nacimiento ?? "",
+        nacimiento: toDateOnlyInputValue(mascota.nacimiento),
         alertas_criticas: mascota.alertas_criticas ?? "",
         notas_manejo: mascota.notas_manejo ?? "",
       });
