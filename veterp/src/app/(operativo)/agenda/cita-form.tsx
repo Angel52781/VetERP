@@ -16,7 +16,10 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -48,6 +51,11 @@ function toDateTimeLocalInput(value?: string, fallbackNow = false) {
   return format(date, "yyyy-MM-dd'T'HH:mm");
 }
 
+function getTipoCitaLabel(tipo: TipoCitaAgenda) {
+  const area = AREA_META[normalizeCitaArea(tipo.area)].shortLabel;
+  return `${area} · ${tipo.nombre} (${tipo.duracion_min} min)`;
+}
+
 export function CitaForm({
   clientes,
   tiposCita,
@@ -63,7 +71,6 @@ export function CitaForm({
   const [loadingMascotas, setLoadingMascotas] = useState(false);
 
   const defaultStartDate = toDateTimeLocalInput(initialValues?.start_date || initialDate, true);
-  // Default end date +30 min
   const defaultEndDate = initialValues?.end_date
     ? toDateTimeLocalInput(initialValues.end_date)
     : format(addMinutes(new Date(defaultStartDate), 30), "yyyy-MM-dd'T'HH:mm");
@@ -87,16 +94,15 @@ export function CitaForm({
   const selectedClienteId = form.watch("cliente_id");
   const selectedTipoCitaId = form.watch("tipo_cita_id");
   const selectedStartDate = form.watch("start_date");
-  const tiposCitaOrdenados = useMemo(() => {
-    return [...tiposCita].sort((a, b) => {
-      const areaA = normalizeCitaArea(a.area);
-      const areaB = normalizeCitaArea(b.area);
-      const areaDiff = AREA_ORDER.indexOf(areaA) - AREA_ORDER.indexOf(areaB);
-      return areaDiff || a.nombre.localeCompare(b.nombre, "es");
-    });
+  const tiposCitaAgrupados = useMemo(() => {
+    return AREA_ORDER.map((area) => ({
+      area,
+      tipos: tiposCita
+        .filter((tipo) => normalizeCitaArea(tipo.area) === area)
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, "es")),
+    })).filter((group) => group.tipos.length > 0);
   }, [tiposCita]);
 
-  // Track if end_date was modified manually by the user
   const [isEndDateManual, setIsEndDateManual] = useState(false);
 
   useEffect(() => {
@@ -108,14 +114,13 @@ export function CitaForm({
       setLoadingMascotas(true);
       const { data, error } = await getMascotasDeCliente(selectedClienteId);
       setLoadingMascotas(false);
-      
+
       if (error) {
         toast.error("Error al cargar mascotas");
         return;
       }
       if (data) {
         setMascotas(data);
-        // Si el cliente no tiene la mascota seleccionada actual, resetear
         const currentMascota = form.getValues("mascota_id");
         if (currentMascota && !data.find((m) => m.id === currentMascota)) {
           form.resetField("mascota_id", { defaultValue: "" });
@@ -126,8 +131,6 @@ export function CitaForm({
   }, [selectedClienteId, form]);
 
   useEffect(() => {
-    // Actualizar la fecha de fin basada en la duración del tipo de cita seleccionado
-    // Solo si el usuario NO la ha modificado manualmente
     if (selectedTipoCitaId && selectedStartDate && !isEndDateManual) {
       const tipo = tiposCita.find((t) => t.id === selectedTipoCitaId);
       if (tipo) {
@@ -171,17 +174,17 @@ export function CitaForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Responsable</FormLabel>
-              <Select 
+              <Select
                 onValueChange={(val) => {
                   field.onChange(val || "");
                   form.resetField("mascota_id", { defaultValue: "" });
-                }} 
+                }}
                 value={field.value || ""}
               >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona un responsable">
-                      {field.value ? clientes.find(c => c.id === field.value)?.nombre : "Selecciona un responsable"}
+                      {field.value ? clientes.find((c) => c.id === field.value)?.nombre : "Selecciona un responsable"}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
@@ -231,8 +234,8 @@ export function CitaForm({
                         className={cn(
                           "relative flex flex-col items-start p-3 text-left border rounded-lg transition-all",
                           "hover:border-primary/50 hover:bg-accent/50",
-                          field.value === m.id 
-                            ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm" 
+                          field.value === m.id
+                            ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
                             : "border-input bg-background"
                         )}
                       >
@@ -264,30 +267,43 @@ export function CitaForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tipo de Cita</FormLabel>
-              <Select 
+              <Select
                 onValueChange={(val) => {
                   field.onChange(val || "");
                   form.trigger("tipo_cita_id");
-                }} 
+                }}
                 value={field.value || ""}
               >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecciona un tipo de cita">
-                      {field.value 
+                      {field.value
                         ? (() => {
-                            const t = tiposCita.find(t => t.id === field.value);
-                            return t ? `${t.nombre} (${t.duracion_min} min)` : "Selecciona un tipo de cita";
+                            const tipo = tiposCita.find((item) => item.id === field.value);
+                            return tipo ? getTipoCitaLabel(tipo) : "Selecciona un tipo de cita";
                           })()
                         : "Selecciona un tipo de cita"}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  {tiposCitaOrdenados.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      {AREA_META[normalizeCitaArea(t.area)].shortLabel} · {t.nombre} ({t.duracion_min} min)
-                    </SelectItem>
+                <SelectContent alignItemWithTrigger className="max-h-80">
+                  {tiposCitaAgrupados.map((group, index) => (
+                    <SelectGroup key={group.area}>
+                      {index > 0 && <SelectSeparator />}
+                      <SelectLabel className="font-semibold uppercase tracking-wide">
+                        {AREA_META[group.area].label}
+                      </SelectLabel>
+                      {group.tipos.map((tipo) => (
+                        <SelectItem key={tipo.id} value={tipo.id}>
+                          <span className="flex min-w-0 flex-col py-0.5 leading-tight">
+                            <span className="truncate font-medium">{tipo.nombre}</span>
+                            <span className="text-[11px] text-muted-foreground">
+                              {AREA_META[group.area].shortLabel} · {tipo.duracion_min} min
+                            </span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   ))}
                 </SelectContent>
               </Select>
@@ -318,9 +334,9 @@ export function CitaForm({
               <FormItem>
                 <FormLabel>Fecha y Hora de Fin</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="datetime-local" 
-                    {...field} 
+                  <Input
+                    type="datetime-local"
+                    {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       setIsEndDateManual(true);

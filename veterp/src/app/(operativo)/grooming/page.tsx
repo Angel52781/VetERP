@@ -1,19 +1,10 @@
 import Link from "next/link";
-import { format, startOfDay, endOfDay } from "date-fns";
+import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Scissors, CalendarDays, ShoppingBag, Info, AlertTriangle } from "lucide-react";
-
+import { Scissors, CalendarDays, Inbox } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-import { requireClinicaIdFromCookies } from "@/lib/clinica";
-import { createClient } from "@/lib/supabase/server";
+import { getGroomingDia } from "./actions";
+import { GroomingCard } from "./grooming-client";
 
 export const dynamic = "force-dynamic";
 
@@ -23,44 +14,18 @@ export const metadata = {
 };
 
 export default async function GroomingPage() {
-  const clinicaId = await requireClinicaIdFromCookies();
-  const supabase = await createClient();
-
   const hoy = new Date();
-  const inicioHoy = startOfDay(hoy).toISOString();
-  const finHoy = endOfDay(hoy).toISOString();
+  const { data: citas, error } = await getGroomingDia();
 
-  // Citas de hoy cuyo tipo_cita pertenece a área banos o grooming
-  const { data: citasGrooming } = await supabase
-    .from("citas")
-    .select(
-      `id, start_date, end_date, estado,
-       clientes:cliente_id (nombre),
-       mascotas:mascota_id (nombre, alertas_criticas),
-       tipo_citas:tipo_cita_id (nombre, color, area)`
-    )
-    .eq("clinica_id", clinicaId)
-    .gte("start_date", inicioHoy)
-    .lte("start_date", finHoy)
-    .not("estado", "in", '("cancelada","no_asistio")')
-    .order("start_date", { ascending: true });
-
-  // Filtrar solo las de área banos o grooming (en cliente para evitar join complejo)
-  const citasFiltradas = (citasGrooming ?? []).filter(
-    (c: any) => c.tipo_citas?.area === "banos" || c.tipo_citas?.area === "grooming"
+  const pendientes = citas.filter(
+    (c: any) => c.grooming_servicios?.[0]?.estado_text !== "completado"
+  );
+  const completados = citas.filter(
+    (c: any) => c.grooming_servicios?.[0]?.estado_text === "completado"
   );
 
-  const estadoLabels: Record<string, string> = {
-    programada: "Programada",
-    confirmada: "Confirmada",
-    llego: "Llegó",
-    en_atencion: "En servicio",
-    completada: "Completada",
-  };
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -68,8 +33,7 @@ export default async function GroomingPage() {
             Grooming
           </h1>
           <p className="text-sm text-muted-foreground">
-            Baños, cortes, grooming y servicios relacionados —{" "}
-            {format(hoy, "EEEE d 'de' MMMM", { locale: es })}
+            Baños, cortes, grooming y servicios relacionados - {format(hoy, "EEEE d 'de' MMMM", { locale: es })}
           </p>
         </div>
         <Link href="/agenda" className={buttonVariants({ variant: "default" })}>
@@ -78,124 +42,75 @@ export default async function GroomingPage() {
         </Link>
       </div>
 
-      {/* Aviso de módulo en construcción */}
-      <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
-        <CardHeader className="pb-2 flex flex-row items-center gap-3">
-          <Info className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
-          <CardTitle className="text-sm font-semibold text-amber-800 dark:text-amber-200">
-            Módulo operativo en construcción
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-amber-700 dark:text-amber-300">
-            Por ahora, programa los servicios de baño/grooming desde{" "}
-            <Link href="/agenda" className="font-semibold underline">
-              Agenda
-            </Link>{" "}
-            y cobra desde{" "}
-            <Link href="/caja" className="font-semibold underline">
-              Caja
-            </Link>{" "}
-            /
-            <Link href="/ajustes?tab=catalogo" className="font-semibold underline ml-1">
-              Catálogo
-            </Link>
-            . El flujo operativo completo (cola de grooming, consumo de productos, historial de cortes) estará disponible en la siguiente fase.
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Citas de Baño / Grooming hoy */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold tracking-tight">
-            Servicios de baño / grooming hoy{" "}
-            {citasFiltradas.length > 0 && (
-              <span className="ml-2 text-xs font-normal text-muted-foreground">
-                ({citasFiltradas.length})
-              </span>
-            )}
-          </h2>
-          <Link href="/agenda" className={buttonVariants({ variant: "outline", size: "sm" })}>
-            Ver agenda completa
-          </Link>
+      {error && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          Error cargando servicios: {error}
         </div>
+      )}
 
-        {citasFiltradas.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            No hay servicios de baño o grooming programados para hoy.
-            <br />
-            <Link href="/agenda" className="mt-3 inline-block text-primary underline text-xs">
-              Programar servicio en Agenda →
-            </Link>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-lg border p-3 text-center">
+          <p className="text-2xl font-bold">{citas.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Total hoy</p>
+        </div>
+        <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-3 text-center">
+          <p className="text-2xl font-bold text-amber-700">{pendientes.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Pendientes</p>
+        </div>
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50/40 p-3 text-center">
+          <p className="text-2xl font-bold text-emerald-700">{completados.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Completados</p>
+        </div>
+      </div>
+
+      {citas.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center gap-3">
+          <Inbox className="h-10 w-10 text-muted-foreground/30" />
+          <div>
+            <p className="font-medium text-sm">Sin servicios de baño o grooming para hoy</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Programa los servicios desde{" "}
+              <Link href="/agenda" className="text-primary underline">
+                Agenda
+              </Link>
+              , usando un tipo de cita con área &quot;Baños&quot; o &quot;Grooming&quot;.
+            </p>
           </div>
-        ) : (
-          <div className="divide-y rounded-lg border">
-            {citasFiltradas.map((cita: any) => (
-              <div
-                key={cita.id}
-                className="flex items-center justify-between px-4 py-3 gap-4"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  {cita.tipo_citas?.color && (
-                    <div
-                      className="h-3 w-3 rounded-full shrink-0"
-                      style={{ backgroundColor: cita.tipo_citas.color }}
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm truncate flex items-center gap-1">
-                      {cita.mascotas?.alertas_criticas?.trim() && (
-                        <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" />
-                      )}
-                      {cita.mascotas?.nombre ?? "Sin paciente"}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {cita.clientes?.nombre ?? "Sin responsable"} ·{" "}
-                      {cita.tipo_citas?.nombre ?? "Sin tipo"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-xs text-muted-foreground hidden sm:inline">
-                    {format(new Date(cita.start_date), "HH:mm")}
-                  </span>
-                  <Badge variant="secondary">
-                    {estadoLabels[cita.estado] ?? cita.estado}
-                  </Badge>
-                </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {pendientes.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Pendientes ({pendientes.length})
+              </h2>
+              <div className="space-y-3">
+                {pendientes.map((cita: any) => (
+                  <GroomingCard key={cita.id} cita={cita} />
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+            </section>
+          )}
 
-      {/* Accesos rápidos */}
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">Accesos rápidos</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Link
-            href="/agenda"
-            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-          >
-            <CalendarDays className="h-5 w-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-medium">Agenda</p>
-              <p className="text-xs text-muted-foreground">Programar cita de baño o grooming</p>
-            </div>
-          </Link>
-          <Link
-            href="/ajustes"
-            className="flex items-center gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-          >
-            <ShoppingBag className="h-5 w-5 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm font-medium">Catálogo de servicios</p>
-              <p className="text-xs text-muted-foreground">Ver y editar precios de grooming</p>
-            </div>
-          </Link>
+          {completados.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Completados ({completados.length})
+              </h2>
+              <div className="space-y-3">
+                {completados.map((cita: any) => (
+                  <GroomingCard key={cita.id} cita={cita} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
-      </section>
+      )}
+
+      <p className="text-xs text-muted-foreground border-t pt-4">
+        Próximas fases: historial de grooming por paciente, consumo de productos,
+        fotos antes/después, combos y descuentos.
+      </p>
     </div>
   );
 }
