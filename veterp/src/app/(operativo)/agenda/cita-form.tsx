@@ -23,11 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { citaSchema, CitaInput } from "@/lib/validators/agenda";
+import { citaSchema, type CitaInput } from "@/lib/validators/agenda";
 import { createCita, getMascotasDeCliente, updateCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AREA_META, AREA_ORDER, normalizeCitaArea, type TipoCitaAgenda } from "./types";
 
@@ -69,6 +69,7 @@ export function CitaForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mascotas, setMascotas] = useState<{ id: string; nombre: string }[]>([]);
   const [loadingMascotas, setLoadingMascotas] = useState(false);
+  const [tipoSearch, setTipoSearch] = useState("");
 
   const defaultStartDate = toDateTimeLocalInput(initialValues?.start_date || initialDate, true);
   const defaultEndDate = initialValues?.end_date
@@ -94,14 +95,23 @@ export function CitaForm({
   const selectedClienteId = form.watch("cliente_id");
   const selectedTipoCitaId = form.watch("tipo_cita_id");
   const selectedStartDate = form.watch("start_date");
+  const currentTipoCitaId = initialValues?.tipo_cita_id ?? null;
+  const tiposCitaDisponibles = useMemo(() => {
+    return tiposCita.filter((tipo) => !tipo.is_disabled || tipo.id === currentTipoCitaId);
+  }, [currentTipoCitaId, tiposCita]);
   const tiposCitaAgrupados = useMemo(() => {
+    const query = tipoSearch.trim().toLowerCase();
     return AREA_ORDER.map((area) => ({
       area,
-      tipos: tiposCita
+      tipos: tiposCitaDisponibles
         .filter((tipo) => normalizeCitaArea(tipo.area) === area)
-        .sort((a, b) => a.nombre.localeCompare(b.nombre, "es")),
+        .filter((tipo) => {
+          if (!query) return true;
+          return tipo.nombre.toLowerCase().includes(query) || AREA_META[area].label.toLowerCase().includes(query);
+        })
+        .sort((a, b) => Number(a.is_disabled) - Number(b.is_disabled) || a.nombre.localeCompare(b.nombre, "es")),
     })).filter((group) => group.tipos.length > 0);
-  }, [tiposCita]);
+  }, [tipoSearch, tiposCitaDisponibles]);
 
   const [isEndDateManual, setIsEndDateManual] = useState(false);
 
@@ -132,7 +142,7 @@ export function CitaForm({
 
   useEffect(() => {
     if (selectedTipoCitaId && selectedStartDate && !isEndDateManual) {
-      const tipo = tiposCita.find((t) => t.id === selectedTipoCitaId);
+      const tipo = tiposCitaDisponibles.find((t) => t.id === selectedTipoCitaId);
       if (tipo) {
         const start = new Date(selectedStartDate);
         if (!isNaN(start.getTime())) {
@@ -141,7 +151,7 @@ export function CitaForm({
         }
       }
     }
-  }, [selectedTipoCitaId, selectedStartDate, tiposCita, form, isEndDateManual]);
+  }, [selectedTipoCitaId, selectedStartDate, tiposCitaDisponibles, form, isEndDateManual]);
 
   async function onSubmit(data: CitaInput) {
     setIsSubmitting(true);
@@ -271,6 +281,7 @@ export function CitaForm({
                 onValueChange={(val) => {
                   field.onChange(val || "");
                   form.trigger("tipo_cita_id");
+                  setTipoSearch("");
                 }}
                 value={field.value || ""}
               >
@@ -279,32 +290,51 @@ export function CitaForm({
                     <SelectValue placeholder="Selecciona un tipo de cita">
                       {field.value
                         ? (() => {
-                            const tipo = tiposCita.find((item) => item.id === field.value);
+                            const tipo = tiposCitaDisponibles.find((item) => item.id === field.value);
                             return tipo ? getTipoCitaLabel(tipo) : "Selecciona un tipo de cita";
                           })()
                         : "Selecciona un tipo de cita"}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent alignItemWithTrigger className="max-h-80">
-                  {tiposCitaAgrupados.map((group, index) => (
-                    <SelectGroup key={group.area}>
-                      {index > 0 && <SelectSeparator />}
-                      <SelectLabel className="font-semibold uppercase tracking-wide">
-                        {AREA_META[group.area].label}
-                      </SelectLabel>
-                      {group.tipos.map((tipo) => (
-                        <SelectItem key={tipo.id} value={tipo.id}>
-                          <span className="flex min-w-0 flex-col py-0.5 leading-tight">
-                            <span className="truncate font-medium">{tipo.nombre}</span>
-                            <span className="text-[11px] text-muted-foreground">
-                              {AREA_META[group.area].shortLabel} · {tipo.duracion_min} min
+                <SelectContent alignItemWithTrigger className="max-h-96">
+                  <div className="sticky top-0 z-10 border-b bg-popover p-2">
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        value={tipoSearch}
+                        onChange={(event) => setTipoSearch(event.target.value)}
+                        placeholder="Buscar tipo o área"
+                        className="h-8 pl-8"
+                      />
+                    </div>
+                  </div>
+                  {tiposCitaAgrupados.length === 0 ? (
+                    <div className="px-3 py-4 text-center text-xs text-muted-foreground">
+                      Sin tipos para la búsqueda.
+                    </div>
+                  ) : (
+                    tiposCitaAgrupados.map((group, index) => (
+                      <SelectGroup key={group.area}>
+                        {index > 0 && <SelectSeparator />}
+                        <SelectLabel className="font-semibold uppercase tracking-wide">
+                          {AREA_META[group.area].label}
+                        </SelectLabel>
+                        {group.tipos.map((tipo) => (
+                          <SelectItem key={tipo.id} value={tipo.id}>
+                            <span className="flex min-w-0 flex-col py-0.5 leading-tight">
+                              <span className="truncate font-medium">
+                                {tipo.nombre}{tipo.is_disabled ? " (inactivo)" : ""}
+                              </span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {AREA_META[group.area].shortLabel} · {tipo.duracion_min} min
+                              </span>
                             </span>
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  ))}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />

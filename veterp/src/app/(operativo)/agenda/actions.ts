@@ -1,8 +1,18 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
-import { tipoCitaSchema, citaSchema, TipoCitaInput, CitaInput } from "@/lib/validators/agenda";
+import {
+  citaSchema,
+  tipoCitaDisabledSchema,
+  tipoCitaSchema,
+  tipoCitaUpdateSchema,
+  type CitaInput,
+  type TipoCitaDisabledInput,
+  type TipoCitaInput,
+  type TipoCitaUpdateInput,
+} from "@/lib/validators/agenda";
 
 const ESTADOS_CITA = ["programada", "confirmada", "llego", "en_atencion", "cancelada", "no_asistio", "completada"] as const;
 type EstadoCita = (typeof ESTADOS_CITA)[number];
@@ -29,6 +39,7 @@ async function validateCitaRelations(
   clienteId: string,
   mascotaId: string,
   tipoCitaId: string,
+  options: { allowDisabledTipoCitaId?: string | null } = {},
 ) {
   const [{ data: cliente }, { data: mascota }, { data: tipoCita }] = await Promise.all([
     supabase.from("clientes").select("id").eq("id", clienteId).eq("clinica_id", clinicaId).maybeSingle(),
@@ -38,12 +49,20 @@ async function validateCitaRelations(
       .eq("id", mascotaId)
       .eq("clinica_id", clinicaId)
       .maybeSingle(),
-    supabase.from("tipo_citas").select("id").eq("id", tipoCitaId).eq("clinica_id", clinicaId).maybeSingle(),
+    supabase
+      .from("tipo_citas")
+      .select("id, is_disabled")
+      .eq("id", tipoCitaId)
+      .eq("clinica_id", clinicaId)
+      .maybeSingle(),
   ]);
 
-  if (!cliente) return "El cliente no pertenece a la clínica activa.";
-  if (!mascota) return "La mascota no pertenece a la clínica activa.";
-  if (!tipoCita) return "El tipo de cita no pertenece a la clínica activa.";
+  if (!cliente) return "El cliente no pertenece a la clinica activa.";
+  if (!mascota) return "La mascota no pertenece a la clinica activa.";
+  if (!tipoCita) return "El tipo de cita no pertenece a la clinica activa.";
+  if (tipoCita.is_disabled && tipoCita.id !== options.allowDisabledTipoCitaId) {
+    return "El tipo de cita esta inactivo para nuevas programaciones.";
+  }
   if (mascota.cliente_id !== clienteId) return "La mascota no pertenece al cliente seleccionado.";
 
   return null;
@@ -59,7 +78,11 @@ export async function createTipoCita(input: TipoCitaInput) {
     const { data, error } = await supabase
       .from("tipo_citas")
       .insert({
-        ...validatedData,
+        nombre: validatedData.nombre,
+        duracion_min: validatedData.duracion_min,
+        color: validatedData.color || null,
+        area: validatedData.area,
+        is_disabled: false,
         clinica_id: clinicaId,
       })
       .select()
@@ -70,9 +93,75 @@ export async function createTipoCita(input: TipoCitaInput) {
       return { error: error.message, data: null };
     }
 
+    revalidatePath("/agenda");
     return { error: null, data };
   } catch (err: any) {
     return { error: err.message || "Error al crear tipo de cita", data: null };
+  }
+}
+
+export async function updateTipoCita(id: string, input: TipoCitaUpdateInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validatedData = tipoCitaUpdateSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("tipo_citas")
+      .update({
+        nombre: validatedData.nombre,
+        duracion_min: validatedData.duracion_min,
+        color: validatedData.color || null,
+        area: validatedData.area,
+      })
+      .eq("id", id)
+      .eq("clinica_id", clinicaId)
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error updating tipo cita:", error);
+      return { error: error.message, data: null };
+    }
+
+    if (!data) {
+      return { error: "No se encontro el tipo de cita.", data: null };
+    }
+
+    revalidatePath("/agenda");
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al actualizar tipo de cita", data: null };
+  }
+}
+
+export async function setTipoCitaDisabled(id: string, input: TipoCitaDisabledInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const { disabled } = tipoCitaDisabledSchema.parse(input);
+
+    const { data, error } = await supabase
+      .from("tipo_citas")
+      .update({ is_disabled: disabled })
+      .eq("id", id)
+      .eq("clinica_id", clinicaId)
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error toggling tipo cita:", error);
+      return { error: error.message, data: null };
+    }
+
+    if (!data) {
+      return { error: "No se encontro el tipo de cita.", data: null };
+    }
+
+    revalidatePath("/agenda");
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al cambiar estado del tipo de cita", data: null };
   }
 }
 
@@ -93,7 +182,6 @@ export async function createCita(input: CitaInput) {
       return { error: relationError, data: null };
     }
 
-    // ensure dates are correctly passed
     const startDate = new Date(validatedData.start_date).toISOString();
     const endDate = new Date(validatedData.end_date).toISOString();
 
@@ -130,6 +218,7 @@ export async function getTiposCita() {
       .from("tipo_citas")
       .select("*")
       .eq("clinica_id", clinicaId)
+      .eq("is_disabled", false)
       .order("area")
       .order("nombre");
 
@@ -141,6 +230,29 @@ export async function getTiposCita() {
     return { error: null, data };
   } catch (err: any) {
     return { error: err.message || "Error al obtener tipos de cita", data: null };
+  }
+}
+
+export async function getTiposCitaForManagement() {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("tipo_citas")
+      .select("*")
+      .eq("clinica_id", clinicaId)
+      .order("area")
+      .order("nombre");
+
+    if (error) {
+      console.error("Error fetching tipos cita for management:", error);
+      return { error: error.message, data: null };
+    }
+
+    return { error: null, data };
+  } catch (err: any) {
+    return { error: err.message || "Error al obtener configuracion de tipos de cita", data: null };
   }
 }
 
@@ -164,7 +276,7 @@ export async function getCitas(startDate: string, endDate: string) {
         mascota_id,
         clientes ( nombre ),
         mascotas ( nombre ),
-        tipo_citas ( nombre, color, area )
+        tipo_citas ( nombre, color, area, is_disabled )
       `)
       .eq("clinica_id", clinicaId)
       .gte("start_date", start)
@@ -247,7 +359,7 @@ export async function updateCitaEstado(citaId: string, nextEstado: string) {
       .single();
 
     if (citaError || !cita) {
-      return { error: "No se encontró la cita", data: null };
+      return { error: "No se encontro la cita", data: null };
     }
 
     const actual = (cita.estado ?? "programada") as EstadoCita;
@@ -263,7 +375,7 @@ export async function updateCitaEstado(citaId: string, nextEstado: string) {
     }
 
     if (isFutureWithinEarlyWindow && ["no_asistio", "completada"].includes(siguiente)) {
-      return { error: "No se puede marcar 'no asistió' o 'completada' antes de la hora de inicio.", data: null };
+      return { error: "No se puede marcar 'no asistio' o 'completada' antes de la hora de inicio.", data: null };
     }
 
     if (!canTransitionEstadoCita(actual, siguiente)) {
@@ -293,31 +405,33 @@ export async function updateCita(citaId: string, input: CitaInput) {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
     const validatedData = citaSchema.parse(input);
+
+    const { data: cita, error: citaError } = await supabase
+      .from("citas")
+      .select("id, estado, tipo_cita_id")
+      .eq("id", citaId)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (citaError || !cita) {
+      return { error: "No se encontro la cita", data: null };
+    }
+
+    const estadoActual = (cita.estado ?? "programada") as string;
+    if (!["programada", "confirmada"].includes(estadoActual)) {
+      return { error: "Solo se pueden reprogramar citas programadas o confirmadas.", data: null };
+    }
+
     const relationError = await validateCitaRelations(
       supabase,
       clinicaId,
       validatedData.cliente_id,
       validatedData.mascota_id,
       validatedData.tipo_cita_id,
+      { allowDisabledTipoCitaId: cita.tipo_cita_id },
     );
     if (relationError) {
       return { error: relationError, data: null };
-    }
-
-    const { data: cita, error: citaError } = await supabase
-      .from("citas")
-      .select("id, estado")
-      .eq("id", citaId)
-      .eq("clinica_id", clinicaId)
-      .single();
-
-    if (citaError || !cita) {
-      return { error: "No se encontró la cita", data: null };
-    }
-
-    const estadoActual = (cita.estado ?? "programada") as string;
-    if (!["programada", "confirmada"].includes(estadoActual)) {
-      return { error: "Solo se pueden reprogramar citas programadas o confirmadas.", data: null };
     }
 
     const startDate = new Date(validatedData.start_date).toISOString();

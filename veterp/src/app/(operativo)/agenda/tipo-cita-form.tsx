@@ -14,44 +14,54 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { tipoCitaSchema, TipoCitaInput } from "@/lib/validators/agenda";
-import { createTipoCita } from "./actions";
+import { tipoCitaSchema, tipoCitaUpdateSchema, type TipoCitaInput, type TipoCitaUpdateInput } from "@/lib/validators/agenda";
+import { createTipoCita, updateTipoCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { AREA_META, AREA_ORDER } from "./types";
+import { AREA_META, AREA_ORDER, normalizeCitaArea, type CitaArea, type TipoCitaAgenda } from "./types";
 
 interface TipoCitaFormProps {
   onSuccess?: () => void;
+  tipoCita?: TipoCitaAgenda;
 }
 
-export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
+type TipoCitaFormValues = {
+  nombre: string;
+  duracion_min: number;
+  color?: string | null;
+  area: CitaArea;
+};
+
+export function TipoCitaForm({ onSuccess, tipoCita }: TipoCitaFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditing = Boolean(tipoCita?.id);
 
-  const form = useForm<TipoCitaInput>({
-    resolver: zodResolver(tipoCitaSchema),
+  const form = useForm<TipoCitaFormValues>({
+    resolver: zodResolver(isEditing ? tipoCitaUpdateSchema : tipoCitaSchema),
     defaultValues: {
-      nombre: "",
-      duracion_min: 30,
-      color: "#3b82f6",
-      area: "clinica",
-      is_disabled: false,
+      nombre: tipoCita?.nombre ?? "",
+      duracion_min: tipoCita?.duracion_min ?? 30,
+      color: tipoCita?.color ?? "#3b82f6",
+      area: normalizeCitaArea(tipoCita?.area),
     },
   });
 
-  async function onSubmit(data: TipoCitaInput) {
+  async function onSubmit(data: TipoCitaFormValues) {
     setIsSubmitting(true);
-    const { error } = await createTipoCita(data);
+    const result = isEditing && tipoCita?.id
+      ? await updateTipoCita(tipoCita.id, data as TipoCitaUpdateInput)
+      : await createTipoCita(data as TipoCitaInput);
     setIsSubmitting(false);
 
-    if (error) {
-      toast.error(error);
+    if (result.error) {
+      toast.error(result.error);
       return;
     }
 
-    toast.success("Tipo de cita creado exitosamente");
-    form.reset();
+    toast.success(isEditing ? "Tipo de cita actualizado." : "Tipo de cita creado exitosamente.");
+    if (!isEditing) form.reset();
     router.refresh();
     if (onSuccess) onSuccess();
   }
@@ -66,13 +76,13 @@ export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input placeholder="Consulta General" {...field} />
+                <Input placeholder="Consulta general" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="area"
@@ -107,8 +117,9 @@ export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
               <FormControl>
                 <Input
                   type="number"
+                  min={1}
                   {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  onChange={(event) => field.onChange(Number(event.target.value))}
                 />
               </FormControl>
               <FormMessage />
@@ -124,8 +135,8 @@ export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
               <FormLabel>Color</FormLabel>
               <FormControl>
                 <div className="flex gap-2">
-                  <Input type="color" className="w-16 p-1 h-10" {...field} />
-                  <Input type="text" {...field} />
+                  <Input type="color" className="h-10 w-16 p-1" value={field.value ?? "#3b82f6"} onChange={field.onChange} />
+                  <Input type="text" value={field.value ?? ""} onChange={field.onChange} />
                 </div>
               </FormControl>
               <FormMessage />
@@ -135,7 +146,7 @@ export function TipoCitaForm({ onSuccess }: TipoCitaFormProps) {
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Guardar Tipo de Cita
+          {isEditing ? "Guardar cambios" : "Guardar tipo de cita"}
         </Button>
       </form>
     </Form>

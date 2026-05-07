@@ -19,6 +19,7 @@ export type TipoCitaAgenda = {
   duracion_min: number;
   color?: string | null;
   area?: CitaArea | string | null;
+  is_disabled?: boolean | null;
 };
 
 export type CitaAgenda = {
@@ -33,7 +34,7 @@ export type CitaAgenda = {
   active_order_estado_text?: string | null;
   clientes: { nombre: string } | null;
   mascotas: { nombre: string } | null;
-  tipo_citas: { nombre: string; color: string | null; area?: CitaArea | string | null } | null;
+  tipo_citas: { nombre: string; color: string | null; area?: CitaArea | string | null; is_disabled?: boolean | null } | null;
 };
 
 export function normalizeCitaArea(area: string | null | undefined): CitaArea {
