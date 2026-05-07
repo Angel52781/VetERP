@@ -241,7 +241,7 @@ export async function getMascotaCompleta(mascotaId: string) {
   const clinicaId = await requireClinicaIdFromCookies();
   const supabase = await createClient();
 
-  const [mascotaRes, ordenesRes, citasRes] = await Promise.all([
+  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes] = await Promise.all([
     supabase
       .from("mascotas")
       .select(`
@@ -276,7 +276,13 @@ export async function getMascotaCompleta(mascotaId: string) {
       `)
       .eq("clinica_id", clinicaId)
       .eq("mascota_id", mascotaId)
-      .order("start_date", { ascending: false })
+      .order("start_date", { ascending: false }),
+
+    supabase
+      .from("tipo_citas")
+      .select("id, nombre, duracion_min")
+      .eq("clinica_id", clinicaId)
+      .order("nombre"),
   ]);
 
   const seguimientos = await loadSeguimientosWithRecovery(supabase, clinicaId, mascotaId);
@@ -285,6 +291,7 @@ export async function getMascotaCompleta(mascotaId: string) {
     mascota: mascotaRes.data, 
     ordenes: ordenesRes.data ?? [],
     citas: citasRes.data ?? [],
+    tiposCita: tiposCitaRes.data ?? [],
     seguimientos: seguimientos.data,
     seguimientoFeatureUnavailable: seguimientos.unavailable,
     seguimientoFeatureReason: seguimientos.reason,
