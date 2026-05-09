@@ -47,7 +47,7 @@ export default async function ClienteDetallePage({
   const { data: ordenes } = await supabase
     .from("ordenes_servicio")
     .select(`
-      id, estado_text, started_at, created_at,
+      id, estado_text, mascota_id, started_at, created_at,
       mascotas:mascota_id ( nombre )
     `)
     .eq("clinica_id", clinicaId)
@@ -100,43 +100,89 @@ export default async function ClienteDetallePage({
     const pagado = pagos.reduce((acc: number, mov: any) => acc + Number(mov.monto), 0);
     const saldo = venta.estado === "anulada" ? 0 : Math.max(0, total - pagado);
 
-    let estadoCuenta: "pagada" | "pendiente" | "parcial" | "anulada" = "pendiente";
-    if (venta.estado === "anulada") {
-      estadoCuenta = "anulada";
-    } else if (saldo <= 0 && total > 0) {
-      estadoCuenta = "pagada";
-    } else if (pagado > 0 && saldo > 0) {
-      estadoCuenta = "parcial";
-    }
-
     const orden = venta.ordenes_servicio as any;
-    const mascota = orden?.mascotas as any;
 
     return {
       id: venta.id,
       ordenId: venta.orden_id as string | null,
       createdAt: venta.created_at as string,
+      ventaEstado: venta.estado as string,
       total,
       pagado,
       saldo,
-      estadoCuenta,
-      mascotaNombre: mascota?.nombre as string | undefined,
+      pagos: pagos.map((mov: any) => ({
+        id: mov.id as string,
+        monto: Number(mov.monto) || 0,
+        fecha: mov.fecha as string,
+        metodoPago: (mov.metodo_pago as string | null) ?? null,
+      })),
     };
   });
 
-  const deudaTotal = estadoCuentaRows.reduce((acc, row) => acc + row.saldo, 0);
-  const ventasPendientesCount = estadoCuentaRows.filter((row) => row.estadoCuenta === "pendiente" || row.estadoCuenta === "parcial").length;
+  const totalVendido = estadoCuentaRows
+    .filter((row) => row.ventaEstado !== "anulada")
+    .reduce((acc, row) => acc + row.total, 0);
   const totalPagadoHistorico = estadoCuentaRows
-    .filter((row) => row.estadoCuenta !== "anulada")
+    .filter((row) => row.ventaEstado !== "anulada")
     .reduce((acc, row) => acc + row.pagado, 0);
-  const ventasPagadasCount = estadoCuentaRows.filter((row) => row.estadoCuenta === "pagada").length;
+  const deudaTotal = Math.max(0, totalVendido - totalPagadoHistorico);
+  const ordenActiva = (ordenes || []).find((orden: any) =>
+    ["open", "in_progress"].includes(orden.estado_text)
+  ) as any | undefined;
+  const ventaPendienteConOrden = estadoCuentaRows.find(
+    (row) => row.ventaEstado !== "anulada" && row.saldo > 0 && row.ordenId
+  );
+  const ordenActivaByMascota = new Map<string, any>();
+  for (const orden of ordenes || []) {
+    if (!["open", "in_progress"].includes((orden as any).estado_text)) continue;
+    const mascotaId = (orden as any).mascota_id as string | null;
+    if (!mascotaId || ordenActivaByMascota.has(mascotaId)) continue;
+    ordenActivaByMascota.set(mascotaId, orden);
+  }
 
-  const estadoCuentaBadge: Record<"pagada" | "pendiente" | "parcial" | "anulada", { label: string; className: string }> = {
-    pagada: { label: "Pagada", className: "bg-emerald-100 text-emerald-800" },
-    pendiente: { label: "Pendiente", className: "bg-amber-100 text-amber-800" },
-    parcial: { label: "Parcial", className: "bg-blue-100 text-blue-800" },
-    anulada: { label: "Anulada", className: "bg-muted text-muted-foreground" },
-  };
+  const movimientosCuentaBase = estadoCuentaRows.flatMap((row) => {
+    const cargo =
+      row.ventaEstado === "anulada"
+        ? []
+        : [
+            {
+              id: `cargo-${row.id}`,
+              fecha: row.createdAt,
+              tipo: "cargo" as const,
+              concepto: `Cargo por venta VTA-${row.id.slice(0, 8).toUpperCase()}`,
+              cargo: row.total,
+              pago: 0,
+              ordenId: row.ordenId,
+              ventaId: row.id,
+            },
+          ];
+
+    const pagos = row.pagos.map((mov: { id: string; monto: number; fecha: string; metodoPago: string | null }) => ({
+      id: `pago-${mov.id}`,
+      fecha: mov.fecha,
+      tipo: "pago" as const,
+      concepto: `Pago${mov.metodoPago ? ` (${mov.metodoPago})` : ""} · VTA-${row.id.slice(0, 8).toUpperCase()}`,
+      cargo: 0,
+      pago: mov.monto,
+      ordenId: row.ordenId,
+      ventaId: row.id,
+    }));
+
+    return [...cargo, ...pagos];
+  });
+
+  const movimientosCuenta = movimientosCuentaBase.sort(
+    (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
+  );
+
+  let saldoAcumulado = 0;
+  const movimientosConSaldo = movimientosCuenta.map((mov) => {
+    saldoAcumulado += mov.cargo - mov.pago;
+    return {
+      ...mov,
+      saldoAcumulado: Number.isFinite(saldoAcumulado) ? saldoAcumulado : 0,
+    };
+  });
 
   const estadoOrden: Record<string, { label: string; cls: string }> = {
     open:        { label: "En espera",   cls: "bg-amber-100 text-amber-800" },
@@ -184,6 +230,14 @@ export default async function ClienteDetallePage({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {ordenActiva ? (
+            <Link
+              href={`/orden_y_colas/${ordenActiva.id}?returnTo=${clienteReturnTo}`}
+              className={buttonVariants({ variant: "secondary", size: "sm" })}
+            >
+              Ver atención
+            </Link>
+          ) : null}
           <ClienteEditDialog cliente={cliente} />
           <AccionesContextualesCliente
             clienteId={clienteId}
@@ -194,7 +248,7 @@ export default async function ClienteDetallePage({
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 flex flex-col justify-center">
             <p className="text-sm font-medium text-muted-foreground">Pacientes totales</p>
@@ -205,14 +259,6 @@ export default async function ClienteDetallePage({
           <CardContent className="p-4 flex flex-col justify-center">
             <p className="text-sm font-medium text-muted-foreground">Últimas Atenciones</p>
             <p className="text-2xl font-bold">{ordenes?.length || 0}</p>
-          </CardContent>
-        </Card>
-        <Card className={deudaTotal > 0 ? "border-amber-200 bg-amber-50/50" : ""}>
-          <CardContent className="p-4 flex flex-col justify-center">
-            <p className="text-sm font-medium text-muted-foreground">Deuda Pendiente</p>
-            <p className={`text-2xl font-bold ${deudaTotal > 0 ? "text-amber-600" : "text-emerald-600"}`}>
-              {formatMoneyPEN(deudaTotal)}
-            </p>
           </CardContent>
         </Card>
         <Card>
@@ -232,96 +278,79 @@ export default async function ClienteDetallePage({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Card className={deudaTotal > 0 ? "border-amber-200 bg-amber-50/50" : "bg-muted/10 border-muted"}>
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-muted-foreground">Deuda pendiente total</p>
-                <p className={`text-xl font-bold ${deudaTotal > 0 ? "text-amber-700" : "text-emerald-700"}`}>{formatMoneyPEN(deudaTotal)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-muted-foreground">Ventas pendientes</p>
-                <p className="text-xl font-bold">{ventasPendientesCount}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-muted-foreground">Total pagado histórico</p>
-                <p className="text-xl font-bold text-emerald-700">{formatMoneyPEN(totalPagadoHistorico)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-3">
-                <p className="text-xs font-medium text-muted-foreground">Ventas pagadas</p>
-                <p className="text-xl font-bold">{ventasPagadasCount}</p>
-              </CardContent>
-            </Card>
+          <div className={`rounded-md border px-3 py-2 text-sm ${deudaTotal > 0 ? "border-amber-200 bg-amber-50 text-amber-900" : "border-muted bg-muted/30 text-muted-foreground"}`}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span>{deudaTotal > 0 ? `Deuda pendiente ${formatMoneyPEN(deudaTotal)}` : "Sin deuda pendiente"}</span>
+              {deudaTotal > 0 && ventaPendienteConOrden?.ordenId ? (
+                <Link
+                  href={`/orden_y_colas/${ventaPendienteConOrden.ordenId}?tab=venta&returnTo=${clienteReturnTo}`}
+                  className={buttonVariants({ size: "sm", variant: "outline" })}
+                >
+                  Ir a cobro
+                </Link>
+              ) : null}
+            </div>
           </div>
 
-          <div className="rounded-md border overflow-hidden">
-            <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead>Paciente</TableHead>
-                  <TableHead>Comprobante</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right">Pagado</TableHead>
-                  <TableHead className="text-right">Saldo</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-center w-14">Ver</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {estadoCuentaRows.length === 0 ? (
+          <details className="group rounded-md border bg-muted/10 px-3 py-2">
+            <summary className="cursor-pointer list-none text-sm font-medium">
+              <span className="group-open:hidden">Ver movimientos del estado de cuenta</span>
+              <span className="hidden group-open:inline">Ocultar movimientos del estado de cuenta</span>
+            </summary>
+            <div className="mt-3 rounded-md border overflow-hidden bg-background">
+              <Table>
+                <TableHeader className="bg-muted/50">
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-8">
-                      Sin ventas registradas para este cliente.
-                    </TableCell>
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Concepto</TableHead>
+                    <TableHead className="text-right">Cargo</TableHead>
+                    <TableHead className="text-right">Pago</TableHead>
+                    <TableHead className="text-right">Saldo acumulado</TableHead>
+                    <TableHead className="text-center">Acción</TableHead>
                   </TableRow>
-                ) : (
-                  estadoCuentaRows.map((row) => {
-                    const estado = estadoCuentaBadge[row.estadoCuenta];
-                    return (
-                      <TableRow key={row.id}>
+                </TableHeader>
+                <TableBody>
+                  {movimientosConSaldo.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-8">
+                        Este cliente todavía no tiene movimientos financieros.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    movimientosConSaldo.map((mov) => (
+                      <TableRow key={mov.id}>
                         <TableCell className="text-xs font-medium">
-                          {format(new Date(row.createdAt), "dd/MM/yy HH:mm", { locale: es })}
-                        </TableCell>
-                        <TableCell>{row.mascotaNombre || "—"}</TableCell>
-                        <TableCell>
-                          <div className="text-xs">
-                            <div className="font-medium">VTA-{row.id.slice(0, 8).toUpperCase()}</div>
-                            {row.ordenId ? <div className="text-muted-foreground">ORD-{row.ordenId.slice(0, 8).toUpperCase()}</div> : null}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right font-medium">{formatMoneyPEN(row.total)}</TableCell>
-                        <TableCell className="text-right text-emerald-700">{formatMoneyPEN(row.pagado)}</TableCell>
-                        <TableCell className={`text-right font-semibold ${row.saldo > 0 ? "text-amber-700" : "text-foreground"}`}>
-                          {formatMoneyPEN(row.saldo)}
+                          {format(new Date(mov.fecha), "dd/MM/yy HH:mm", { locale: es })}
                         </TableCell>
                         <TableCell>
-                          <Badge className={estado.className}>{estado.label}</Badge>
+                          <Badge variant={mov.tipo === "cargo" ? "secondary" : "default"}>
+                            {mov.tipo === "cargo" ? "Cargo" : "Pago"}
+                          </Badge>
                         </TableCell>
+                        <TableCell className="text-xs">{mov.concepto}</TableCell>
+                        <TableCell className="text-right font-medium">{mov.cargo > 0 ? formatMoneyPEN(mov.cargo) : "—"}</TableCell>
+                        <TableCell className="text-right text-emerald-700">{mov.pago > 0 ? formatMoneyPEN(mov.pago) : "—"}</TableCell>
+                        <TableCell className="text-right font-semibold">{formatMoneyPEN(mov.saldoAcumulado)}</TableCell>
                         <TableCell className="text-center">
-                          {row.ordenId ? (
+                          {mov.ordenId ? (
                             <Link
-                              href={`/orden_y_colas/${row.ordenId}?tab=venta&returnTo=${clienteReturnTo}`}
-                              className={buttonVariants({ variant: "ghost", size: "icon" })}
+                              href={`/orden_y_colas/${mov.ordenId}?returnTo=${clienteReturnTo}`}
+                              className={buttonVariants({ variant: "outline", size: "sm" })}
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              Ver orden
                             </Link>
                           ) : (
                             <span className="text-xs text-muted-foreground">—</span>
                           )}
                         </TableCell>
                       </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </details>
         </CardContent>
       </Card>
 
@@ -344,23 +373,33 @@ export default async function ClienteDetallePage({
                 <div className="divide-y">
                   {mascotas.map((m) => {
                     const edad = getAgeFromDateOnly(m.nacimiento, now);
+                    const ordenMascotaActiva = ordenActivaByMascota.get(m.id);
                     return (
-                      <Link
-                        key={m.id}
-                        href={`/mascotas/${m.id}?returnTo=${clienteReturnTo}`}
-                        className="flex items-center gap-3 py-3 hover:bg-muted/40 -mx-2 px-2 rounded transition-colors group"
-                      >
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                          <PawPrint className="h-4 w-4 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">{m.nombre}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {[formatSpeciesLabel(m.especie), formatBreedLabel(m.raza)].filter(Boolean).join(" · ")}
-                            {edad !== null ? ` · ${edad} año${edad !== 1 ? "s" : ""}` : ""}
-                          </p>
-                        </div>
-                      </Link>
+                      <div key={m.id} className="flex items-center gap-3 py-3 -mx-2 px-2 rounded transition-colors hover:bg-muted/40">
+                        <Link
+                          href={`/mascotas/${m.id}?returnTo=${clienteReturnTo}`}
+                          className="flex min-w-0 flex-1 items-center gap-3 group"
+                        >
+                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                            <PawPrint className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">{m.nombre}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {[formatSpeciesLabel(m.especie), formatBreedLabel(m.raza)].filter(Boolean).join(" · ")}
+                              {edad !== null ? ` · ${edad} año${edad !== 1 ? "s" : ""}` : ""}
+                            </p>
+                          </div>
+                        </Link>
+                        {ordenMascotaActiva ? (
+                          <Link
+                            href={`/orden_y_colas/${ordenMascotaActiva.id}?returnTo=${clienteReturnTo}`}
+                            className={buttonVariants({ variant: "outline", size: "sm" })}
+                          >
+                            Ver atención
+                          </Link>
+                        ) : null}
+                      </div>
                     );
                   })}
                 </div>

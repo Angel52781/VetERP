@@ -26,12 +26,13 @@ interface PageProps {
   }>;
   searchParams?: Promise<{
     returnTo?: string;
+    tab?: string;
   }>;
 }
 
 export default async function OrdenDetailsPage({ params, searchParams }: PageProps) {
   const { id } = await params;
-  const { returnTo } = (await searchParams) ?? {};
+  const { returnTo, tab } = (await searchParams) ?? {};
   const [{ data: orden, error }, { data: itemsCatalogo }, { data: ventas }] = await Promise.all([
     getOrdenCompleta(id),
     getItemsCatalogo(),
@@ -48,10 +49,29 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
     seguimientoFeatureReason,
   } = await getSeguimientosMascota(orden.mascota_id);
 
-  const safeReturnTo = typeof returnTo === "string" && returnTo.startsWith("/")
-    ? returnTo
-    : "/atenciones";
-  const mascotaReturnTo = encodeURIComponent(`/orden_y_colas/${id}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`);
+  const decodedReturnTo =
+    typeof returnTo === "string"
+      ? (() => {
+          try {
+            return decodeURIComponent(returnTo);
+          } catch {
+            return returnTo;
+          }
+        })()
+      : undefined;
+  const safeReturnTo =
+    typeof decodedReturnTo === "string" && decodedReturnTo.startsWith("/")
+      ? decodedReturnTo
+      : "/atenciones";
+  const normalizedTab = tab === "cobro" ? "venta" : tab;
+  const allowedTabs = new Set(["resumen", "notas", "seguimientos", "adjuntos", "venta"]);
+  const initialTab =
+    typeof normalizedTab === "string" && allowedTabs.has(normalizedTab)
+      ? normalizedTab
+      : "resumen";
+  const mascotaReturnTo = encodeURIComponent(
+    `/orden_y_colas/${id}${decodedReturnTo ? `?returnTo=${encodeURIComponent(decodedReturnTo)}` : ""}`
+  );
   const pacienteAge = getAgeFromDateOnly((orden.mascotas as any)?.nacimiento);
   const ordenStatusMeta = getOrdenStatusMeta(orden.estado_text);
   const ventaAbierta = (ventas || []).find((venta: any) => venta.estado === "abierta");
@@ -86,6 +106,14 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
             <Link href={`/mascotas/${orden.mascota_id}?returnTo=${mascotaReturnTo}`} className="text-primary hover:underline font-medium text-sm">
               Paciente: {orden.mascotas?.nombre}
             </Link>
+            {orden.cliente_id ? (
+              <>
+                <span className="text-muted-foreground font-medium text-sm">•</span>
+                <Link href={`/clientes/${orden.cliente_id}`} className="text-primary hover:underline font-medium text-sm">
+                  Cliente: {orden.clientes?.nombre ?? "Responsable"}
+                </Link>
+              </>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -101,7 +129,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
       {/* Alertas críticas del paciente */}
       <AlertasCriticasBanner alertas={(orden.mascotas as any)?.alertas_criticas} />
 
-      <Tabs defaultValue="resumen" className="w-full">
+      <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="resumen">Resumen</TabsTrigger>
           <TabsTrigger value="notas">Atención Clínica</TabsTrigger>

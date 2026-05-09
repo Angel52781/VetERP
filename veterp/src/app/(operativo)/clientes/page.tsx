@@ -70,9 +70,8 @@ export default async function ClientesPage() {
               (a: any, b: any) =>
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             )[0];
-            const tieneOrdenActiva = ordenes.some((o: any) =>
-              ["open", "in_progress"].includes(o.estado_text)
-            );
+            const ordenActiva = ordenes.find((o: any) => ["open", "in_progress"].includes(o.estado_text));
+            const tieneOrdenActiva = Boolean(ordenActiva);
             
             const ventas = (c.ventas as any[]) ?? [];
             const deudaTotal = ventas.filter(v => v.estado !== "pagada").reduce((acc, v) => {
@@ -81,9 +80,8 @@ export default async function ClientesPage() {
             }, 0);
 
             return (
-              <Link
+              <div
                 key={c.id}
-                href={`/clientes/${c.id}`}
                 className="flex items-center gap-4 px-4 py-4 hover:bg-muted/40 transition-colors"
               >
                 {/* Avatar inicial */}
@@ -94,7 +92,9 @@ export default async function ClientesPage() {
                 {/* Info principal */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-sm truncate">{c.nombre}</p>
+                    <Link href={`/clientes/${c.id}`} className="font-medium text-sm truncate hover:underline">
+                      {c.nombre}
+                    </Link>
                     {tieneOrdenActiva && (
                       <span className="shrink-0 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-medium">
                         En atención
@@ -105,6 +105,14 @@ export default async function ClientesPage() {
                         Deuda: {formatMoneyPEN(deudaTotal)}
                       </span>
                     )}
+                    {ordenActiva ? (
+                      <Link
+                        href={`/orden_y_colas/${ordenActiva.id}?returnTo=${encodeURIComponent("/clientes")}`}
+                        className={buttonVariants({ variant: "outline", size: "sm", className: "h-6 px-2 text-[11px]" })}
+                      >
+                        Ver atención
+                      </Link>
+                    ) : null}
                   </div>
                   <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
                     {c.telefono && (
@@ -145,7 +153,7 @@ export default async function ClientesPage() {
                     )}
                   </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getVentasDeOrden, addItemToVenta, removeVentaItem, registrarPago, crearVenta } from "@/app/(operativo)/caja_inventario/actions";
@@ -21,9 +22,27 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
   const [loadingAction, setLoadingAction] = useState(false);
   
   const [selectedItem, setSelectedItem] = useState<string>("");
+  const [itemQuery, setItemQuery] = useState<string>("");
+  const [isComboboxOpen, setIsComboboxOpen] = useState<boolean>(false);
+  const [isClient, setIsClient] = useState(false);
+  const [comboboxRect, setComboboxRect] = useState<{ top: number; left: number; width: number }>({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
   const [cantidad, setCantidad] = useState<number>(1);
   const [pagoMonto, setPagoMonto] = useState<number>(0);
   const [metodoPago, setMetodoPago] = useState<string>("efectivo");
+  const comboboxInputRef = useRef<HTMLInputElement | null>(null);
+  const selectedItemData = itemsCatalogo.find((item) => item.id === selectedItem);
+  const filteredItems = itemsCatalogo.filter((item) => {
+    const query = itemQuery.trim().toLowerCase();
+    if (!query) return true;
+    const nombre = String(item.nombre ?? "").toLowerCase();
+    const kind = String(item.kind ?? "").toLowerCase();
+    const categoria = String(item.categoria ?? item.category ?? "").toLowerCase();
+    return nombre.includes(query) || kind.includes(query) || categoria.includes(query);
+  });
 
   const loadVentas = async () => {
     setLoading(true);
@@ -45,6 +64,33 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
       setPagoMonto(0);
     }
   }, [ventas]);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isComboboxOpen) return;
+
+    const updatePosition = () => {
+      if (!comboboxInputRef.current) return;
+      const rect = comboboxInputRef.current.getBoundingClientRect();
+      setComboboxRect({
+        top: rect.bottom + 6,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [isComboboxOpen]);
 
   const handleCrearVenta = async () => {
     setLoadingAction(true);
@@ -76,6 +122,8 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
     } else {
       toast.success("Ítem agregado a la venta.");
       setSelectedItem("");
+      setItemQuery("");
+      setIsComboboxOpen(false);
       setCantidad(1);
       await loadVentas();
     }
@@ -197,20 +245,23 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                   <div className="grid gap-2 mb-6 items-end sm:grid-cols-[minmax(0,1fr)_6rem_auto]">
                     <div className="min-w-0 space-y-1">
                       <label className="text-xs font-medium">Producto/Servicio</label>
-                      <Select value={selectedItem} onValueChange={(val) => setSelectedItem(val || "")}>
-                        <SelectTrigger className="h-10 w-full min-w-0">
-                          <SelectValue placeholder="Selecciona un ítem...">
-                            {selectedItem ? itemsCatalogo.find(i => i.id === selectedItem)?.nombre : "Selecciona un ítem..."}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="min-w-80 max-w-[min(32rem,calc(100vw-2rem))]">
-                          {itemsCatalogo.map(item => (
-                            <SelectItem key={item.id} value={item.id}>
-                              {item.nombre} - {formatMoneyPEN(item.precio_inc)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="relative">
+                        <Input
+                          ref={comboboxInputRef}
+                          value={itemQuery}
+                          onFocus={() => setIsComboboxOpen(true)}
+                          onBlur={() => setTimeout(() => setIsComboboxOpen(false), 120)}
+                          onChange={(e) => {
+                            setItemQuery(e.target.value);
+                            setIsComboboxOpen(true);
+                          }}
+                          placeholder={selectedItemData ? selectedItemData.nombre : "Buscar por nombre, categoría o tipo..."}
+                          role="combobox"
+                          aria-expanded={isComboboxOpen}
+                          aria-controls="items-combobox-list"
+                          className="h-10"
+                        />
+                      </div>
                     </div>
                     <div className="w-24 space-y-1">
                       <label className="text-xs font-medium">Cantidad</label>
@@ -225,6 +276,46 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                       {loadingAction ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                     </Button>
                   </div>
+
+                  {isClient && isComboboxOpen
+                    ? createPortal(
+                        <div
+                          id="items-combobox-list"
+                          className="fixed z-[100] max-h-72 overflow-y-auto rounded-md border bg-background p-1 shadow-xl"
+                          style={{
+                            top: comboboxRect.top,
+                            left: comboboxRect.left,
+                            width: comboboxRect.width,
+                          }}
+                        >
+                          {filteredItems.length > 0 ? (
+                            filteredItems.map((item) => (
+                              <button
+                                key={item.id}
+                                type="button"
+                                className={`flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent ${
+                                  selectedItem === item.id ? "bg-accent" : ""
+                                }`}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setSelectedItem(item.id);
+                                  setItemQuery(item.nombre);
+                                  setIsComboboxOpen(false);
+                                }}
+                              >
+                                <span className="truncate">{item.nombre}</span>
+                                <span className="ml-2 shrink-0 text-xs text-muted-foreground">
+                                  {(item.kind || item.categoria || item.category || "ítem").toString()}
+                                </span>
+                              </button>
+                            ))
+                          ) : (
+                            <div className="px-2 py-2 text-xs text-muted-foreground">Sin resultados.</div>
+                          )}
+                        </div>,
+                        document.body
+                      )
+                    : null}
 
                   {abierta.items_venta && abierta.items_venta.length > 0 ? (
                     <Table>
