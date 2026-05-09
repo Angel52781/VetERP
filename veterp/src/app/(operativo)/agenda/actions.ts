@@ -353,7 +353,7 @@ export async function updateCitaEstado(citaId: string, nextEstado: string) {
 
     const { data: cita, error: citaError } = await supabase
       .from("citas")
-      .select("id, estado, start_date")
+      .select("id, estado, start_date, mascota_id")
       .eq("id", citaId)
       .eq("clinica_id", clinicaId)
       .single();
@@ -370,6 +370,14 @@ export async function updateCitaEstado(citaId: string, nextEstado: string) {
     const isFutureFar = msToStart > 120 * 60 * 1000;
     const isFutureWithinEarlyWindow = isFuture && !isFutureFar;
 
+    if (actual === "cancelada" && ["en_atencion", "completada"].includes(siguiente)) {
+      return { error: "No se puede iniciar atención de una cita cancelada.", data: null };
+    }
+
+    if (actual === "no_asistio" && ["en_atencion", "completada"].includes(siguiente)) {
+      return { error: "No se puede modificar una cita marcada como no asistió sin reprogramarla.", data: null };
+    }
+
     if (isFutureFar && actual !== siguiente && !["confirmada", "cancelada"].includes(siguiente)) {
       return { error: "Para citas fuera de la ventana anticipada solo se permite confirmar o cancelar.", data: null };
     }
@@ -380,6 +388,35 @@ export async function updateCitaEstado(citaId: string, nextEstado: string) {
 
     if (!canTransitionEstadoCita(actual, siguiente)) {
       return { error: `No se puede pasar de '${actual}' a '${siguiente}'`, data: null };
+    }
+
+    if (siguiente === "completada" && cita.mascota_id) {
+      const start = new Date(cita.start_date);
+      if (!Number.isNaN(start.getTime())) {
+        const dayStart = new Date(start);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(start);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        const { data: ordenActiva, error: ordenError } = await supabase
+          .from("ordenes_servicio")
+          .select("id")
+          .eq("clinica_id", clinicaId)
+          .eq("mascota_id", cita.mascota_id)
+          .in("estado_text", ["open", "in_progress"])
+          .gte("started_at", dayStart.toISOString())
+          .lte("started_at", dayEnd.toISOString())
+          .limit(1)
+          .maybeSingle();
+
+        if (ordenError) {
+          return { error: "No se pudo validar el estado operativo de la orden asociada.", data: null };
+        }
+
+        if (ordenActiva?.id) {
+          return { error: "No se puede completar una cita con una orden activa.", data: null };
+        }
+      }
     }
 
     const { data, error } = await supabase

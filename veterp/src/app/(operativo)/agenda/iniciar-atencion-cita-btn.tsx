@@ -56,12 +56,34 @@ export function IniciarAtencionCitaBtn({
   }
 
   async function handleIniciarAtencion() {
+    if (estadoActual === "cancelada") {
+      toast.error("No se puede iniciar atención de una cita cancelada.");
+      return;
+    }
+
+    if (estadoActual === "no_asistio") {
+      toast.error("No se puede modificar una cita marcada como no asistió sin reprogramarla.");
+      return;
+    }
+
+    if (estadoActual === "completada") {
+      toast.error("No se puede iniciar atención de una cita completada.");
+      return;
+    }
+
     if (isEnAtencion && hasActiveOrder && activeOrderId) {
       router.push(`/orden_y_colas/${activeOrderId}`);
       return;
     }
 
-    if (!isLlegada || !withinEarlyWindow) return;
+    if (!isLlegada || !withinEarlyWindow) {
+      if (!isLlegada) {
+        toast.error("Marca primero la cita como 'Llegó'.");
+      } else {
+        toast.error("La cita está fuera de la ventana anticipada de 120 minutos.");
+      }
+      return;
+    }
 
     if (hasActiveOrder && activeOrderId) {
       await marcarCitaEnAtencionSiAplica();
