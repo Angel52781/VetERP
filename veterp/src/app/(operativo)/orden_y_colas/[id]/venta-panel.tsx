@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Trash2, Plus, DollarSign, ReceiptText } from "lucide-react";
 import { toast } from "sonner";
 import { formatMoneyPEN } from "@/lib/money";
+import { getVentaStatusMeta } from "@/lib/operational-status";
 
 export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }: { ordenId: string, clienteId: string, itemsCatalogo: any[], initialVentas: any[] }) {
   const [ventas, setVentas] = useState<any[]>(initialVentas);
@@ -183,7 +184,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
               <h2 className="text-xl font-semibold">Cobro Pendiente</h2>
               <p className="text-sm text-muted-foreground">Agrega servicios o productos y registra el pago para cerrar el cobro.</p>
             </div>
-            <Badge variant="secondary" className="text-sm px-4 py-1">Abierta</Badge>
+            <Badge variant="secondary" className="text-sm px-4 py-1">{getVentaStatusMeta("abierta").label}</Badge>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">

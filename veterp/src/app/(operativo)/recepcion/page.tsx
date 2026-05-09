@@ -24,7 +24,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { createClient } from "@/lib/supabase/server";
-import { getCombinedOperationalStatus, getOrdenStatusMeta } from "@/lib/operational-status";
+import { getCombinedOperationalStatus, getFinancialStatusMeta, getOrdenStatusMeta } from "@/lib/operational-status";
 import { getClientesParaAgenda } from "@/app/(operativo)/agenda/actions";
 import { getOrdenesServicio } from "@/app/(operativo)/index/actions";
 import { NuevaAtencionForm } from "@/app/(operativo)/index/nueva-atencion-form";
@@ -229,6 +229,16 @@ export default async function RecepcionPage() {
                       }).label
                     }
                   </Badge>
+                  {(() => {
+                    const orden = ordenActivaByMascotaId.get(cita.mascotas?.id);
+                    if (!orden) return null;
+                    const financial = getFinancialStatusMeta({
+                      hasVenta: orden.financial_has_venta,
+                      ventaEstado: orden.financial_venta_estado,
+                      saldoPendiente: orden.financial_saldo_pendiente,
+                    });
+                    return <Badge variant="outline">{financial.label}</Badge>;
+                  })()}
                 </div>
               </div>
             ))}
@@ -276,6 +286,15 @@ export default async function RecepcionPage() {
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge variant={orden.estado_text === "in_progress" ? "default" : "secondary"}>
                     {getOrdenStatusMeta(orden.estado_text).label}
+                  </Badge>
+                  <Badge variant="outline">
+                    {
+                      getFinancialStatusMeta({
+                        hasVenta: orden.financial_has_venta,
+                        ventaEstado: orden.financial_venta_estado,
+                        saldoPendiente: orden.financial_saldo_pendiente,
+                      }).label
+                    }
                   </Badge>
                   <Link
                     href={`/orden_y_colas/${orden.id}`}

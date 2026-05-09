@@ -18,6 +18,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { getActiveClinicaContext } from "@/lib/clinica";
 import { formatMoneyPEN } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
+import {
+  getCombinedOperationalStatus,
+  getFinancialStatusMeta,
+  getOrdenStatusMeta,
+  getToneBadgeClass,
+} from "@/lib/operational-status";
 import { IniciarAtencionCitaBtn } from "../agenda/iniciar-atencion-cita-btn";
 import { RecordatoriosPanel, type DashboardRecordatorio } from "./recordatorios-panel";
 
@@ -260,6 +266,7 @@ export default async function DashboardPage() {
   const seguimientosProximos30 = normalizeRecordatorios(seguimientosProximos30DetalleRes.data);
   const mascotaIdsDeCitasHoy = Array.from(new Set(citasHoy.map((c: any) => c.mascota_id).filter(Boolean)));
   const ordenActivaByMascota = new Map<string, any>();
+  const ventaByOrden = new Map<string, any>();
 
   if (mascotaIdsDeCitasHoy.length > 0) {
     const { data: ordenesActivasDeCitas } = await supabase
@@ -281,11 +288,24 @@ export default async function DashboardPage() {
       }
     }
   }
+  const orderIds = ordenesRecientes.map((orden: any) => orden.id);
+  if (orderIds.length > 0) {
+    const { data: ventasDeOrden } = await supabase
+      .from("ventas")
+      .select("id, orden_id, estado, total, created_at, ledger ( tipo, monto )")
+      .eq("clinica_id", cid)
+      .in("orden_id", orderIds)
+      .order("created_at", { ascending: false });
 
-  const estadoLabel: Record<string, { label: string; cls: string }> = {
-    open:        { label: "En espera",  cls: "bg-amber-100 text-amber-800" },
-    in_progress: { label: "En atención", cls: "bg-blue-100 text-blue-800" },
-  };
+    for (const venta of ventasDeOrden ?? []) {
+      const key = venta.orden_id;
+      if (!key) continue;
+      const current = ventaByOrden.get(key);
+      if (!current || (current.estado !== "abierta" && venta.estado === "abierta")) {
+        ventaByOrden.set(key, venta);
+      }
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -411,7 +431,17 @@ export default async function DashboardPage() {
             ) : (
               <div className="divide-y">
                 {ordenesRecientes.map((o) => {
-                  const info = estadoLabel[o.estado_text] ?? estadoLabel.open;
+                  const ordenMeta = getOrdenStatusMeta(o.estado_text);
+                  const venta = ventaByOrden.get(o.id);
+                  const total = Number(venta?.total ?? 0);
+                  const pagado = (venta?.ledger ?? [])
+                    .filter((mov: any) => mov.tipo === "pago")
+                    .reduce((acc: number, mov: any) => acc + Number(mov.monto), 0);
+                  const financialMeta = getFinancialStatusMeta({
+                    hasVenta: Boolean(venta?.id),
+                    ventaEstado: venta?.estado ?? null,
+                    saldoPendiente: Math.max(0, total - pagado),
+                  });
                   const mins = o.started_at
                     ? Math.floor((now.getTime() - new Date(o.started_at).getTime()) / 60000)
                     : null;
@@ -436,8 +466,11 @@ export default async function DashboardPage() {
                             <Clock className="h-3 w-3" /> {mins} min
                           </span>
                         )}
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${info.cls}`}>
-                          {info.label}
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getToneBadgeClass(ordenMeta.tone)}`}>
+                          {ordenMeta.label}
+                        </span>
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getToneBadgeClass(financialMeta.tone)}`}>
+                          {financialMeta.label}
                         </span>
                       </div>
                     </Link>
@@ -493,40 +526,36 @@ export default async function DashboardPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          c.estado === "completada"
-                            ? "bg-green-100 text-green-800"
-                            : c.estado === "en_atencion"
-                            ? "bg-indigo-100 text-indigo-800"
-                            : c.estado === "llego"
-                            ? "bg-amber-100 text-amber-800"
-                            : c.estado === "confirmada"
-                            ? "bg-blue-100 text-blue-800"
-                          : c.estado === "cancelada"
-                            ? "bg-red-100 text-red-800"
-                          : c.estado === "no_asistio"
-                            ? "bg-orange-100 text-orange-800"
-                            : "bg-secondary text-secondary-foreground"
-                        }`}>
-                          {c.estado === "completada"
-                            ? "Completada"
-                            : c.estado === "en_atencion"
-                            ? "En atención"
-                            : c.estado === "llego"
-                            ? "Llegó"
-                            : c.estado === "confirmada"
-                            ? "Confirmada"
-                            : c.estado === "cancelada"
-                            ? "Cancelada"
-                            : c.estado === "no_asistio"
-                            ? "No asistió"
-                            : "Programada"}
-                        </span>
-                        {ordenActivaByMascota.get(c.mascota_id) ? (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                            En atención
-                          </span>
-                        ) : null}
+                        {(() => {
+                          const ordenActiva = ordenActivaByMascota.get(c.mascota_id);
+                          const operationalMeta = getCombinedOperationalStatus({
+                            citaEstado: c.estado,
+                            ordenEstado: ordenActiva?.estado_text,
+                          });
+                          const venta = ordenActiva?.id ? ventaByOrden.get(ordenActiva.id) : null;
+                          const total = Number(venta?.total ?? 0);
+                          const pagado = (venta?.ledger ?? [])
+                            .filter((mov: any) => mov.tipo === "pago")
+                            .reduce((acc: number, mov: any) => acc + Number(mov.monto), 0);
+                          const financialMeta = getFinancialStatusMeta({
+                            hasVenta: Boolean(venta?.id),
+                            ventaEstado: venta?.estado ?? null,
+                            saldoPendiente: Math.max(0, total - pagado),
+                          });
+
+                          return (
+                            <>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${getToneBadgeClass(operationalMeta.tone)}`}>
+                                {operationalMeta.label}
+                              </span>
+                              {ordenActiva?.id ? (
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${getToneBadgeClass(financialMeta.tone)}`}>
+                                  {financialMeta.label}
+                                </span>
+                              ) : null}
+                            </>
+                          );
+                        })()}
                         <IniciarAtencionCitaBtn
                           citaId={c.id}
                           clienteId={c.cliente_id}

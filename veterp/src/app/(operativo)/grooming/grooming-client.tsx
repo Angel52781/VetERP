@@ -181,6 +181,9 @@ export function GroomingCard({ cita }: GroomingCardProps) {
             {isCompletado ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
             {groomingMeta.label}
           </span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+            Cobro en Caja/Cobro
+          </span>
 
           {mascota?.id && (
             <Link href={`/mascotas/${mascota.id}`} className={buttonVariants({ size: "sm", variant: "outline" })}>

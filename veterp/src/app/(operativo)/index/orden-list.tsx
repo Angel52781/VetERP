@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, MoreVertical, Play, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
-import { getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
+import { getFinancialStatusMeta, getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 
 type Orden = {
   id: string;
@@ -31,6 +31,9 @@ type Orden = {
   started_at: string;
   clientes: { id: string; nombre: string } | null;
   mascotas: { id: string; nombre: string } | null;
+  financial_has_venta?: boolean;
+  financial_venta_estado?: string | null;
+  financial_saldo_pendiente?: number | null;
 };
 
 interface OrdenListProps {
@@ -85,6 +88,11 @@ export function OrdenList({ ordenes }: OrdenListProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {ordenes.map((orden) => {
         const estadoInfo = getOrdenStatusMeta(orden.estado_text);
+        const financialInfo = getFinancialStatusMeta({
+          hasVenta: orden.financial_has_venta,
+          ventaEstado: orden.financial_venta_estado,
+          saldoPendiente: orden.financial_saldo_pendiente,
+        });
         const Icon = ESTADOS_ICON[orden.estado_text] || Clock;
 
         return (
@@ -140,9 +148,14 @@ export function OrdenList({ ordenes }: OrdenListProps) {
               </div>
             </CardContent>
             <CardFooter className="mt-auto flex justify-between gap-2 pt-4">
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getToneBadgeClass(estadoInfo.tone)}`}>
-                {estadoInfo.label}
-              </span>
+              <div className="flex flex-wrap items-center gap-1">
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getToneBadgeClass(estadoInfo.tone)}`}>
+                  {estadoInfo.label}
+                </span>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getToneBadgeClass(financialInfo.tone)}`}>
+                  {financialInfo.label}
+                </span>
+              </div>
               <Link 
                 href={`/orden_y_colas/${orden.id}`} 
                 className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-2.5 text-xs font-semibold hover:bg-muted hover:text-foreground transition-colors"

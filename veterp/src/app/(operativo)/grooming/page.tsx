@@ -111,6 +111,10 @@ export default async function GroomingPage() {
       )}
 
       <p className="text-xs text-muted-foreground border-t pt-4">
+        Nota operativa: marcar un servicio de grooming como completado no implica cobro registrado;
+        el cobro se gestiona en Caja / Cobro.
+      </p>
+      <p className="text-xs text-muted-foreground">
         Próximas fases: historial de grooming por paciente, consumo de productos,
         fotos antes/después, combos y descuentos.
       </p>

@@ -27,6 +27,16 @@ export type CombinedOperationalInput = {
   ventaEstado?: string | null;
 };
 
+export type FinancialStatusInput = {
+  ventaEstado?: string | null;
+  hasVenta?: boolean;
+  saldoPendiente?: number | null;
+};
+
+export type OrderFinancialStatusInput = FinancialStatusInput & {
+  ordenEstado?: string | null;
+};
+
 const FALLBACK_STATUS: OperationalStatusMeta = {
   label: "Estado operativo",
   tone: "neutral",
@@ -60,6 +70,12 @@ const VENTA_STATUS: Record<VentaEstado, OperationalStatusMeta> = {
   anulada: { label: "Venta anulada", tone: "neutral", priority: 13 },
 };
 
+const NO_BILLING_STATUS: OperationalStatusMeta = {
+  label: "Sin cobro registrado",
+  tone: "neutral",
+  description: "No existe venta asociada para esta atención.",
+};
+
 export function getCitaStatusMeta(estado?: string | null): OperationalStatusMeta {
   if (!estado || !(estado in CITA_STATUS)) return FALLBACK_STATUS;
   return CITA_STATUS[estado as CitaEstado];
@@ -78,6 +94,37 @@ export function getGroomingStatusMeta(estado?: string | null): OperationalStatus
 export function getVentaStatusMeta(estado?: string | null): OperationalStatusMeta {
   if (!estado || !(estado in VENTA_STATUS)) return FALLBACK_STATUS;
   return VENTA_STATUS[estado as VentaEstado];
+}
+
+export function getFinancialStatusMeta(input: FinancialStatusInput): OperationalStatusMeta {
+  const hasVenta = input.hasVenta ?? Boolean(input.ventaEstado);
+  const ventaEstado = input.ventaEstado ?? null;
+  const saldoPendiente = Number(input.saldoPendiente ?? 0);
+
+  if (!hasVenta) return NO_BILLING_STATUS;
+  if (ventaEstado === "anulada") return getVentaStatusMeta("anulada");
+  if (ventaEstado === "pagada") return getVentaStatusMeta("pagada");
+  if (ventaEstado === "abierta") {
+    if (saldoPendiente > 0) return getVentaStatusMeta("abierta");
+    return { ...getVentaStatusMeta("pagada"), description: "Venta abierta sin saldo pendiente." };
+  }
+
+  return NO_BILLING_STATUS;
+}
+
+export function getOrderFinancialStatus(input: OrderFinancialStatusInput): OperationalStatusMeta {
+  const ordenEstado = input.ordenEstado ?? null;
+  const financial = getFinancialStatusMeta(input);
+
+  if (ordenEstado === "finished") {
+    return {
+      ...financial,
+      label: `Orden finalizada · ${financial.label}`,
+      description: financial.description ?? "La orden clínica finalizó y este es su estado de cobro.",
+    };
+  }
+
+  return financial;
 }
 
 export function getToneBadgeClass(tone: OperationalTone) {

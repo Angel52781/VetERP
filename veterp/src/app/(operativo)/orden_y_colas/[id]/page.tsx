@@ -18,7 +18,7 @@ import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions"
 import { SeguimientosCard } from "../../seguimientos-card";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { getAgeFromDateOnly } from "@/lib/date-only";
-import { getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
+import { getOrderFinancialStatus, getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 
 interface PageProps {
   params: Promise<{
@@ -54,6 +54,20 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
   const mascotaReturnTo = encodeURIComponent(`/orden_y_colas/${id}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`);
   const pacienteAge = getAgeFromDateOnly((orden.mascotas as any)?.nacimiento);
   const ordenStatusMeta = getOrdenStatusMeta(orden.estado_text);
+  const ventaAbierta = (ventas || []).find((venta: any) => venta.estado === "abierta");
+  const ventaPagada = (ventas || []).find((venta: any) => venta.estado === "pagada");
+  const ventaActiva = ventaAbierta ?? ventaPagada ?? null;
+  const totalVenta = Number(ventaActiva?.total ?? 0);
+  const pagadoVenta = (ventaActiva?.ledger ?? [])
+    .filter((mov: any) => mov.tipo === "pago")
+    .reduce((acc: number, mov: any) => acc + Number(mov.monto), 0);
+  const saldoPendiente = Math.max(0, totalVenta - pagadoVenta);
+  const financialStatusMeta = getOrderFinancialStatus({
+    ordenEstado: orden.estado_text,
+    hasVenta: Boolean(ventaActiva?.id),
+    ventaEstado: ventaActiva?.estado ?? null,
+    saldoPendiente,
+  });
 
   return (
     <div className="container mx-auto py-8 max-w-5xl space-y-6">
@@ -74,10 +88,13 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
             </Link>
           </div>
         </div>
-        <div
-          className={`px-4 py-2 rounded-full font-medium text-sm ${getToneBadgeClass(ordenStatusMeta.tone)}`}
-        >
-          {ordenStatusMeta.label}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className={`px-4 py-2 rounded-full font-medium text-sm ${getToneBadgeClass(ordenStatusMeta.tone)}`}>
+            {ordenStatusMeta.label}
+          </div>
+          <div className={`px-4 py-2 rounded-full font-medium text-sm ${getToneBadgeClass(financialStatusMeta.tone)}`}>
+            {financialStatusMeta.label}
+          </div>
         </div>
       </div>
 

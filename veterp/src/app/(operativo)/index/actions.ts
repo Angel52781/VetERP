@@ -99,7 +99,62 @@ export async function getOrdenesServicio() {
       return { error: error.message, data: null };
     }
 
-    return { error: null, data };
+    const ordenes = data ?? [];
+    if (ordenes.length === 0) {
+      return { error: null, data: ordenes };
+    }
+
+    const ordenIds = ordenes.map((orden: any) => orden.id);
+    const { data: ventas, error: ventasError } = await supabase
+      .from("ventas")
+      .select(`
+        id,
+        orden_id,
+        estado,
+        total,
+        created_at,
+        ledger ( tipo, monto )
+      `)
+      .eq("clinica_id", clinicaId)
+      .in("orden_id", ordenIds)
+      .order("created_at", { ascending: false });
+
+    if (ventasError) {
+      console.error("Error fetching ventas for ordenes activas:", ventasError);
+      return { error: ventasError.message, data: null };
+    }
+
+    const ventaByOrdenId = new Map<string, any>();
+    for (const venta of ventas ?? []) {
+      const key = venta.orden_id;
+      if (!key) continue;
+      const current = ventaByOrdenId.get(key);
+      if (!current) {
+        ventaByOrdenId.set(key, venta);
+        continue;
+      }
+      if (current.estado !== "abierta" && venta.estado === "abierta") {
+        ventaByOrdenId.set(key, venta);
+      }
+    }
+
+    const enrichedOrdenes = ordenes.map((orden: any) => {
+      const venta = ventaByOrdenId.get(orden.id);
+      const total = Number(venta?.total ?? 0);
+      const pagado = (venta?.ledger ?? [])
+        .filter((mov: any) => mov.tipo === "pago")
+        .reduce((acc: number, mov: any) => acc + Number(mov.monto), 0);
+      const saldoPendiente = Math.max(0, total - pagado);
+
+      return {
+        ...orden,
+        financial_has_venta: Boolean(venta?.id),
+        financial_venta_estado: venta?.estado ?? null,
+        financial_saldo_pendiente: saldoPendiente,
+      };
+    });
+
+    return { error: null, data: enrichedOrdenes };
   } catch (error: any) {
     console.error("Exception in getOrdenesServicio:", error);
     return { error: error.message || "Error al obtener las órdenes de servicio", data: null };
