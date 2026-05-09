@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, MoreVertical, Play, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
+import { getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 
 type Orden = {
   id: string;
@@ -36,11 +37,11 @@ interface OrdenListProps {
   ordenes: Orden[];
 }
 
-const ESTADOS: Record<string, { label: string; bgClass: string; textClass: string; icon: any }> = {
-  open: { label: "En espera", bgClass: "bg-secondary", textClass: "text-secondary-foreground", icon: Clock },
-  in_progress: { label: "En atencion", bgClass: "bg-primary", textClass: "text-primary-foreground", icon: Play },
-  finished: { label: "Finalizada", bgClass: "bg-green-100", textClass: "text-green-800", icon: CheckCircle },
-  closed: { label: "Cerrada", bgClass: "bg-muted", textClass: "text-muted-foreground", icon: CheckCircle },
+const ESTADOS_ICON: Record<string, any> = {
+  open: Clock,
+  in_progress: Play,
+  finished: CheckCircle,
+  closed: CheckCircle,
 };
 
 export function OrdenList({ ordenes }: OrdenListProps) {
@@ -83,8 +84,8 @@ export function OrdenList({ ordenes }: OrdenListProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {ordenes.map((orden) => {
-        const estadoInfo = ESTADOS[orden.estado_text as keyof typeof ESTADOS] || ESTADOS.open;
-        const Icon = estadoInfo.icon;
+        const estadoInfo = getOrdenStatusMeta(orden.estado_text);
+        const Icon = ESTADOS_ICON[orden.estado_text] || Clock;
 
         return (
           <Card key={orden.id} className="flex flex-col shadow-sm hover:shadow-md transition-shadow">
@@ -139,7 +140,7 @@ export function OrdenList({ ordenes }: OrdenListProps) {
               </div>
             </CardContent>
             <CardFooter className="mt-auto flex justify-between gap-2 pt-4">
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${estadoInfo.bgClass} ${estadoInfo.textClass}`}>
+              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getToneBadgeClass(estadoInfo.tone)}`}>
                 {estadoInfo.label}
               </span>
               <Link 

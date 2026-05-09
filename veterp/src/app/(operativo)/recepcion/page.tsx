@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { createClient } from "@/lib/supabase/server";
+import { getCombinedOperationalStatus, getOrdenStatusMeta } from "@/lib/operational-status";
 import { getClientesParaAgenda } from "@/app/(operativo)/agenda/actions";
 import { getOrdenesServicio } from "@/app/(operativo)/index/actions";
 import { NuevaAtencionForm } from "@/app/(operativo)/index/nueva-atencion-form";
@@ -49,7 +50,7 @@ export default async function RecepcionPage() {
     .select(
       `id, start_date, end_date, estado,
        clientes:cliente_id (nombre),
-       mascotas:mascota_id (nombre, alertas_criticas),
+       mascotas:mascota_id (id, nombre, alertas_criticas),
        tipo_citas:tipo_cita_id (nombre, color)`
     )
     .eq("clinica_id", clinicaId)
@@ -67,11 +68,15 @@ export default async function RecepcionPage() {
   const enEspera = ordenesActivas.filter((o) => o.estado_text === "open");
   const enAtencion = ordenesActivas.filter((o) => o.estado_text === "in_progress");
 
-  const estadoLabels: Record<string, string> = {
-    programada: "Programada",
-    confirmada: "Confirmada",
-    llego: "Llegó",
-  };
+  const ordenActivaByMascotaId = new Map<string, any>();
+  for (const orden of ordenesActivas) {
+    const mascotaId = orden?.mascotas?.id;
+    if (!mascotaId) continue;
+    const current = ordenActivaByMascotaId.get(mascotaId);
+    if (!current || (current.estado_text !== "in_progress" && orden.estado_text === "in_progress")) {
+      ordenActivaByMascotaId.set(mascotaId, orden);
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -217,7 +222,12 @@ export default async function RecepcionPage() {
                     {format(new Date(cita.start_date), "HH:mm")}
                   </span>
                   <Badge variant="secondary">
-                    {estadoLabels[cita.estado] ?? cita.estado}
+                    {
+                      getCombinedOperationalStatus({
+                        citaEstado: cita.estado,
+                        ordenEstado: ordenActivaByMascotaId.get(cita.mascotas?.id)?.estado_text,
+                      }).label
+                    }
                   </Badge>
                 </div>
               </div>
@@ -265,7 +275,7 @@ export default async function RecepcionPage() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge variant={orden.estado_text === "in_progress" ? "default" : "secondary"}>
-                    {orden.estado_text === "in_progress" ? "En atención" : "En espera"}
+                    {getOrdenStatusMeta(orden.estado_text).label}
                   </Badge>
                   <Link
                     href={`/orden_y_colas/${orden.id}`}

@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { getCitaStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 import { updateCitaEstado } from "./actions";
 
 type CitaEstadoControlProps = {
@@ -14,18 +15,6 @@ type CitaEstadoControlProps = {
   startDate?: string | null;
   compact?: boolean;
 };
-
-const ESTADO_META: Record<string, { label: string; badgeClass: string }> = {
-  programada: { label: "Programada", badgeClass: "bg-secondary text-secondary-foreground" },
-  confirmada: { label: "Confirmada", badgeClass: "bg-blue-100 text-blue-800" },
-  llego: { label: "Llegó", badgeClass: "bg-amber-100 text-amber-800" },
-  en_atencion: { label: "En atención", badgeClass: "bg-indigo-100 text-indigo-800" },
-  cancelada: { label: "Cancelada", badgeClass: "bg-red-100 text-red-800" },
-  no_asistio: { label: "No asistió", badgeClass: "bg-orange-100 text-orange-800" },
-  completada: { label: "Completada", badgeClass: "bg-green-100 text-green-800" },
-};
-
-const FALLBACK_META = ESTADO_META.programada;
 
 function getAllowedActions(estado: string) {
   if (estado === "programada") {
@@ -58,7 +47,7 @@ export function CitaEstadoControl({ citaId, estado, startDate, compact = false }
   const msToStart = Number.isNaN(startMs) ? -1 : startMs - nowMs;
   const isFuture = msToStart > 0;
   const isFutureFar = msToStart > 120 * 60 * 1000;
-  const meta = ESTADO_META[estadoActual] ?? FALLBACK_META;
+  const meta = getCitaStatusMeta(estadoActual);
   const actions = (() => {
     if (isFutureFar) {
       if (estadoActual === "programada") {
@@ -103,13 +92,13 @@ export function CitaEstadoControl({ citaId, estado, startDate, compact = false }
       return;
     }
 
-    toast.success(`Cita marcada como ${ESTADO_META[nextEstado]?.label ?? nextEstado}.`);
+    toast.success(`Cita marcada como ${getCitaStatusMeta(nextEstado).label}.`);
     router.refresh();
   }
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className={`text-xs px-2 py-0.5 rounded-full ${meta.badgeClass}`}>{meta.label}</span>
+      <span className={`text-xs px-2 py-0.5 rounded-full ${getToneBadgeClass(meta.tone)}`}>{meta.label}</span>
       {actions.map((action) => (
         <Button
           key={`${citaId}-${action.estado}`}

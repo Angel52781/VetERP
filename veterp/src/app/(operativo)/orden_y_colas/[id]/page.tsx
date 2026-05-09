@@ -18,6 +18,7 @@ import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions"
 import { SeguimientosCard } from "../../seguimientos-card";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { getAgeFromDateOnly } from "@/lib/date-only";
+import { getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 
 interface PageProps {
   params: Promise<{
@@ -52,6 +53,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
     : "/atenciones";
   const mascotaReturnTo = encodeURIComponent(`/orden_y_colas/${id}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`);
   const pacienteAge = getAgeFromDateOnly((orden.mascotas as any)?.nacimiento);
+  const ordenStatusMeta = getOrdenStatusMeta(orden.estado_text);
 
   return (
     <div className="container mx-auto py-8 max-w-5xl space-y-6">
@@ -73,25 +75,9 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
           </div>
         </div>
         <div
-          className={`px-4 py-2 rounded-full font-medium text-sm ${
-            orden.estado_text === "in_progress"
-              ? "bg-primary/10 text-primary"
-              : orden.estado_text === "finished"
-              ? "bg-green-100 text-green-800"
-              : orden.estado_text === "closed"
-              ? "bg-muted text-muted-foreground"
-              : "bg-secondary text-secondary-foreground"
-          }`}
+          className={`px-4 py-2 rounded-full font-medium text-sm ${getToneBadgeClass(ordenStatusMeta.tone)}`}
         >
-          {orden.estado_text === "open"
-            ? "Abierta"
-            : orden.estado_text === "in_progress"
-            ? "En progreso"
-            : orden.estado_text === "finished"
-            ? "Finalizada"
-            : orden.estado_text === "closed"
-            ? "Cerrada"
-            : orden.estado_text ?? "Abierta"}
+          {ordenStatusMeta.label}
         </div>
       </div>
 

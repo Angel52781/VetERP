@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Scissors, CalendarDays, Inbox } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { getGroomingStatusMeta } from "@/lib/operational-status";
 import { getGroomingDia } from "./actions";
 import { GroomingCard } from "./grooming-client";
 
@@ -23,6 +24,8 @@ export default async function GroomingPage() {
   const completados = citas.filter(
     (c: any) => c.grooming_servicios?.[0]?.estado_text === "completado"
   );
+  const pendientesMeta = getGroomingStatusMeta("pendiente");
+  const completadosMeta = getGroomingStatusMeta("completado");
 
   return (
     <div className="space-y-6">
@@ -82,7 +85,7 @@ export default async function GroomingPage() {
           {pendientes.length > 0 && (
             <section className="space-y-3">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Pendientes ({pendientes.length})
+                {pendientesMeta.label} ({pendientes.length})
               </h2>
               <div className="space-y-3">
                 {pendientes.map((cita: any) => (
@@ -95,7 +98,7 @@ export default async function GroomingPage() {
           {completados.length > 0 && (
             <section className="space-y-3">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Completados ({completados.length})
+                {completadosMeta.label} ({completados.length})
               </h2>
               <div className="space-y-3">
                 {completados.map((cita: any) => (

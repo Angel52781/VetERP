@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { getGroomingStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 import {
   guardarGroomingServicio,
   marcarGroomingCompletado,
@@ -65,6 +66,7 @@ export function GroomingCard({ cita }: GroomingCardProps) {
 
   const gs = cita.grooming_servicios?.[0];
   const isCompletado = gs?.estado_text === "completado";
+  const groomingMeta = getGroomingStatusMeta(isCompletado ? "completado" : "pendiente");
 
   const [obs, setObs] = useState(gs?.observaciones_text ?? "");
   const [servicios, setServicios] = useState(gs?.servicios_realizados_text ?? "");
@@ -175,15 +177,10 @@ export function GroomingCard({ cita }: GroomingCardProps) {
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          {isCompletado ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Completado
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs text-amber-800">
-              <Clock className="h-3.5 w-3.5" /> Pendiente
-            </span>
-          )}
+          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs ${getToneBadgeClass(groomingMeta.tone)}`}>
+            {isCompletado ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
+            {groomingMeta.label}
+          </span>
 
           {mascota?.id && (
             <Link href={`/mascotas/${mascota.id}`} className={buttonVariants({ size: "sm", variant: "outline" })}>
@@ -193,7 +190,7 @@ export function GroomingCard({ cita }: GroomingCardProps) {
 
           <Button size="sm" variant="secondary" onClick={() => setIsOpen((value) => !value)}>
             {isOpen ? <ChevronUp className="mr-2 h-3.5 w-3.5" /> : <ChevronDown className="mr-2 h-3.5 w-3.5" />}
-            {isOpen ? "Cerrar" : "Gestionar"}
+            {isOpen ? "Cerrar" : "Ver detalles"}
           </Button>
         </div>
       </div>

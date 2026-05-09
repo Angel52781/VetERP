@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ExternalLink, Search } from "lucide-react";
 import { formatMoneyPEN } from "@/lib/money";
+import { getBadgeVariantByTone, getVentaStatusMeta } from "@/lib/operational-status";
 
 export function VentasList({ ventas }: { ventas: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,8 +70,8 @@ export function VentasList({ ventas }: { ventas: any[] }) {
                     </TableCell>
                     <TableCell>{venta.clientes?.nombre || "Desconocido"}</TableCell>
                     <TableCell>
-                      <Badge variant={venta.estado === "pagada" ? "default" : "secondary"} className="text-[10px] uppercase">
-                        {venta.estado}
+                      <Badge variant={getBadgeVariantByTone(getVentaStatusMeta(venta.estado).tone)} className="text-[10px] uppercase">
+                        {getVentaStatusMeta(venta.estado).label}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right font-medium">{formatMoneyPEN(total)}</TableCell>
