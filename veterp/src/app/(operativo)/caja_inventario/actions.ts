@@ -195,7 +195,19 @@ export async function getItemsCatalogo() {
 
   const { data, error } = await supabase
     .from("items_catalogo")
-    .select("*")
+    .select(`
+      id,
+      nombre,
+      descripcion,
+      kind,
+      precio_inc,
+      is_disabled,
+      proveedor_id,
+      categoria_id,
+      categorias_catalogo (
+        nombre
+      )
+    `)
     .eq("clinica_id", clinicaId)
     .eq("is_disabled", false)
     .order("nombre");

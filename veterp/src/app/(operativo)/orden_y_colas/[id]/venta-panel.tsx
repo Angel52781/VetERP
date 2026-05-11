@@ -16,6 +16,43 @@ import { toast } from "sonner";
 import { formatMoneyPEN } from "@/lib/money";
 import { getVentaStatusMeta } from "@/lib/operational-status";
 
+type ItemFilter = "frecuentes" | "servicios" | "productos" | "todos";
+
+const itemFilters: Array<{ value: ItemFilter; label: string }> = [
+  { value: "frecuentes", label: "Frecuentes" },
+  { value: "servicios", label: "Servicios" },
+  { value: "productos", label: "Productos" },
+  { value: "todos", label: "Todos" },
+];
+
+const frequentNameKeywords = ["consulta", "bano", "baño", "grooming", "vacuna", "corte de unas", "corte de uñas"];
+const frequentCategoryKeywords = ["consultas", "banos", "baños", "grooming", "vacunas", "adicionales"];
+
+function normalizeSearch(value: unknown) {
+  return String(value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getCategoriaNombre(item: any) {
+  return item.categorias_catalogo?.nombre ?? item.categoria ?? item.category ?? "";
+}
+
+function getKindLabel(kind: unknown) {
+  return kind === "producto" ? "Producto" : "Servicio";
+}
+
+function isFrequentItem(item: any) {
+  const nombre = normalizeSearch(item.nombre);
+  const categoria = normalizeSearch(getCategoriaNombre(item));
+
+  return (
+    frequentNameKeywords.some((keyword) => nombre.includes(normalizeSearch(keyword))) ||
+    frequentCategoryKeywords.some((keyword) => categoria.includes(normalizeSearch(keyword)))
+  );
+}
+
 export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }: { ordenId: string, clienteId: string, itemsCatalogo: any[], initialVentas: any[] }) {
   const [ventas, setVentas] = useState<any[]>(initialVentas);
   const [loading, setLoading] = useState(false);
@@ -23,6 +60,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
   
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [itemQuery, setItemQuery] = useState<string>("");
+  const [itemFilter, setItemFilter] = useState<ItemFilter>("frecuentes");
   const [isComboboxOpen, setIsComboboxOpen] = useState<boolean>(false);
   const [isClient, setIsClient] = useState(false);
   const [comboboxRect, setComboboxRect] = useState<{ top: number; left: number; width: number }>({
@@ -36,11 +74,19 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
   const comboboxInputRef = useRef<HTMLInputElement | null>(null);
   const selectedItemData = itemsCatalogo.find((item) => item.id === selectedItem);
   const filteredItems = itemsCatalogo.filter((item) => {
-    const query = itemQuery.trim().toLowerCase();
+    const query = normalizeSearch(itemQuery.trim());
+    const nombre = normalizeSearch(item.nombre);
+    const kind = normalizeSearch(item.kind);
+    const categoria = normalizeSearch(getCategoriaNombre(item));
+    const matchesFilter =
+      itemFilter === "todos" ||
+      (itemFilter === "servicios" && item.kind === "servicio") ||
+      (itemFilter === "productos" && item.kind === "producto") ||
+      (itemFilter === "frecuentes" && isFrequentItem(item));
+
+    if (!matchesFilter) return false;
     if (!query) return true;
-    const nombre = String(item.nombre ?? "").toLowerCase();
-    const kind = String(item.kind ?? "").toLowerCase();
-    const categoria = String(item.categoria ?? item.category ?? "").toLowerCase();
+
     return nombre.includes(query) || kind.includes(query) || categoria.includes(query);
   });
 
@@ -162,6 +208,43 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
     setLoadingAction(false);
   };
 
+  const handleCopyResumen = async (venta: any) => {
+    const total = Number(venta.total) || 0;
+    const pagado = venta.ledger?.reduce((acc: number, p: any) => acc + Number(p.monto), 0) || 0;
+    const saldo = Math.max(0, total - pagado);
+    const items = venta.items_venta?.length
+      ? venta.items_venta.map((iv: any) =>
+          `- ${iv.cantidad}x ${iv.items_catalogo?.nombre ?? "Item"}: ${formatMoneyPEN(iv.total_linea)}`
+        ).join("\n")
+      : "- Sin items registrados";
+    const pagos = venta.ledger?.length
+      ? venta.ledger.map((p: any) =>
+          `- ${format(new Date(p.fecha), "dd/MM/yyyy HH:mm", { locale: es })} · ${p.metodo_pago ?? "efectivo"} · ${formatMoneyPEN(p.monto)}`
+        ).join("\n")
+      : "- Sin pagos registrados";
+    const resumen = [
+      `Resumen de cobro VTA-${venta.id.slice(0, 8).toUpperCase()}`,
+      `Fecha: ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: es })}`,
+      "",
+      "Items:",
+      items,
+      "",
+      `Total: ${formatMoneyPEN(total)}`,
+      `Pagado: ${formatMoneyPEN(pagado)}`,
+      `Saldo: ${formatMoneyPEN(saldo)}`,
+      "",
+      "Pagos:",
+      pagos,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(resumen);
+      toast.success("Resumen copiado.");
+    } catch {
+      toast.error("No se pudo copiar el resumen.");
+    }
+  };
+
   if (loading && ventas.length === 0) {
     return (
       <div className="flex justify-center p-8">
@@ -245,6 +328,26 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                   <div className="grid gap-2 mb-6 items-end sm:grid-cols-[minmax(0,1fr)_6rem_auto]">
                     <div className="min-w-0 space-y-1">
                       <label className="text-xs font-medium">Producto/Servicio</label>
+                      <div className="flex flex-wrap gap-1">
+                        {itemFilters.map((filter) => (
+                          <button
+                            key={filter.value}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => {
+                              setItemFilter(filter.value);
+                              setIsComboboxOpen(true);
+                            }}
+                            className={`rounded-full border px-2 py-0.5 text-[11px] transition-colors ${
+                              itemFilter === filter.value
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "bg-background text-muted-foreground hover:bg-muted"
+                            }`}
+                          >
+                            {filter.label}
+                          </button>
+                        ))}
+                      </div>
                       <div className="relative">
                         <Input
                           ref={comboboxInputRef}
@@ -289,11 +392,14 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                           }}
                         >
                           {filteredItems.length > 0 ? (
-                            filteredItems.map((item) => (
+                            filteredItems.map((item) => {
+                              const categoria = getCategoriaNombre(item);
+
+                              return (
                               <button
                                 key={item.id}
                                 type="button"
-                                className={`flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent ${
+                                className={`flex w-full items-start justify-between gap-3 rounded-sm px-2 py-2 text-left text-sm hover:bg-accent ${
                                   selectedItem === item.id ? "bg-accent" : ""
                                 }`}
                                 onMouseDown={(e) => {
@@ -303,12 +409,19 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                                   setIsComboboxOpen(false);
                                 }}
                               >
-                                <span className="truncate">{item.nombre}</span>
-                                <span className="ml-2 shrink-0 text-xs text-muted-foreground">
-                                  {(item.kind || item.categoria || item.category || "ítem").toString()}
+                                <span className="min-w-0">
+                                  <span className="block truncate font-medium">{item.nombre}</span>
+                                  <span className="mt-0.5 flex flex-wrap gap-1 text-[11px] text-muted-foreground">
+                                    <span>{getKindLabel(item.kind)}</span>
+                                    {categoria ? <span>· {categoria}</span> : null}
+                                  </span>
+                                </span>
+                                <span className="shrink-0 text-xs font-semibold">
+                                  {formatMoneyPEN(Number(item.precio_inc) || 0)}
                                 </span>
                               </button>
-                            ))
+                              );
+                            })
                           ) : (
                             <div className="px-2 py-2 text-xs text-muted-foreground">Sin resultados.</div>
                           )}
@@ -412,6 +525,58 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                           <span>{formatMoneyPEN(saldoPendiente)}</span>
                         </div>
                       </>
+                    );
+                  })()}
+                  {(() => {
+                    const itemsCount = abierta.items_venta?.reduce((acc: number, iv: any) => acc + Number(iv.cantidad), 0) || 0;
+                    const totalPagado = abierta.ledger?.reduce((acc: number, p: any) => acc + Number(p.monto), 0) || 0;
+                    const saldoPendiente = Math.max(0, Number(abierta.total) - totalPagado);
+                    const itemsResumen = abierta.items_venta || [];
+                    const ultimoPago = [...(abierta.ledger || [])].sort((a: any, b: any) =>
+                      new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+                    )[0];
+
+                    return (
+                      <div className="rounded-md border bg-background/80 p-3 text-xs space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-semibold text-sm">Resumen del cobro</p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7"
+                            onClick={() => handleCopyResumen(abierta)}
+                          >
+                            Copiar resumen
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-muted-foreground">
+                          <span>Items: {itemsCount}</span>
+                          <span>Total: {formatMoneyPEN(abierta.total)}</span>
+                          <span>Pagado: {formatMoneyPEN(totalPagado)}</span>
+                          <span>Saldo: {formatMoneyPEN(saldoPendiente)}</span>
+                        </div>
+                        {itemsResumen.length > 0 ? (
+                          <div className="space-y-1 border-t pt-2">
+                            {itemsResumen.slice(0, 4).map((iv: any) => (
+                              <div key={iv.id} className="flex justify-between gap-2 text-muted-foreground">
+                                <span className="truncate">{iv.cantidad}x {iv.items_catalogo?.nombre ?? "Item"}</span>
+                                <span className="shrink-0">{formatMoneyPEN(iv.total_linea)}</span>
+                              </div>
+                            ))}
+                            {itemsResumen.length > 4 ? (
+                              <p className="text-muted-foreground">+{itemsResumen.length - 4} ítem adicional</p>
+                            ) : null}
+                          </div>
+                        ) : null}
+                        {ultimoPago ? (
+                          <p className="text-muted-foreground">
+                            Último pago: {ultimoPago.metodo_pago || "efectivo"} · {format(new Date(ultimoPago.fecha), "dd/MM/yyyy HH:mm", { locale: es })}
+                          </p>
+                        ) : (
+                          <p className="text-muted-foreground">Sin pagos registrados todavía.</p>
+                        )}
+                      </div>
                     );
                   })()}
                 </CardContent>
