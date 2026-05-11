@@ -1,0 +1,289 @@
+"use client";
+
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { BedDouble, Phone, Plus, Search } from "lucide-react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
+import {
+  createHospitalizacionSchema,
+  type CreateHospitalizacionInput,
+} from "@/lib/validators/hospitalizaciones";
+import { createHospitalizacion } from "./actions";
+
+export type HospitalizacionPacienteOption = {
+  id: string;
+  nombre: string;
+  especie: string | null;
+  raza: string | null;
+  cliente_id: string;
+  clientes: {
+    id: string;
+    nombre: string;
+    telefono: string | null;
+  } | null;
+};
+
+type NuevaHospitalizacionDialogProps = {
+  pacientes: HospitalizacionPacienteOption[];
+};
+
+function normalizeSearch(value: unknown) {
+  return String(value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDialogProps) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [patientQuery, setPatientQuery] = useState("");
+  const [pending, startTransition] = useTransition();
+  const form = useForm<CreateHospitalizacionInput>({
+    resolver: zodResolver(createHospitalizacionSchema),
+    defaultValues: {
+      mascota_id: "",
+      cliente_id: "",
+      medico_tratante_text: "",
+      motivo_text: "",
+      diagnostico_presuntivo_text: "",
+    },
+  });
+
+  const selectedMascotaId = form.watch("mascota_id");
+  const selectedPaciente = useMemo(
+    () => pacientes.find((paciente) => paciente.id === selectedMascotaId),
+    [pacientes, selectedMascotaId],
+  );
+  const filteredPacientes = useMemo(() => {
+    const query = normalizeSearch(patientQuery.trim());
+    if (!query) return pacientes.slice(0, 20);
+
+    return pacientes
+      .filter((paciente) => {
+        const searchable = [
+          paciente.nombre,
+          paciente.clientes?.nombre,
+          paciente.clientes?.telefono,
+          paciente.especie,
+          formatSpeciesLabel(paciente.especie),
+          paciente.raza,
+          formatBreedLabel(paciente.raza),
+        ]
+          .map(normalizeSearch)
+          .join(" ");
+
+        return searchable.includes(query);
+      })
+      .slice(0, 30);
+  }, [pacientes, patientQuery]);
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      form.reset();
+      setPatientQuery("");
+    }
+  }
+
+  function handlePacienteChange(mascotaId: string) {
+    const paciente = pacientes.find((item) => item.id === mascotaId);
+    form.setValue("mascota_id", mascotaId, { shouldValidate: true });
+    form.setValue("cliente_id", paciente?.cliente_id ?? "", { shouldValidate: true });
+    form.clearErrors(["mascota_id", "cliente_id"]);
+    setPatientQuery(paciente?.nombre ?? "");
+  }
+
+  function onSubmit(values: CreateHospitalizacionInput) {
+    startTransition(async () => {
+      const result = await createHospitalizacion(values);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success("Internamiento creado");
+      setOpen(false);
+      form.reset();
+      router.refresh();
+    });
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger render={<Button />}>
+        <Plus className="mr-2 h-4 w-4" />
+        Nuevo internamiento
+      </DialogTrigger>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <BedDouble className="h-4 w-4" />
+            Nuevo internamiento
+          </DialogTitle>
+          <DialogDescription>
+            Registra un paciente internado sin crear cobro ni movimientos de inventario.
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="mascota_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Paciente</FormLabel>
+                  <FormControl>
+                    <div className="space-y-3 rounded-lg border p-3">
+                      <div className="relative">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                          value={patientQuery}
+                          onChange={(event) => setPatientQuery(event.target.value)}
+                          placeholder="Buscar por paciente, responsable, especie o raza"
+                          className="pl-9"
+                        />
+                      </div>
+
+                      {selectedPaciente && (
+                        <div className="rounded-md bg-primary/5 px-3 py-2 text-sm">
+                          <p className="font-medium">Seleccionado: {selectedPaciente.nombre}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {selectedPaciente.clientes?.nombre ?? "Responsable no registrado"}
+                            {selectedPaciente.clientes?.telefono ? ` · ${selectedPaciente.clientes.telefono}` : ""}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="max-h-60 space-y-2 overflow-y-auto pr-1">
+                        {filteredPacientes.length === 0 ? (
+                          <div className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
+                            No hay pacientes que coincidan con la búsqueda.
+                          </div>
+                        ) : (
+                          filteredPacientes.map((paciente) => {
+                            const selected = field.value === paciente.id;
+                            return (
+                              <button
+                                key={paciente.id}
+                                type="button"
+                                onClick={() => handlePacienteChange(paciente.id)}
+                                className={`w-full rounded-md border px-3 py-2 text-left transition-colors ${
+                                  selected
+                                    ? "border-primary bg-primary/5"
+                                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                                }`}
+                              >
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <p className="truncate text-sm font-semibold">{paciente.nombre}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {formatSpeciesLabel(paciente.especie)} / {formatBreedLabel(paciente.raza)}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Responsable: {paciente.clientes?.nombre ?? "No registrado"}
+                                    </p>
+                                  </div>
+                                  {paciente.clientes?.telefono && (
+                                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                                      <Phone className="h-3 w-3" />
+                                      {paciente.clientes.telefono}
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="medico_tratante_text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Médico tratante</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nombre del médico responsable" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="motivo_text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Motivo de internamiento</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Ej. Observación postoperatoria, deshidratación, monitoreo..."
+                      className="min-h-20 resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="diagnostico_presuntivo_text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Diagnóstico presuntivo</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Diagnóstico o sospecha inicial"
+                      className="min-h-20 resize-none"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full" disabled={pending || pacientes.length === 0}>
+              {pending ? "Guardando..." : "Crear internamiento"}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

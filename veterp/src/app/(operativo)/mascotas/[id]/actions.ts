@@ -241,7 +241,7 @@ export async function getMascotaCompleta(mascotaId: string) {
   const clinicaId = await requireClinicaIdFromCookies();
   const supabase = await createClient();
 
-  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes] = await Promise.all([
+  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes, hospitalizacionesRes] = await Promise.all([
     supabase
       .from("mascotas")
       .select(`
@@ -283,9 +283,58 @@ export async function getMascotaCompleta(mascotaId: string) {
       .select("id, nombre, duracion_min")
       .eq("clinica_id", clinicaId)
       .order("nombre"),
+
+    supabase
+      .from("hospitalizaciones")
+      .select(`
+        id,
+        estado_text,
+        medico_tratante_text,
+        motivo_text,
+        diagnostico_presuntivo_text,
+        internado_at,
+        alta_at,
+        alta_notas_text,
+        created_at
+      `)
+      .eq("clinica_id", clinicaId)
+      .eq("mascota_id", mascotaId)
+      .order("internado_at", { ascending: false }),
   ]);
 
   const seguimientos = await loadSeguimientosWithRecovery(supabase, clinicaId, mascotaId);
+  const hospitalizaciones = hospitalizacionesRes.data ?? [];
+  const hospitalizacionIds = hospitalizaciones.map((h: any) => h.id).filter(Boolean);
+  const controlesRes = hospitalizacionIds.length
+    ? await supabase
+        .from("hospitalizacion_controles")
+        .select(`
+          id,
+          hospitalizacion_id,
+          temperatura_num,
+          frecuencia_cardiaca_num,
+          frecuencia_respiratoria_num,
+          peso_num,
+          deshidratacion_pct,
+          mucosas_text,
+          tlc_text,
+          comio_bool,
+          orino_bool,
+          defeco_bool,
+          observaciones_text,
+          registrado_at
+        `)
+        .eq("clinica_id", clinicaId)
+        .in("hospitalizacion_id", hospitalizacionIds)
+        .order("registrado_at", { ascending: false })
+    : { data: [] as any[], error: null };
+
+  const ultimoControlByHospitalizacion = new Map<string, any>();
+  for (const control of controlesRes.data ?? []) {
+    if (!ultimoControlByHospitalizacion.has(control.hospitalizacion_id)) {
+      ultimoControlByHospitalizacion.set(control.hospitalizacion_id, control);
+    }
+  }
 
   return { 
     mascota: mascotaRes.data, 
@@ -293,9 +342,13 @@ export async function getMascotaCompleta(mascotaId: string) {
     citas: citasRes.data ?? [],
     tiposCita: tiposCitaRes.data ?? [],
     seguimientos: seguimientos.data,
+    hospitalizaciones: hospitalizaciones.map((hospitalizacion: any) => ({
+      ...hospitalizacion,
+      ultimo_control: ultimoControlByHospitalizacion.get(hospitalizacion.id) ?? null,
+    })),
     seguimientoFeatureUnavailable: seguimientos.unavailable,
     seguimientoFeatureReason: seguimientos.reason,
-    error: mascotaRes.error?.message
+    error: mascotaRes.error?.message || hospitalizacionesRes.error?.message || controlesRes.error?.message
   };
 }
 

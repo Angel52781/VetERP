@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Clock, Calendar, ArrowLeft, NotebookPen, Phone, User,
   Stethoscope, FileText, AlertCircle, Scissors,
-  Building2, FlaskConical, Syringe, FolderOpen, Activity,
+  BedDouble, FlaskConical, Syringe, FolderOpen, Activity,
   CheckCircle2,
 } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
@@ -47,7 +47,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const { id } = await params;
   const { returnTo, tab } = (await searchParams) ?? {};
   const {
-    mascota, ordenes, citas, tiposCita, seguimientos,
+    mascota, ordenes, citas, tiposCita, seguimientos, hospitalizaciones,
     seguimientoFeatureUnavailable, seguimientoFeatureReason, error,
   } = await getMascotaCompleta(id);
 
@@ -85,7 +85,16 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
     ? returnTo
     : `/clientes/${mascota.cliente_id}`;
   const ordenReturnTo = encodeURIComponent(`/mascotas/${id}`);
-  const defaultTab = tab === "seguimientos" ? "seguimientos" : tab === "ordenes" ? "ordenes" : tab === "citas" ? "citas" : "historia";
+  const defaultTab =
+    tab === "seguimientos"
+      ? "seguimientos"
+      : tab === "hospitalizaciones"
+        ? "hospitalizaciones"
+        : tab === "ordenes"
+          ? "ordenes"
+          : tab === "citas"
+            ? "citas"
+            : "historia";
 
   const responsable = mascota.clientes as any;
 
@@ -279,9 +288,10 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
       {/* ── TABS ── */}
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="historia">Historia clínica</TabsTrigger>
           <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
+          <TabsTrigger value="hospitalizaciones">Hospitalizaciones</TabsTrigger>
           <TabsTrigger value="ordenes">Atenciones</TabsTrigger>
           <TabsTrigger value="citas">Citas</TabsTrigger>
         </TabsList>
@@ -344,6 +354,112 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             featureUnavailable={seguimientoFeatureUnavailable}
             featureUnavailableReason={seguimientoFeatureReason ?? undefined}
           />
+        </TabsContent>
+
+        {/* Hospitalizaciones */}
+        <TabsContent value="hospitalizaciones" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <BedDouble className="h-4 w-4 text-primary" />
+                Hospitalizaciones
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {hospitalizaciones && hospitalizaciones.length > 0 ? (
+                <div className="divide-y rounded-md border">
+                  {hospitalizaciones.map((hospitalizacion: any) => {
+                    const isActiva = hospitalizacion.estado_text === "activa";
+                    const ultimoControl = hospitalizacion.ultimo_control;
+                    return (
+                      <div key={hospitalizacion.id} className="p-4 space-y-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-sm font-semibold">
+                                {hospitalizacion.diagnostico_presuntivo_text || "Internamiento"}
+                              </p>
+                              <Badge
+                                className={
+                                  isActiva
+                                    ? "bg-blue-100 text-blue-800 border-none"
+                                    : "bg-emerald-100 text-emerald-800 border-none"
+                                }
+                              >
+                                {isActiva ? "Activa" : "Alta"}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Ingreso:{" "}
+                              {format(new Date(hospitalizacion.internado_at), "dd MMM yyyy, HH:mm", {
+                                locale: es,
+                              })}
+                              {hospitalizacion.alta_at && (
+                                <>
+                                  {" "}
+                                  · Alta:{" "}
+                                  {format(new Date(hospitalizacion.alta_at), "dd MMM yyyy, HH:mm", {
+                                    locale: es,
+                                  })}
+                                </>
+                              )}
+                            </p>
+                            {hospitalizacion.medico_tratante_text && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Médico: {hospitalizacion.medico_tratante_text}
+                              </p>
+                            )}
+                          </div>
+                          <Link
+                            href="/hospitalizaciones"
+                            className={buttonVariants({ variant: "outline", size: "sm" })}
+                          >
+                            Ver módulo
+                          </Link>
+                        </div>
+
+                        {hospitalizacion.motivo_text && (
+                          <p className="text-sm whitespace-pre-wrap">{hospitalizacion.motivo_text}</p>
+                        )}
+
+                        {ultimoControl ? (
+                          <div className="rounded-md bg-muted/30 p-3 text-xs">
+                            <p className="font-medium text-foreground">
+                              Último control:{" "}
+                              {format(new Date(ultimoControl.registrado_at), "dd/MM/yyyy HH:mm")}
+                            </p>
+                            <p className="mt-1 text-muted-foreground">
+                              {[
+                                ultimoControl.temperatura_num ? `${ultimoControl.temperatura_num} C` : null,
+                                ultimoControl.frecuencia_cardiaca_num ? `${ultimoControl.frecuencia_cardiaca_num} lpm` : null,
+                                ultimoControl.frecuencia_respiratoria_num ? `${ultimoControl.frecuencia_respiratoria_num} rpm` : null,
+                                ultimoControl.peso_num ? `${ultimoControl.peso_num} kg` : null,
+                              ]
+                                .filter(Boolean)
+                                .join(" · ") || "Sin signos vitales numéricos"}
+                            </p>
+                            {ultimoControl.observaciones_text && (
+                              <p className="mt-1 whitespace-pre-wrap">{ultimoControl.observaciones_text}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">Sin controles registrados.</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <BedDouble className="mx-auto h-8 w-8 text-muted-foreground/30" />
+                  <p className="mt-2 text-sm font-medium">Sin hospitalizaciones registradas</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Los internamientos aparecerán aquí cuando se creen desde el módulo Hospitalizaciones.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Atenciones */}
@@ -440,7 +556,6 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
             { icon: Scissors, label: "Grooming", desc: "Historial de baños, cortes y observaciones de manejo." },
-            { icon: Building2, label: "Hospitalizaciones", desc: "Internamientos, evolución y medicación." },
             { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },
             { icon: Syringe, label: "Procedimientos", desc: "Cirugías, vacunas y procedimientos clínicos." },
             { icon: FolderOpen, label: "Archivos adjuntos", desc: "Radiografías, ecografías y documentos." },
