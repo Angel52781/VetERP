@@ -45,17 +45,6 @@ export const ledgerSchema = z.object({
 
 export type LedgerInput = z.infer<typeof ledgerSchema>;
 
-export const abonoLibreClienteSchema = z.object({
-  cliente_id: z.string().uuid("El cliente es requerido"),
-  monto: z.coerce.number().min(0.01, "El monto debe ser mayor a 0"),
-  metodo_pago: z.enum(["efectivo", "tarjeta", "transferencia"], {
-    error: "El metodo de pago es requerido",
-  }),
-  notas_text: z.string().trim().max(500, "Las notas no pueden exceder 500 caracteres").optional().nullable(),
-});
-
-export type AbonoLibreClienteInput = z.infer<typeof abonoLibreClienteSchema>;
-
 export const abrirCajaSchema = z.object({
   monto_apertura: z.coerce.number().min(0, "El monto de apertura no puede ser negativo"),
 });

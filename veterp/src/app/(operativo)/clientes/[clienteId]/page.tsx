@@ -17,7 +17,6 @@ import { createClient } from "@/lib/supabase/server";
 import MascotaForm from "./mascota-form";
 import { AccionesContextualesCliente } from "./acciones-contextuales";
 import { ClienteEditDialog } from "./cliente-edit-dialog";
-import { AbonoClienteDialog } from "./abono-cliente-dialog";
 
 export default async function ClienteDetallePage({
   params,
@@ -95,15 +94,6 @@ export default async function ClienteDetallePage({
     .eq("cliente_id", clienteId)
     .order("created_at", { ascending: false });
 
-  const { data: abonosLibres } = await supabase
-    .from("ledger")
-    .select("id, monto, fecha, metodo_pago, notas_text")
-    .eq("clinica_id", clinicaId)
-    .eq("cliente_id", clienteId)
-    .eq("tipo", "pago")
-    .is("venta_id", null)
-    .order("fecha", { ascending: false });
-
   const estadoCuentaRows = (ventasCuenta || []).map((venta: any) => {
     const pagos = (venta.ledger || []).filter((mov: any) => mov.tipo === "pago");
     const total = Number(venta.total) || 0;
@@ -136,14 +126,6 @@ export default async function ClienteDetallePage({
     .filter((row) => row.ventaEstado !== "anulada")
     .reduce((acc, row) => acc + row.pagado, 0);
   const deudaTotal = Math.max(0, totalVendido - totalPagadoHistorico);
-  const abonosLibresRows = (abonosLibres || []).map((mov: any) => ({
-    id: mov.id as string,
-    monto: Number(mov.monto) || 0,
-    fecha: mov.fecha as string,
-    metodoPago: (mov.metodo_pago as string | null) ?? null,
-    notas: (mov.notas_text as string | null) ?? null,
-  }));
-  const saldoAFavor = abonosLibresRows.reduce((acc, mov) => acc + mov.monto, 0);
   const ordenActiva = (ordenes || []).find((orden: any) =>
     ["open", "in_progress"].includes(orden.estado_text)
   ) as any | undefined;
@@ -189,18 +171,7 @@ export default async function ClienteDetallePage({
     return [...cargo, ...pagos];
   });
 
-  const movimientosAbonosLibres = abonosLibresRows.map((mov) => ({
-    id: `abono-${mov.id}`,
-    fecha: mov.fecha,
-    tipo: "abono" as const,
-    concepto: mov.notas?.trim() || `Anticipo del cliente${mov.metodoPago ? ` (${mov.metodoPago})` : ""}`,
-    cargo: 0,
-    pago: mov.monto,
-    ordenId: null,
-    ventaId: null,
-  }));
-
-  const movimientosCuenta = [...movimientosPorVenta, ...movimientosAbonosLibres].sort(
+  const movimientosCuenta = movimientosPorVenta.sort(
     (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
   );
 
@@ -321,13 +292,6 @@ export default async function ClienteDetallePage({
             </div>
           </div>
 
-          <div className={`rounded-md border px-3 py-2 text-sm ${saldoAFavor > 0 ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-muted bg-muted/20 text-muted-foreground"}`}>
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span>{saldoAFavor > 0 ? `Saldo a favor ${formatMoneyPEN(saldoAFavor)}` : "Sin saldo a favor registrado"}</span>
-              <AbonoClienteDialog clienteId={clienteId} />
-            </div>
-          </div>
-
           <details className="group rounded-md border bg-muted/10 px-3 py-2">
             <summary className="cursor-pointer list-none text-sm font-medium">
               <span className="group-open:hidden">Ver movimientos del estado de cuenta</span>
@@ -361,7 +325,7 @@ export default async function ClienteDetallePage({
                         </TableCell>
                         <TableCell>
                           <Badge variant={mov.tipo === "cargo" ? "secondary" : "default"}>
-                            {mov.tipo === "cargo" ? "Cargo" : mov.tipo === "abono" ? "Anticipo" : "Pago"}
+                            {mov.tipo === "cargo" ? "Cargo" : "Pago"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-xs">{mov.concepto}</TableCell>
