@@ -7,6 +7,8 @@ import {
   ItemVentaInput, 
   ledgerSchema, 
   LedgerInput,
+  abonoLibreClienteSchema,
+  AbonoLibreClienteInput,
   abrirCajaSchema,
   AbrirCajaInput,
   cerrarCajaSchema,
@@ -583,6 +585,49 @@ export async function registrarPago(ventaId: string, input: LedgerInput) {
   } catch (error: any) {
     console.error("Exception in registrarPago:", error);
     return { error: error.message || "Error al registrar pago", data: null };
+  }
+}
+
+export async function registrarAbonoCliente(input: AbonoLibreClienteInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const validatedData = abonoLibreClienteSchema.parse(input);
+    const cliente = await ensureClienteInClinica(supabase, clinicaId, validatedData.cliente_id);
+
+    if (!cliente) {
+      return { error: "El cliente no pertenece a la clinica activa.", data: null };
+    }
+
+    const notas = validatedData.notas_text?.trim() || null;
+    const { data: abono, error: insertError } = await supabase
+      .from("ledger")
+      .insert({
+        clinica_id: clinicaId,
+        cliente_id: validatedData.cliente_id,
+        venta_id: null,
+        orden_id: null,
+        tipo: "pago",
+        monto: validatedData.monto,
+        metodo_pago: validatedData.metodo_pago,
+        notas_text: notas,
+        fecha: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+
+    if (insertError) {
+      console.error("Error inserting abono libre:", insertError);
+      return { error: insertError.message, data: null };
+    }
+
+    revalidatePath(`/clientes/${validatedData.cliente_id}`);
+    revalidatePath("/caja");
+    return { error: null, data: abono, message: "Anticipo registrado correctamente." };
+  } catch (error: any) {
+    console.error("Exception in registrarAbonoCliente:", error);
+    return { error: error.message || "Error al registrar anticipo", data: null };
   }
 }
 
