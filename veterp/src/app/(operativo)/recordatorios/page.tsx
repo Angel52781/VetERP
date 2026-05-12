@@ -44,6 +44,7 @@ type RecordatorioRow = {
   mascotas: {
     id: string;
     nombre: string;
+    codigo_text: string | null;
     especie: string | null;
     raza: string | null;
     clientes: {
@@ -163,6 +164,7 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
       mascotas:mascota_id (
         id,
         nombre,
+        codigo_text,
         especie,
         raza,
         clientes:cliente_id ( id, nombre )
@@ -265,6 +267,11 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
                           <p className="font-semibold">
                             {paciente?.nombre ?? "Paciente sin nombre"}
                           </p>
+                          {paciente?.codigo_text?.trim() ? (
+                            <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                              #{paciente.codigo_text}
+                            </Badge>
+                          ) : null}
                           <Badge variant="secondary">{tipo.label}</Badge>
                           <Badge className={cn("border-none", status.className)}>
                             <StatusIcon className="h-3 w-3" />
