@@ -33,7 +33,7 @@ export type CitaAgenda = {
   active_order_id?: string | null;
   active_order_estado_text?: string | null;
   clientes: { nombre: string } | null;
-  mascotas: { nombre: string } | null;
+  mascotas: { nombre: string; codigo_text?: string | null } | null;
   tipo_citas: { nombre: string; color: string | null; area?: CitaArea | string | null; is_disabled?: boolean | null } | null;
 };
 

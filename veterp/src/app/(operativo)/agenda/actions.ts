@@ -275,7 +275,7 @@ export async function getCitas(startDate: string, endDate: string) {
         cliente_id,
         mascota_id,
         clientes ( nombre ),
-        mascotas ( nombre ),
+        mascotas ( nombre, codigo_text ),
         tipo_citas ( nombre, color, area, is_disabled )
       `)
       .eq("clinica_id", clinicaId)

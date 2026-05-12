@@ -227,13 +227,17 @@ export async function createHospitalizacion(input: CreateHospitalizacionInput) {
       return { error: "El paciente no pertenece al responsable seleccionado.", data: null };
     }
 
-    const { data: existente } = await supabase
+    const { data: existente, error: existenteError } = await supabase
       .from("hospitalizaciones")
       .select("id")
       .eq("clinica_id", clinicaId)
       .eq("mascota_id", validated.mascota_id)
       .eq("estado_text", "activa")
       .maybeSingle();
+
+    if (existenteError) {
+      return { error: "No se pudo validar si el paciente ya tiene una hospitalización activa.", data: null };
+    }
 
     if (existente) {
       return { error: "Este paciente ya tiene una hospitalización activa.", data: existente };

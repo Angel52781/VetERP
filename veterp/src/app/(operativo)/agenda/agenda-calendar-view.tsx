@@ -248,6 +248,11 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                               <span className="truncate text-xs font-semibold leading-tight">
                               {cita.mascotas?.nombre || "Paciente"}
                               </span>
+                              {cita.mascotas?.codigo_text?.trim() ? (
+                                <span className="truncate text-[10px] font-medium leading-tight text-white/85">
+                                  #{cita.mascotas.codigo_text}
+                                </span>
+                              ) : null}
                               <span className="truncate text-[10px] font-medium leading-tight text-white/85">
                                 {getCitaAreaLabel(cita.tipo_citas?.area)}
                               </span>
@@ -289,12 +294,19 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                               <div>
                                 <span className="block font-semibold">Paciente</span>
                                 {cita.mascota_id ? (
-                                  <Link
-                                    href={`/mascotas/${cita.mascota_id}`}
-                                    className="font-semibold text-primary hover:underline"
-                                  >
-                                    {cita.mascotas?.nombre || "Paciente desconocido"}
-                                  </Link>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <Link
+                                      href={`/mascotas/${cita.mascota_id}`}
+                                      className="font-semibold text-primary hover:underline"
+                                    >
+                                      {cita.mascotas?.nombre || "Paciente desconocido"}
+                                    </Link>
+                                    {cita.mascotas?.codigo_text?.trim() ? (
+                                      <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                                        #{cita.mascotas.codigo_text}
+                                      </Badge>
+                                    ) : null}
+                                  </div>
                                 ) : (
                                   <span className="text-muted-foreground">Desconocida</span>
                                 )}

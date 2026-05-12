@@ -167,9 +167,16 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                               <div className="flex items-center text-muted-foreground">
                                 <PawPrint className="mr-2 h-4 w-4" />
                                 {cita.mascotas?.nombre ? (
-                                  <Link href={`/mascotas/${cita.mascota_id}`} className="hover:text-primary hover:underline transition-colors">
-                                    {cita.mascotas.nombre}
-                                  </Link>
+                                  <span className="flex min-w-0 flex-wrap items-center gap-2">
+                                    <Link href={`/mascotas/${cita.mascota_id}`} className="hover:text-primary hover:underline transition-colors">
+                                      {cita.mascotas.nombre}
+                                    </Link>
+                                    {cita.mascotas.codigo_text?.trim() ? (
+                                      <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                                        #{cita.mascotas.codigo_text}
+                                      </Badge>
+                                    ) : null}
+                                  </span>
                                 ) : (
                                   "Paciente desconocido"
                                 )}

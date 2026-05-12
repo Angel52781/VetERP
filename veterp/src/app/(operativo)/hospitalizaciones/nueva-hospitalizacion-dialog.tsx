@@ -62,6 +62,7 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [patientQuery, setPatientQuery] = useState("");
+  const [actionError, setActionError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const form = useForm<CreateHospitalizacionInput>({
     resolver: zodResolver(createHospitalizacionSchema),
@@ -108,6 +109,7 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
     if (!nextOpen) {
       form.reset();
       setPatientQuery("");
+      setActionError(null);
     }
   }
 
@@ -116,13 +118,16 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
     form.setValue("mascota_id", mascotaId, { shouldValidate: true });
     form.setValue("cliente_id", paciente?.cliente_id ?? "", { shouldValidate: true });
     form.clearErrors(["mascota_id", "cliente_id"]);
+    setActionError(null);
     setPatientQuery(paciente?.nombre ?? "");
   }
 
   function onSubmit(values: CreateHospitalizacionInput) {
+    setActionError(null);
     startTransition(async () => {
       const result = await createHospitalizacion(values);
       if (result.error) {
+        setActionError(result.error);
         toast.error(result.error);
         return;
       }
@@ -293,6 +298,11 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
             <Button type="submit" className="w-full" disabled={pending || pacientes.length === 0}>
               {pending ? "Guardando..." : "Crear internamiento"}
             </Button>
+            {actionError ? (
+              <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {actionError}
+              </p>
+            ) : null}
           </form>
         </Form>
       </DialogContent>
