@@ -28,7 +28,7 @@ export default function MascotaForm({ clienteId }: { clienteId: string }) {
 
   const form = useForm<MascotaFormValues>({
     resolver: zodResolver(mascotaSchema),
-    defaultValues: { nombre: "", especie: "", raza: "", nacimiento: "" },
+    defaultValues: { nombre: "", codigo_text: "", especie: "", raza: "", nacimiento: "" },
   });
 
   function onSubmit(values: MascotaFormValues) {
@@ -57,6 +57,23 @@ export default function MascotaForm({ clienteId }: { clienteId: string }) {
             {form.formState.errors.nombre ? (
               <p className="text-sm text-destructive">
                 {form.formState.errors.nombre.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="codigo_text">Código de paciente</Label>
+            <Input
+              id="codigo_text"
+              placeholder="Ej. CAN-001, F-203, P00045"
+              {...form.register("codigo_text")}
+            />
+            <p className="text-xs text-muted-foreground">
+              Opcional. Usa el código interno de la clínica.
+            </p>
+            {form.formState.errors.codigo_text ? (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.codigo_text.message}
               </p>
             ) : null}
           </div>

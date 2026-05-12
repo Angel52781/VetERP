@@ -527,7 +527,7 @@ export async function getMascotasDeCliente(clienteId: string) {
 
     const { data, error } = await supabase
       .from("mascotas")
-      .select("id, nombre")
+      .select("id, nombre, codigo_text")
       .eq("clinica_id", clinicaId)
       .eq("cliente_id", clienteId)
       .order("nombre");

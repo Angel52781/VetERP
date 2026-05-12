@@ -38,7 +38,7 @@ export default async function ClienteDetallePage({
 
   const { data: mascotas } = await supabase
     .from("mascotas")
-    .select("id, nombre, especie, raza, nacimiento")
+    .select("id, nombre, codigo_text, especie, raza, nacimiento")
     .eq("cliente_id", clienteId)
     .eq("clinica_id", clinicaId)
     .order("nombre");
@@ -384,7 +384,14 @@ export default async function ClienteDetallePage({
                             <PawPrint className="h-4 w-4 text-primary" />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">{m.nombre}</p>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">{m.nombre}</p>
+                              {m.codigo_text?.trim() ? (
+                                <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                                  #{m.codigo_text}
+                                </Badge>
+                              ) : null}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                               {[formatSpeciesLabel(m.especie), formatBreedLabel(m.raza)].filter(Boolean).join(" · ")}
                               {edad !== null ? ` · ${edad} año${edad !== 1 ? "s" : ""}` : ""}

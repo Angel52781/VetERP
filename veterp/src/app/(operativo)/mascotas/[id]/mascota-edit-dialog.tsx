@@ -33,6 +33,7 @@ type MascotaEditDialogProps = {
   mascota: {
     id: string;
     nombre: string;
+    codigo_text: string | null;
     especie: string | null;
     raza: string | null;
     nacimiento: string | null;
@@ -51,6 +52,7 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
     resolver: zodResolver(mascotaSchema),
     defaultValues: {
       nombre: mascota.nombre,
+      codigo_text: mascota.codigo_text ?? "",
       especie: mascota.especie ?? "",
       raza: mascota.raza ?? "",
       nacimiento: toDateOnlyInputValue(mascota.nacimiento),
@@ -65,6 +67,7 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
       setError(null);
       form.reset({
         nombre: mascota.nombre,
+        codigo_text: mascota.codigo_text ?? "",
         especie: mascota.especie ?? "",
         raza: mascota.raza ?? "",
         nacimiento: toDateOnlyInputValue(mascota.nacimiento),
@@ -103,6 +106,23 @@ export function MascotaEditDialog({ mascota }: MascotaEditDialogProps) {
             <Input id="edit-mascota-nombre" {...form.register("nombre")} />
             {form.formState.errors.nombre ? (
               <p className="text-sm text-destructive">{form.formState.errors.nombre.message}</p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-mascota-codigo">Código de paciente</Label>
+            <Input
+              id="edit-mascota-codigo"
+              placeholder="Ej. CAN-001, F-203, P00045"
+              {...form.register("codigo_text")}
+            />
+            <p className="text-xs text-muted-foreground">
+              Opcional. Usa el código interno de la clínica.
+            </p>
+            {form.formState.errors.codigo_text ? (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.codigo_text.message}
+              </p>
             ) : null}
           </div>
 

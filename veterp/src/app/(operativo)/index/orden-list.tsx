@@ -30,7 +30,7 @@ type Orden = {
   estado_text: string;
   started_at: string;
   clientes: { id: string; nombre: string } | null;
-  mascotas: { id: string; nombre: string } | null;
+  mascotas: { id: string; nombre: string; codigo_text?: string | null } | null;
   financial_has_venta?: boolean;
   financial_venta_estado?: string | null;
   financial_saldo_pendiente?: number | null;
@@ -102,6 +102,9 @@ export function OrdenList({ ordenes }: OrdenListProps) {
                 <CardTitle className="text-base font-bold text-primary">
                   {orden.mascotas?.nombre || "Paciente"}
                 </CardTitle>
+                {orden.mascotas?.codigo_text?.trim() ? (
+                  <p className="text-xs font-medium text-muted-foreground">#{orden.mascotas.codigo_text}</p>
+                ) : null}
                 <CardDescription className="font-medium">
                   Responsable: {orden.clientes?.nombre || "Cliente"}
                 </CardDescription>

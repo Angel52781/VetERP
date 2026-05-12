@@ -82,6 +82,7 @@ export async function getHospitalizaciones() {
           mascotas:mascota_id (
             id,
             nombre,
+            codigo_text,
             especie,
             raza,
             alertas_criticas,
@@ -101,6 +102,7 @@ export async function getHospitalizaciones() {
         .select(`
           id,
           nombre,
+          codigo_text,
           especie,
           raza,
           cliente_id,

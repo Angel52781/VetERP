@@ -36,6 +36,7 @@ import { createHospitalizacion } from "./actions";
 export type HospitalizacionPacienteOption = {
   id: string;
   nombre: string;
+  codigo_text: string | null;
   especie: string | null;
   raza: string | null;
   cliente_id: string;
@@ -86,6 +87,7 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
       .filter((paciente) => {
         const searchable = [
           paciente.nombre,
+          paciente.codigo_text,
           paciente.clientes?.nombre,
           paciente.clientes?.telefono,
           paciente.especie,
@@ -164,14 +166,17 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
                         <Input
                           value={patientQuery}
                           onChange={(event) => setPatientQuery(event.target.value)}
-                          placeholder="Buscar por paciente, responsable, especie o raza"
+                          placeholder="Buscar por código, paciente, responsable, especie o raza"
                           className="pl-9"
                         />
                       </div>
 
                       {selectedPaciente && (
                         <div className="rounded-md bg-primary/5 px-3 py-2 text-sm">
-                          <p className="font-medium">Seleccionado: {selectedPaciente.nombre}</p>
+                          <p className="font-medium">
+                            Seleccionado: {selectedPaciente.nombre}
+                            {selectedPaciente.codigo_text?.trim() ? ` #${selectedPaciente.codigo_text}` : ""}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             {selectedPaciente.clientes?.nombre ?? "Responsable no registrado"}
                             {selectedPaciente.clientes?.telefono ? ` · ${selectedPaciente.clientes.telefono}` : ""}
@@ -200,7 +205,14 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
                               >
                                 <div className="flex items-start justify-between gap-3">
                                   <div className="min-w-0">
-                                    <p className="truncate text-sm font-semibold">{paciente.nombre}</p>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <p className="truncate text-sm font-semibold">{paciente.nombre}</p>
+                                      {paciente.codigo_text?.trim() ? (
+                                        <span className="rounded-full border px-1.5 py-0 text-[10px] font-medium text-muted-foreground">
+                                          #{paciente.codigo_text}
+                                        </span>
+                                      ) : null}
+                                    </div>
                                     <p className="text-xs text-muted-foreground">
                                       {formatSpeciesLabel(paciente.especie)} / {formatBreedLabel(paciente.raza)}
                                     </p>

@@ -58,7 +58,7 @@ export function NuevaAtencionForm({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mascotas, setMascotas] = useState<{ id: string; nombre: string }[]>([]);
+  const [mascotas, setMascotas] = useState<{ id: string; nombre: string; codigo_text?: string | null }[]>([]);
   const [loadingMascotas, setLoadingMascotas] = useState(false);
   const safeInitialClienteId =
     initialClienteId && clientes.some((c) => c.id === initialClienteId) ? initialClienteId : "";
@@ -254,6 +254,11 @@ export function NuevaAtencionForm({
                             )}>
                               {m.nombre}
                             </span>
+                            {m.codigo_text?.trim() ? (
+                              <span className="mt-1 text-[10px] font-semibold text-muted-foreground">
+                                #{m.codigo_text}
+                              </span>
+                            ) : null}
                             <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider mt-1">
                               Ficha Clínica
                             </span>

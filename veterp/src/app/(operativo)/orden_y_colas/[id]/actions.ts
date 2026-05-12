@@ -34,6 +34,7 @@ export async function getOrdenCompleta(id: string) {
         mascotas:mascota_id (
           id,
           nombre,
+          codigo_text,
           especie,
           raza,
           nacimiento,

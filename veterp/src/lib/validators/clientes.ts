@@ -15,6 +15,12 @@ export type ClienteFormValues = z.infer<typeof clienteSchema>;
 
 export const mascotaSchema = z.object({
   nombre: z.string().min(1),
+  codigo_text: z
+    .string()
+    .trim()
+    .max(50, "El código debe tener 50 caracteres o menos.")
+    .optional()
+    .nullable(),
   especie: z.string().optional(),
   raza: z.string().optional(),
   nacimiento: z.string().optional(),

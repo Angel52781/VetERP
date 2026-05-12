@@ -21,6 +21,18 @@ type MascotaActionResult = {
   mascotaId?: string;
 };
 
+function cleanCodigoPaciente(value: string | null | undefined) {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
+function isMascotaCodigoDuplicado(error: { code?: string; message?: string } | null) {
+  return (
+    error?.code === "23505" &&
+    /mascotas_clinica_codigo_unique|codigo_text|codigo/i.test(error.message ?? "")
+  );
+}
+
 export async function createCliente(input: ClienteFormValues): Promise<ClienteActionResult> {
   try {
     const parsed = clienteSchema.safeParse(input);
@@ -114,6 +126,7 @@ export async function createMascota(clienteId: string, input: MascotaFormValues)
         clinica_id: clinicaId,
         cliente_id: clienteId,
         nombre: parsed.data.nombre,
+        codigo_text: cleanCodigoPaciente(parsed.data.codigo_text),
         especie: parsed.data.especie || null,
         raza: parsed.data.raza || null,
         nacimiento: parsed.data.nacimiento || null,
@@ -122,10 +135,14 @@ export async function createMascota(clienteId: string, input: MascotaFormValues)
       .single();
 
     if (error || !data) {
+      if (isMascotaCodigoDuplicado(error)) {
+        return { error: "Ya existe un paciente con ese código." };
+      }
       return { error: "No se pudo crear la mascota." };
     }
 
     revalidatePath(`/clientes/${clienteId}`);
+    revalidatePath("/pacientes");
     return { error: null, mascotaId: data.id };
   } catch {
     return { error: "No hay una clinica activa valida para crear mascotas." };
@@ -157,6 +174,7 @@ export async function updateMascota(mascotaId: string, input: MascotaFormValues)
       .from("mascotas")
       .update({
         nombre: parsed.data.nombre,
+        codigo_text: cleanCodigoPaciente(parsed.data.codigo_text),
         especie: parsed.data.especie || null,
         raza: parsed.data.raza || null,
         nacimiento: parsed.data.nacimiento || null,
@@ -169,6 +187,9 @@ export async function updateMascota(mascotaId: string, input: MascotaFormValues)
       .maybeSingle();
 
     if (error || !data) {
+      if (isMascotaCodigoDuplicado(error)) {
+        return { error: "Ya existe un paciente con ese código." };
+      }
       return { error: "No se pudo actualizar el paciente." };
     }
 

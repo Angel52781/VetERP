@@ -87,7 +87,8 @@ export async function getOrdenesServicio() {
         ),
         mascotas:mascota_id (
           id,
-          nombre
+          nombre,
+          codigo_text
         )
       `)
       .eq("clinica_id", clinicaId)
@@ -177,7 +178,8 @@ export async function getAllOrdenesServicio() {
         ),
         mascotas:mascota_id (
           id,
-          nombre
+          nombre,
+          codigo_text
         )
       `)
       .eq("clinica_id", clinicaId)

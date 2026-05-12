@@ -106,6 +106,14 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
             <Link href={`/mascotas/${orden.mascota_id}?returnTo=${mascotaReturnTo}`} className="text-primary hover:underline font-medium text-sm">
               Paciente: {orden.mascotas?.nombre}
             </Link>
+            {(orden.mascotas as any)?.codigo_text?.trim() ? (
+              <>
+                <span className="text-muted-foreground font-medium text-sm">â€¢</span>
+                <span className="rounded-full border px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                  #{(orden.mascotas as any).codigo_text}
+                </span>
+              </>
+            ) : null}
             {orden.cliente_id ? (
               <>
                 <span className="text-muted-foreground font-medium text-sm">•</span>
@@ -170,6 +178,13 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
                       {orden.mascotas?.nombre}
                     </Link>
                   </span>
+
+                  {(orden.mascotas as any)?.codigo_text?.trim() ? (
+                    <>
+                      <span className="font-medium text-muted-foreground">Código:</span>
+                      <span className="col-span-2">#{(orden.mascotas as any).codigo_text}</span>
+                    </>
+                  ) : null}
                   
                   <span className="font-medium text-muted-foreground">Especie:</span>
                   <span className="col-span-2">{formatSpeciesLabel(orden.mascotas?.especie)}</span>

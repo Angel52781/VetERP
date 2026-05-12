@@ -48,9 +48,9 @@ export default async function RecepcionPage() {
   const { data: citasHoy } = await supabase
     .from("citas")
     .select(
-      `id, start_date, end_date, estado,
+       `id, start_date, end_date, estado,
        clientes:cliente_id (nombre),
-       mascotas:mascota_id (id, nombre, alertas_criticas),
+       mascotas:mascota_id (id, nombre, codigo_text, alertas_criticas),
        tipo_citas:tipo_cita_id (nombre, color)`
     )
     .eq("clinica_id", clinicaId)
@@ -210,6 +210,11 @@ export default async function RecepcionPage() {
                         <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" />
                       )}
                       {cita.mascotas?.nombre ?? "Sin paciente"}
+                      {cita.mascotas?.codigo_text?.trim() ? (
+                        <Badge variant="outline" className="ml-1 px-1.5 py-0 text-[10px]">
+                          #{cita.mascotas.codigo_text}
+                        </Badge>
+                      ) : null}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
                       {cita.clientes?.nombre ?? "Sin responsable"} ·{" "}
@@ -277,6 +282,7 @@ export default async function RecepcionPage() {
                   <div className="min-w-0">
                     <p className="font-medium text-sm truncate">
                       {orden.mascotas?.nombre ?? "Sin paciente"}
+                      {orden.mascotas?.codigo_text?.trim() ? ` #${orden.mascotas.codigo_text}` : ""}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
                       {orden.clientes?.nombre ?? "Sin responsable"}

@@ -197,6 +197,9 @@ export default async function HospitalizacionesPage() {
                           <CardTitle className="text-lg">
                             {mascota?.nombre ?? "Paciente no disponible"}
                           </CardTitle>
+                          {mascota?.codigo_text?.trim() ? (
+                            <Badge variant="outline">#{mascota.codigo_text}</Badge>
+                          ) : null}
                           {getEstadoBadge(hospitalizacion.estado_text)}
                           {mascota?.alertas_criticas?.trim() && (
                             <Badge variant="destructive" className="gap-1">
@@ -303,6 +306,9 @@ export default async function HospitalizacionesPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-medium">{hospitalizacion.mascotas?.nombre ?? "Paciente"}</p>
+                    {hospitalizacion.mascotas?.codigo_text?.trim() ? (
+                      <Badge variant="outline">#{hospitalizacion.mascotas.codigo_text}</Badge>
+                    ) : null}
                     {getEstadoBadge(hospitalizacion.estado_text)}
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">

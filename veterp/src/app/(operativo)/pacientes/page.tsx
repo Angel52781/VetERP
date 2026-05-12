@@ -4,6 +4,7 @@ import { es } from "date-fns/locale";
 import { PawPrint, Search, User } from "lucide-react";
 
 import { buttonVariants, Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { createClient } from "@/lib/supabase/server";
@@ -14,6 +15,13 @@ import { getAgeFromDateOnly } from "@/lib/date-only";
 
 export const dynamic = "force-dynamic";
 
+function normalizeSearch(value: unknown) {
+  return String(value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 type PacientesPageProps = {
   searchParams?: Promise<{
     q?: string;
@@ -23,7 +31,7 @@ type PacientesPageProps = {
 export default async function PacientesPage({ searchParams }: PacientesPageProps) {
   const params = (await searchParams) ?? {};
   const query = typeof params.q === "string" ? params.q.trim() : "";
-  const q = query.toLowerCase();
+  const q = normalizeSearch(query);
 
   const supabase = await createClient();
   const clinicaId = await requireClinicaIdFromCookies();
@@ -34,7 +42,7 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
     supabase
       .from("mascotas")
       .select(`
-        id, nombre, especie, raza, nacimiento, cliente_id,
+        id, nombre, codigo_text, especie, raza, nacimiento, cliente_id,
         clientes:cliente_id ( id, nombre )
       `)
       .eq("clinica_id", clinicaId)
@@ -48,9 +56,10 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
 
   const mascotasFiltradas = (mascotas ?? []).filter((mascota: any) => {
     if (!q) return true;
-    const nombrePaciente = (mascota.nombre ?? "").toLowerCase();
-    const nombreResponsable = ((mascota.clientes as any)?.nombre ?? "").toLowerCase();
-    return nombrePaciente.includes(q) || nombreResponsable.includes(q);
+    const nombrePaciente = normalizeSearch(mascota.nombre);
+    const codigoPaciente = normalizeSearch(mascota.codigo_text);
+    const nombreResponsable = normalizeSearch((mascota.clientes as any)?.nombre);
+    return nombrePaciente.includes(q) || codigoPaciente.includes(q) || nombreResponsable.includes(q);
   });
 
   const mascotaIds = mascotasFiltradas.map((m: any) => m.id).filter(Boolean);
@@ -103,7 +112,7 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
             <Input
               name="q"
               defaultValue={query}
-              placeholder="Buscar por nombre de paciente o responsable"
+              placeholder="Buscar por código, paciente o responsable"
               className="pl-9"
             />
           </div>
@@ -150,6 +159,11 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="truncate text-sm font-semibold group-hover:text-primary group-hover:underline transition-colors">{mascota.nombre}</p>
+                      {mascota.codigo_text?.trim() ? (
+                        <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                          #{mascota.codigo_text}
+                        </Badge>
+                      ) : null}
                       <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase">
                         {formatSpeciesLabel(mascota.especie)}
                       </span>

@@ -134,6 +134,9 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold tracking-tight">{mascota.nombre}</h1>
+                {mascota.codigo_text?.trim() && (
+                  <Badge variant="outline">#{mascota.codigo_text}</Badge>
+                )}
                 <Badge variant="secondary">{formatSpeciesLabel(mascota.especie)}</Badge>
                 {activeOrden && (
                   <Badge className="bg-blue-100 text-blue-800 border-none">En atención</Badge>

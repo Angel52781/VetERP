@@ -34,6 +34,7 @@ interface GroomingCardProps {
     mascotas: {
       id: string;
       nombre: string;
+      codigo_text?: string | null;
       especie?: string | null;
       raza?: string | null;
       alertas_criticas?: string | null;
@@ -140,6 +141,11 @@ export function GroomingCard({ cita }: GroomingCardProps) {
           <div className="min-w-0 space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-semibold text-sm">{mascota?.nombre ?? "Sin paciente"}</p>
+              {mascota?.codigo_text?.trim() && (
+                <span className="rounded-full border px-1.5 py-0 text-[10px] font-medium text-muted-foreground">
+                  #{mascota.codigo_text}
+                </span>
+              )}
               {mascota?.especie && (
                 <span className="rounded bg-muted px-1.5 py-0.5 text-xs font-medium uppercase">
                   {mascota.especie}

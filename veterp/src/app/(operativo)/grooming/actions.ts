@@ -24,7 +24,7 @@ export async function getGroomingDia() {
       tipo_citas:tipo_cita_id ( id, nombre, color, area ),
       clientes:cliente_id ( id, nombre, telefono ),
       mascotas:mascota_id (
-        id, nombre, especie, raza,
+        id, nombre, codigo_text, especie, raza,
         alertas_criticas, notas_manejo
       ),
       grooming_servicios (
