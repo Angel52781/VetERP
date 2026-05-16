@@ -12,6 +12,7 @@ import { NuevaAtencionForm } from "../index/nueva-atencion-form";
 import { AgendarCitaPacienteBtn } from "./agendar-cita-paciente-btn";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { getAgeFromDateOnly } from "@/lib/date-only";
+import { NuevoPacienteDialog } from "./nuevo-paciente-dialog";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
   const now = new Date();
   const nowIso = now.toISOString();
 
-  const [{ data: mascotas }, { data: tiposCita }] = await Promise.all([
+  const [{ data: mascotas }, { data: tiposCita }, { data: clientes }] = await Promise.all([
     supabase
       .from("mascotas")
       .select(`
@@ -50,6 +51,11 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
     supabase
       .from("tipo_citas")
       .select("id, nombre, duracion_min")
+      .eq("clinica_id", clinicaId)
+      .order("nombre"),
+    supabase
+      .from("clientes")
+      .select("id, nombre, telefono, email")
       .eq("clinica_id", clinicaId)
       .order("nombre"),
   ]);
@@ -106,23 +112,26 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
             {mascotasFiltradas.length} paciente{mascotasFiltradas.length !== 1 ? "s" : ""} en vista operativa
           </p>
         </div>
-        <form className="flex w-full max-w-xl items-center gap-2" method="get">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              name="q"
-              defaultValue={query}
-              placeholder="Buscar por código, paciente o responsable"
-              className="pl-9"
-            />
-          </div>
-          <Button type="submit" variant="outline">Buscar</Button>
-          {query ? (
-            <Link href="/pacientes" className={buttonVariants({ variant: "ghost" })}>
-              Limpiar
-            </Link>
-          ) : null}
-        </form>
+        <div className="flex w-full max-w-3xl flex-col gap-2 sm:flex-row sm:items-center md:justify-end">
+          <NuevoPacienteDialog clientes={clientes ?? []} />
+          <form className="flex flex-1 items-center gap-2" method="get">
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                name="q"
+                defaultValue={query}
+                placeholder="Buscar por código, paciente o responsable"
+                className="pl-9"
+              />
+            </div>
+            <Button type="submit" variant="outline">Buscar</Button>
+            {query ? (
+              <Link href="/pacientes" className={buttonVariants({ variant: "ghost" })}>
+                Limpiar
+              </Link>
+            ) : null}
+          </form>
+        </div>
       </div>
 
       {!mascotasFiltradas.length ? (

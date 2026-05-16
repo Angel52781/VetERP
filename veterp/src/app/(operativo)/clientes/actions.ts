@@ -130,6 +130,8 @@ export async function createMascota(clienteId: string, input: MascotaFormValues)
         especie: parsed.data.especie || null,
         raza: parsed.data.raza || null,
         nacimiento: parsed.data.nacimiento || null,
+        alertas_criticas: parsed.data.alertas_criticas?.trim() || null,
+        notas_manejo: parsed.data.notas_manejo?.trim() || null,
       })
       .select("id")
       .single();
