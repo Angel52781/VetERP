@@ -217,6 +217,12 @@ export default async function HospitalizacionesPage() {
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
                         <Link
+                          href={`/hospitalizaciones/${hospitalizacion.id}`}
+                          className={buttonVariants({ variant: "default", size: "sm" })}
+                        >
+                          Ver detalle
+                        </Link>
+                        <Link
                           href={`/mascotas/${hospitalizacion.mascota_id}?tab=hospitalizaciones&returnTo=${encodeURIComponent("/hospitalizaciones")}`}
                           className={buttonVariants({ variant: "outline", size: "sm" })}
                         >
@@ -325,12 +331,20 @@ export default async function HospitalizacionesPage() {
                     {formatDateTime(hospitalizacion.alta_at)}
                   </p>
                 </div>
-                <Link
-                  href={`/mascotas/${hospitalizacion.mascota_id}?tab=hospitalizaciones&returnTo=${encodeURIComponent("/hospitalizaciones")}`}
-                  className={buttonVariants({ variant: "outline", size: "sm" })}
-                >
-                  Ver paciente
-                </Link>
+                <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0">
+                  <Link
+                    href={`/hospitalizaciones/${hospitalizacion.id}`}
+                    className={buttonVariants({ variant: "default", size: "sm" })}
+                  >
+                    Ver detalle
+                  </Link>
+                  <Link
+                    href={`/mascotas/${hospitalizacion.mascota_id}?tab=hospitalizaciones&returnTo=${encodeURIComponent("/hospitalizaciones")}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                  >
+                    Ver paciente
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

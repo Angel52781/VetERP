@@ -413,12 +413,20 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                               </p>
                             )}
                           </div>
-                          <Link
-                            href="/hospitalizaciones"
-                            className={buttonVariants({ variant: "outline", size: "sm" })}
-                          >
-                            Ver módulo
-                          </Link>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Link
+                              href={`/hospitalizaciones/${hospitalizacion.id}`}
+                              className={buttonVariants({ variant: "default", size: "sm" })}
+                            >
+                              Ver detalle
+                            </Link>
+                            <Link
+                              href="/hospitalizaciones"
+                              className={buttonVariants({ variant: "outline", size: "sm" })}
+                            >
+                              Ver módulo
+                            </Link>
+                          </div>
                         </div>
 
                         {hospitalizacion.motivo_text && (

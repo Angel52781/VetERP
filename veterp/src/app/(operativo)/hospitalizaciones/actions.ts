@@ -365,3 +365,86 @@ export async function darAltaHospitalizacion(input: AltaHospitalizacionInput) {
     };
   }
 }
+
+export async function getHospitalizacionById(id: string) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("hospitalizaciones")
+      .select(`
+        id,
+        clinica_id,
+        mascota_id,
+        cliente_id,
+        medico_tratante_text,
+        motivo_text,
+        diagnostico_presuntivo_text,
+        estado_text,
+        internado_at,
+        alta_at,
+        alta_notas_text,
+        created_at,
+        updated_at,
+        mascotas:mascota_id (
+          id,
+          nombre,
+          codigo_text,
+          especie,
+          raza,
+          alertas_criticas,
+          notas_manejo
+        ),
+        clientes:cliente_id (
+          id,
+          nombre,
+          telefono
+        ),
+        hospitalizacion_controles (
+          id,
+          clinica_id,
+          hospitalizacion_id,
+          mascota_id,
+          temperatura_num,
+          frecuencia_cardiaca_num,
+          frecuencia_respiratoria_num,
+          peso_num,
+          deshidratacion_pct,
+          mucosas_text,
+          tlc_text,
+          comio_bool,
+          orino_bool,
+          defeco_bool,
+          observaciones_text,
+          registrado_at,
+          created_at
+        )
+      `)
+      .eq("id", id)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (error) {
+      return { error: error.message, data: null };
+    }
+
+    if (!data) {
+      return { error: "Hospitalización no encontrada.", data: null };
+    }
+
+    // Sort controles by registrado_at desc
+    if (data.hospitalizacion_controles) {
+      data.hospitalizacion_controles.sort((a: any, b: any) => {
+        return new Date(b.registrado_at).getTime() - new Date(a.registrado_at).getTime();
+      });
+    }
+
+    return { error: null, data };
+  } catch (error: unknown) {
+    return {
+      error: error instanceof Error ? error.message : "Error al obtener la hospitalización",
+      data: null,
+    };
+  }
+}
