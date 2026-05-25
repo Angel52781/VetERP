@@ -116,6 +116,13 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
     return { label: "Al día", cls: "bg-emerald-100 text-emerald-800" };
   };
 
+  const hospitalizacionesOrdenadas = [...(hospitalizaciones ?? [])].sort((a: any, b: any) => {
+    const estadoDelta = Number(b.estado_text === "activa") - Number(a.estado_text === "activa");
+    if (estadoDelta !== 0) return estadoDelta;
+    return new Date(b.internado_at).getTime() - new Date(a.internado_at).getTime();
+  });
+  const hospitalizacionActiva = hospitalizacionesOrdenadas.find((h: any) => h.estado_text === "activa");
+
   return (
     <div className="container mx-auto py-6 max-w-5xl space-y-5">
       {/* Back */}
@@ -369,9 +376,40 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {hospitalizaciones && hospitalizaciones.length > 0 ? (
-                <div className="divide-y rounded-md border">
-                  {hospitalizaciones.map((hospitalizacion: any) => {
+              {hospitalizacionesOrdenadas.length > 0 ? (
+                <div className="space-y-4">
+                  {hospitalizacionActiva ? (
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-950">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold flex items-center gap-2">
+                            <BedDouble className="h-4 w-4" />
+                            Hospitalización activa
+                          </p>
+                          <p className="mt-1 text-xs text-blue-800">
+                            Ingreso:{" "}
+                            {format(new Date(hospitalizacionActiva.internado_at), "dd MMM yyyy, HH:mm", {
+                              locale: es,
+                            })}
+                          </p>
+                          {hospitalizacionActiva.diagnostico_presuntivo_text && (
+                            <p className="mt-1 text-xs text-blue-800 line-clamp-2">
+                              {hospitalizacionActiva.diagnostico_presuntivo_text}
+                            </p>
+                          )}
+                        </div>
+                        <Link
+                          href={`/hospitalizaciones/${hospitalizacionActiva.id}`}
+                          className={buttonVariants({ variant: "default", size: "sm" })}
+                        >
+                          Ver hospitalización activa
+                        </Link>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="divide-y rounded-md border">
+                    {hospitalizacionesOrdenadas.map((hospitalizacion: any) => {
                     const isActiva = hospitalizacion.estado_text === "activa";
                     const ultimoControl = hospitalizacion.ultimo_control;
                     return (
@@ -458,12 +496,13 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                         )}
                       </div>
                     );
-                  })}
+                    })}
+                  </div>
                 </div>
               ) : (
                 <div className="rounded-lg border border-dashed p-8 text-center">
                   <BedDouble className="mx-auto h-8 w-8 text-muted-foreground/30" />
-                  <p className="mt-2 text-sm font-medium">Sin hospitalizaciones registradas</p>
+                  <p className="mt-2 text-sm font-medium">Paciente sin hospitalizaciones registradas</p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     Los internamientos aparecerán aquí cuando se creen desde el módulo Hospitalizaciones.
                   </p>

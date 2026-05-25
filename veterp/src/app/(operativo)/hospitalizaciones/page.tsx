@@ -9,12 +9,13 @@ import {
   Clock,
   HeartPulse,
   Phone,
+  Search,
   Stethoscope,
 } from "lucide-react";
 
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -22,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { AltaHospitalizacionDialog } from "./alta-hospitalizacion-dialog";
 import { getHospitalizaciones } from "./actions";
@@ -34,6 +36,27 @@ export const metadata = {
   title: "Hospitalizaciones | VetERP",
   description: "Pacientes internados, controles básicos y alta",
 };
+
+type HospitalizacionesVista = "activas" | "altas" | "todas";
+
+type HospitalizacionesPageProps = {
+  searchParams?: Promise<{
+    vista?: string;
+    q?: string;
+  }>;
+};
+
+function normalizeVista(value: string | undefined): HospitalizacionesVista {
+  if (value === "altas" || value === "todas") return value;
+  return "activas";
+}
+
+function normalizeSearch(value: unknown) {
+  return String(value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
 
 function formatDateTime(value: string | null | undefined) {
   if (!value) return "-";
@@ -107,16 +130,51 @@ function UltimoControl({ control }: { control: any }) {
   );
 }
 
-export default async function HospitalizacionesPage() {
+export default async function HospitalizacionesPage({ searchParams }: HospitalizacionesPageProps) {
+  const params = (await searchParams) ?? {};
+  const vista = normalizeVista(typeof params.vista === "string" ? params.vista : undefined);
+  const query = typeof params.q === "string" ? params.q.trim() : "";
+  const normalizedQuery = normalizeSearch(query);
   const result = await getHospitalizaciones();
   const payload = result.data;
   const hospitalizaciones = payload?.hospitalizaciones ?? [];
   const pacientes = payload?.pacientes ?? [];
   const controlesHoy = payload?.controlesHoy ?? 0;
-  const activas = hospitalizaciones.filter((h: any) => h.estado_text === "activa");
-  const altasRecientes = hospitalizaciones
-    .filter((h: any) => h.estado_text === "alta")
-    .slice(0, 10);
+  const activasTotal = hospitalizaciones.filter((h: any) => h.estado_text === "activa");
+  const altasTotal = hospitalizaciones.filter((h: any) => h.estado_text === "alta");
+  const hospitalizacionesFiltradas = hospitalizaciones.filter((hospitalizacion: any) => {
+    if (!normalizedQuery) return true;
+
+    const mascota = hospitalizacion.mascotas as any;
+    const cliente = hospitalizacion.clientes as any;
+    const searchable = [
+      mascota?.nombre,
+      mascota?.codigo_text,
+      cliente?.nombre,
+      cliente?.telefono,
+      mascota?.especie,
+      formatSpeciesLabel(mascota?.especie),
+      mascota?.raza,
+      formatBreedLabel(mascota?.raza),
+      hospitalizacion.motivo_text,
+      hospitalizacion.diagnostico_presuntivo_text,
+      hospitalizacion.medico_tratante_text,
+    ]
+      .map(normalizeSearch)
+      .join(" ");
+
+    return searchable.includes(normalizedQuery);
+  });
+  const activas = hospitalizacionesFiltradas.filter((h: any) => h.estado_text === "activa");
+  const altas = hospitalizacionesFiltradas.filter((h: any) => h.estado_text === "alta");
+  const showActivas = vista === "activas" || vista === "todas";
+  const showAltas = vista === "altas" || vista === "todas";
+
+  function vistaHref(nextVista: HospitalizacionesVista) {
+    const search = new URLSearchParams({ vista: nextVista });
+    if (query) search.set("q", query);
+    return `/hospitalizaciones?${search.toString()}`;
+  }
 
   return (
     <div className="space-y-6">
@@ -146,7 +204,7 @@ export default async function HospitalizacionesPage() {
             <CardTitle className="text-sm font-medium">Activos</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{activas.length}</p>
+            <p className="text-3xl font-bold">{activasTotal.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -155,7 +213,7 @@ export default async function HospitalizacionesPage() {
             <CardTitle className="text-sm font-medium">Altas recientes</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{altasRecientes.length}</p>
+            <p className="text-3xl font-bold">{altasTotal.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -169,6 +227,45 @@ export default async function HospitalizacionesPage() {
         </Card>
       </div>
 
+      <div className="space-y-3 rounded-lg border bg-card p-3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            <Link href={vistaHref("activas")} className={buttonVariants({ variant: vista === "activas" ? "default" : "outline", size: "sm" })}>
+              Activas ({activasTotal.length})
+            </Link>
+            <Link href={vistaHref("altas")} className={buttonVariants({ variant: vista === "altas" ? "default" : "outline", size: "sm" })}>
+              Altas ({altasTotal.length})
+            </Link>
+            <Link href={vistaHref("todas")} className={buttonVariants({ variant: vista === "todas" ? "default" : "outline", size: "sm" })}>
+              Todas ({hospitalizaciones.length})
+            </Link>
+          </div>
+
+          <form className="flex w-full gap-2 lg:max-w-lg" method="get">
+            <input type="hidden" name="vista" value={vista} />
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                name="q"
+                defaultValue={query}
+                placeholder="Buscar por paciente, código, responsable, diagnóstico..."
+                className="pl-9"
+              />
+            </div>
+            <Button type="submit" variant="outline">Buscar</Button>
+            {query ? (
+              <Link href={`/hospitalizaciones?vista=${vista}`} className={buttonVariants({ variant: "ghost" })}>
+                Limpiar
+              </Link>
+            ) : null}
+          </form>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Busca por paciente, código, responsable, teléfono, especie, raza, motivo, diagnóstico o médico tratante.
+        </p>
+      </div>
+
+      {showActivas ? (
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-base font-semibold tracking-tight">Internados activos</h2>
@@ -178,9 +275,13 @@ export default async function HospitalizacionesPage() {
         {activas.length === 0 ? (
           <div className="rounded-lg border border-dashed py-14 text-center">
             <BedDouble className="mx-auto h-10 w-10 text-muted-foreground/30" />
-            <p className="mt-3 text-sm font-medium">Sin pacientes internados activos</p>
+            <p className="mt-3 text-sm font-medium">
+              {query ? "Sin internamientos activos para esta búsqueda" : "Sin pacientes internados activos"}
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Crea un internamiento cuando el paciente requiera observación y controles.
+              {query
+                ? "Prueba con otro nombre, código, responsable, motivo o diagnóstico."
+                : "Crea un internamiento cuando el paciente requiera observación y controles."}
             </p>
           </div>
         ) : (
@@ -298,16 +399,23 @@ export default async function HospitalizacionesPage() {
           </div>
         )}
       </section>
+      ) : null}
 
+      {showAltas ? (
       <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">Altas recientes</h2>
-        {altasRecientes.length === 0 ? (
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-base font-semibold tracking-tight">Altas</h2>
+          <Badge variant="outline">{altas.length} alta{altas.length === 1 ? "" : "s"}</Badge>
+        </div>
+        {altas.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            No hay altas recientes registradas.
+            {query
+              ? "No hay altas que coincidan con la búsqueda."
+              : "No hay altas registradas todavía."}
           </div>
         ) : (
           <div className="divide-y rounded-lg border">
-            {altasRecientes.map((hospitalizacion: any) => (
+            {altas.map((hospitalizacion: any) => (
               <div key={hospitalizacion.id} className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -350,6 +458,7 @@ export default async function HospitalizacionesPage() {
           </div>
         )}
       </section>
+      ) : null}
 
       <p className="border-t pt-4 text-xs text-muted-foreground flex items-start gap-2">
         <Stethoscope className="mt-0.5 h-3.5 w-3.5 shrink-0" />
