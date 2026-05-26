@@ -206,59 +206,67 @@ export function ItemCatalogoForm({
           <FormField
             control={form.control}
             name="categoria_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Categoría</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value || "none"}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Categoría (opcional)" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">Ninguna</SelectItem>
-                    {categorias.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.nombre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const catValue = field.value;
+              const catLabel = catValue ? (categorias.find(c => c.id === catValue)?.nombre || "Categoría no encontrada") : "Ninguna";
+              return (
+                <FormItem>
+                  <FormLabel>Categoría</FormLabel>
+                  <Select
+                    onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
+                    value={catValue || "none"}
+                  >
+                    <FormControl>
+                      <SelectTrigger className={`w-full ${!catValue ? "text-muted-foreground" : ""}`}>
+                        <span className="line-clamp-1 flex-1 text-left">{catLabel}</span>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">Ninguna</SelectItem>
+                      {categorias.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.nombre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
             control={form.control}
             name="proveedor_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Proveedor</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value || "none"}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Proveedor (opcional)" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">Ninguno</SelectItem>
-                    {proveedores.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.nombre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const provValue = field.value;
+              const provLabel = provValue ? (proveedores.find(p => p.id === provValue)?.nombre || "Proveedor no encontrado") : "Ninguno";
+              return (
+                <FormItem>
+                  <FormLabel>Proveedor</FormLabel>
+                  <Select
+                    onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
+                    value={provValue || "none"}
+                  >
+                    <FormControl>
+                      <SelectTrigger className={`w-full ${!provValue ? "text-muted-foreground" : ""}`}>
+                        <span className="line-clamp-1 flex-1 text-left">{provLabel}</span>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">Ninguno</SelectItem>
+                      {proveedores.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.nombre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
 

@@ -62,3 +62,7 @@ backup_*.sql
 IDEAS.txt
 .env.local
 .env.production
+
+# local veterinary feedback folder
+Fallos/
+fallos/
