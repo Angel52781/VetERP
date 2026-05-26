@@ -35,6 +35,7 @@ import { filterClienteSearchResults } from "./cita-search";
 import {
   AREA_META,
   AREA_ORDER,
+  getCitaAreaPresentation,
   normalizeCitaArea,
   type AgendaClienteSearch,
   type AgendaMascotaSearch,
@@ -119,6 +120,14 @@ export function CitaForm({
   const tiposCitaDisponibles = useMemo(() => {
     return tiposCita.filter((tipo) => !tipo.is_disabled || tipo.id === currentTipoCitaId);
   }, [currentTipoCitaId, tiposCita]);
+  const selectedTipoCita = useMemo(
+    () => tiposCitaDisponibles.find((tipo) => tipo.id === selectedTipoCitaId) ?? null,
+    [selectedTipoCitaId, tiposCitaDisponibles],
+  );
+  const selectedTipoArea = selectedTipoCita ? normalizeCitaArea(selectedTipoCita.area) : null;
+  const selectedAreaPresentation = selectedTipoCita
+    ? getCitaAreaPresentation(selectedTipoCita.area)
+    : null;
   const tiposCitaAgrupados = useMemo(() => {
     const query = tipoSearch.trim().toLowerCase();
     return AREA_ORDER.map((area) => ({
@@ -475,6 +484,27 @@ export function CitaForm({
                 </SelectContent>
               </Select>
               <FormMessage />
+              {selectedTipoCita && selectedAreaPresentation ? (
+                <div className={cn("mt-3 rounded-md border px-3 py-2 text-sm", selectedAreaPresentation.panelClass)}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={cn("h-2.5 w-2.5 rounded-full", selectedAreaPresentation.dotClass)} />
+                    <span className="font-semibold">Area: {selectedAreaPresentation.label}</span>
+                  </div>
+                  <div className="mt-1 grid gap-1 text-xs sm:grid-cols-2">
+                    <p>
+                      <span className="font-semibold">Tipo:</span> {selectedTipoCita.nombre}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Duracion:</span> {selectedTipoCita.duracion_min} min
+                    </p>
+                  </div>
+                  {selectedTipoArea === "movilidad" ? (
+                    <p className="mt-2 border-t border-current/20 pt-2 text-xs">
+                      Usa las notas de cita para direccion, referencia, horario de recojo o indicaciones de traslado.
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
             </FormItem>
           )}
         />

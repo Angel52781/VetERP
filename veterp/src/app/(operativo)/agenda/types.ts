@@ -11,6 +11,43 @@ export const AREA_META: Record<CitaArea, { label: string; shortLabel: string }> 
   otro: { label: "Otro", shortLabel: "Otro" },
 };
 
+export const AREA_VISUAL_META: Record<CitaArea, {
+  badgeClass: string;
+  panelClass: string;
+  dotClass: string;
+}> = {
+  clinica: {
+    badgeClass: "border-blue-200 bg-blue-50 text-blue-800",
+    panelClass: "border-blue-200 bg-blue-50/70 text-blue-950",
+    dotClass: "bg-blue-500",
+  },
+  banos: {
+    badgeClass: "border-cyan-200 bg-cyan-50 text-cyan-800",
+    panelClass: "border-cyan-200 bg-cyan-50/70 text-cyan-950",
+    dotClass: "bg-cyan-500",
+  },
+  grooming: {
+    badgeClass: "border-teal-200 bg-teal-50 text-teal-800",
+    panelClass: "border-teal-200 bg-teal-50/70 text-teal-950",
+    dotClass: "bg-teal-500",
+  },
+  cirugia: {
+    badgeClass: "border-rose-200 bg-rose-50 text-rose-800",
+    panelClass: "border-rose-200 bg-rose-50/70 text-rose-950",
+    dotClass: "bg-rose-500",
+  },
+  movilidad: {
+    badgeClass: "border-amber-200 bg-amber-50 text-amber-800",
+    panelClass: "border-amber-200 bg-amber-50/80 text-amber-950",
+    dotClass: "bg-amber-500",
+  },
+  otro: {
+    badgeClass: "border-slate-200 bg-slate-50 text-slate-700",
+    panelClass: "border-slate-200 bg-slate-50/80 text-slate-900",
+    dotClass: "bg-slate-500",
+  },
+};
+
 export const AREA_ORDER: CitaArea[] = ["clinica", "banos", "grooming", "cirugia", "movilidad", "otro"];
 
 export type TipoCitaAgenda = {
@@ -68,4 +105,12 @@ export function normalizeCitaArea(area: string | null | undefined): CitaArea {
 
 export function getCitaAreaLabel(area: string | null | undefined) {
   return AREA_META[normalizeCitaArea(area)].shortLabel;
+}
+
+export function getCitaAreaPresentation(area: string | null | undefined) {
+  const normalizedArea = normalizeCitaArea(area);
+  return {
+    ...AREA_META[normalizedArea],
+    ...AREA_VISUAL_META[normalizedArea],
+  };
 }

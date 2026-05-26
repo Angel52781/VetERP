@@ -30,7 +30,8 @@ import {
 import { IniciarAtencionCitaBtn } from "./iniciar-atencion-cita-btn";
 import { CitaEstadoControl } from "./cita-estado-control";
 import { EditarCitaBtn } from "./editar-cita-btn";
-import { getCitaAreaLabel, type AgendaClienteSearch, type CitaAgenda, type TipoCitaAgenda } from "./types";
+import { getCitaAreaPresentation, type AgendaClienteSearch, type CitaAgenda, type TipoCitaAgenda } from "./types";
+import { cn } from "@/lib/utils";
 
 interface AgendaCalendarViewProps {
   citas: CitaAgenda[];
@@ -60,6 +61,13 @@ function citasOverlap(a: CitaAgenda, b: CitaAgenda) {
 
 function getCitaTimestamp(cita: CitaAgenda) {
   return parseISO(cita.start_date).getTime();
+}
+
+function getCitaDurationMinutes(cita: CitaAgenda) {
+  const start = parseISO(cita.start_date).getTime();
+  const end = parseISO(cita.end_date).getTime();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return null;
+  return Math.round((end - start) / 60000);
 }
 
 export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalendarViewProps) {
@@ -230,6 +238,8 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
 
                     {dayCitas.map((cita) => {
                       const style = getEventStyle(cita, dayCitas);
+                      const areaPresentation = getCitaAreaPresentation(cita.tipo_citas?.area);
+                      const durationMinutes = getCitaDurationMinutes(cita);
 
                       return (
                         <Dialog key={cita.id}>
@@ -253,18 +263,26 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                                   #{cita.mascotas.codigo_text}
                                 </span>
                               ) : null}
-                              <span className="truncate text-[10px] font-medium leading-tight text-white/85">
-                                {getCitaAreaLabel(cita.tipo_citas?.area)}
+                              <span className="truncate text-[10px] font-semibold uppercase leading-tight text-white">
+                                {areaPresentation.shortLabel}
                               </span>
                             </div>
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-xs">
                           <DialogHeader className="border-b pb-3">
-                            <DialogTitle className="flex items-center gap-2 text-base font-semibold tracking-tight">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge
+                                variant="outline"
+                                className={cn("border font-semibold", areaPresentation.badgeClass)}
+                              >
+                                {areaPresentation.shortLabel}
+                              </Badge>
                               <span
                                 className="h-3 w-3 rounded-full"
                                 style={{ backgroundColor: cita.tipo_citas?.color || "#ccc" }}
                               />
+                            </div>
+                            <DialogTitle className="text-base font-semibold tracking-tight">
                               {cita.tipo_citas?.nombre || "Consulta"}
                             </DialogTitle>
                             <DialogDescription className="text-xs">
@@ -273,9 +291,18 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                           </DialogHeader>
 
                           <div className="space-y-3 py-3 text-xs">
-                            <Badge variant="secondary" className="w-fit">
-                              {getCitaAreaLabel(cita.tipo_citas?.area)}
-                            </Badge>
+                            <div className={cn("rounded-md border px-3 py-2", areaPresentation.panelClass)}>
+                              <p className="font-semibold">Area: {areaPresentation.label}</p>
+                              <p className="mt-0.5">
+                                Tipo: {cita.tipo_citas?.nombre || "Consulta"}
+                                {durationMinutes ? ` / ${durationMinutes} min` : ""}
+                              </p>
+                              {areaPresentation.shortLabel === "Movilidad" ? (
+                                <p className="mt-1 border-t border-current/20 pt-1">
+                                  Revisa notas para direccion, referencia o indicaciones de traslado.
+                                </p>
+                              ) : null}
+                            </div>
                             <div className="flex items-start gap-2.5">
                               <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                               <div>

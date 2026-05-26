@@ -18,13 +18,14 @@ import { List } from "lucide-react";
 import {
   AREA_META,
   AREA_ORDER,
-  getCitaAreaLabel,
+  getCitaAreaPresentation,
   normalizeCitaArea,
   type AgendaClienteSearch,
   type CitaAgenda,
   type CitaArea,
   type TipoCitaAgenda,
 } from "./types";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -140,23 +141,31 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                         {format(parsedDate, "EEEE, d 'de' MMMM", { locale: es })}
                       </h2>
                       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        {dateCitas.map((cita) => (
+                        {dateCitas.map((cita) => {
+                          const areaPresentation = getCitaAreaPresentation(cita.tipo_citas?.area);
+
+                          return (
                           <Card key={cita.id} className="overflow-hidden">
                             <div className="h-2 w-full" style={{ backgroundColor: cita.tipo_citas?.color || "#ccc" }} />
                             <CardHeader className="p-4 pb-2">
-                              <CardTitle className="text-lg flex justify-between items-center">
-                                <span className="min-w-0 truncate">{cita.tipo_citas?.nombre || "Cita"}</span>
+                              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className={cn("border font-semibold", areaPresentation.badgeClass)}
+                                >
+                                  Area: {areaPresentation.shortLabel}
+                                </Badge>
                                 <span className="text-sm font-normal text-muted-foreground flex items-center">
                                   <Clock className="mr-1 h-3 w-3" />
                                   {format(parseISO(cita.start_date), "HH:mm")}
                                 </span>
+                              </div>
+                              <CardTitle className="text-lg">
+                                <span className="block min-w-0 truncate">{cita.tipo_citas?.nombre || "Cita"}</span>
                               </CardTitle>
                             </CardHeader>
                             <CardContent className="p-4 pt-0 text-sm space-y-2">
                               <div className="flex flex-wrap gap-2">
-                                <Badge variant="secondary" className="w-fit">
-                                  {getCitaAreaLabel(cita.tipo_citas?.area)}
-                                </Badge>
                                 {cita.tipo_citas?.is_disabled && (
                                   <Badge variant="outline" className="w-fit">Tipo inactivo</Badge>
                                 )}
@@ -209,7 +218,8 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                               </div>
                             </CardContent>
                           </Card>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   );
