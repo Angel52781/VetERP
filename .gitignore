@@ -6,3 +6,8 @@ ROADMAP_VETERP.md
 .env.local
 .env.production
 check_almacenes.js
+
+# local veterinary feedback folder
+Fallos/
+fallos/
+
