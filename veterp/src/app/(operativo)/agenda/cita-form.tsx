@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -89,6 +90,7 @@ export function CitaForm({
       tipo_cita_id: initialValues?.tipo_cita_id || "",
       start_date: defaultStartDate,
       end_date: defaultEndDate,
+      notas_text: initialValues?.notas_text ?? "",
     },
   });
 
@@ -170,6 +172,7 @@ export function CitaForm({
       tipo_cita_id: initialValues?.tipo_cita_id || "",
       start_date: defaultStartDate,
       end_date: defaultEndDate,
+      notas_text: initialValues?.notas_text ?? "",
     });
     router.refresh();
     if (onSuccess) onSuccess();
@@ -383,6 +386,29 @@ export function CitaForm({
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="notas_text"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notas de cita</FormLabel>
+              <FormControl>
+                <Textarea
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  rows={3}
+                  className="resize-none"
+                  placeholder="Ej: cuidado con orejas, otitis, temperamento, direccion para movilidad u observaciones para grooming."
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

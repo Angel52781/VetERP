@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, Calendar as CalendarIcon, Clock, PawPrint, User } from "lucide-react";
+import { Calendar, Calendar as CalendarIcon, Clock, NotebookPen, PawPrint, User } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -181,6 +181,17 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                                   "Paciente desconocido"
                                 )}
                               </div>
+                              {cita.notas_text?.trim() ? (
+                                <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-amber-900">
+                                  <NotebookPen className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700" />
+                                  <div className="min-w-0">
+                                    <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                                      Notas de cita
+                                    </p>
+                                    <p className="whitespace-pre-wrap break-words text-xs">{cita.notas_text}</p>
+                                  </div>
+                                </div>
+                              ) : null}
                               <div className="pt-2 flex flex-col gap-2">
                                 <CitaEstadoControl citaId={cita.id} estado={cita.estado} startDate={cita.start_date} compact />
                                 <EditarCitaBtn cita={cita} clientes={clientes} tiposCita={tiposCitaGestion} compact />

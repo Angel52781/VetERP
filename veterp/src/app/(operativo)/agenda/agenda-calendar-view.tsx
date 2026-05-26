@@ -13,7 +13,7 @@ import {
   subWeeks,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Clock, PawPrint, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, NotebookPen, PawPrint, User } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -322,6 +322,18 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                                 </span>
                               </div>
                             </div>
+
+                            {cita.notas_text?.trim() ? (
+                              <div className="flex items-start gap-2.5 border-t pt-2.5">
+                                <NotebookPen className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                                <div>
+                                  <span className="block font-semibold">Notas de cita</span>
+                                  <p className="mt-0.5 whitespace-pre-wrap break-words text-muted-foreground">
+                                    {cita.notas_text}
+                                  </p>
+                                </div>
+                              </div>
+                            ) : null}
                           </div>
                           <div className="border-t pt-3 space-y-3">
                             <CitaEstadoControl citaId={cita.id} estado={cita.estado} startDate={cita.start_date} compact />

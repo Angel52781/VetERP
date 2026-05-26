@@ -193,6 +193,7 @@ export async function createCita(input: CitaInput) {
         tipo_cita_id: validatedData.tipo_cita_id,
         start_date: startDate,
         end_date: endDate,
+        notas_text: validatedData.notas_text?.trim() || null,
         clinica_id: clinicaId,
       })
       .select()
@@ -271,6 +272,7 @@ export async function getCitas(startDate: string, endDate: string) {
         start_date,
         end_date,
         estado,
+        notas_text,
         tipo_cita_id,
         cliente_id,
         mascota_id,
@@ -482,6 +484,7 @@ export async function updateCita(citaId: string, input: CitaInput) {
         tipo_cita_id: validatedData.tipo_cita_id,
         start_date: startDate,
         end_date: endDate,
+        notas_text: validatedData.notas_text?.trim() || null,
       })
       .eq("id", citaId)
       .eq("clinica_id", clinicaId)

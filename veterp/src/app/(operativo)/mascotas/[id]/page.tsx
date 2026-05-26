@@ -566,14 +566,20 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                   {citas.map((cita) => {
                     const est = CITA_ESTADO_META[cita.estado] ?? CITA_ESTADO_META.programada;
                     return (
-                      <div key={cita.id} className="flex items-center justify-between p-3 hover:bg-muted/40 text-sm">
-                        <div className="flex items-center gap-2">
+                      <div key={cita.id} className="flex items-start justify-between gap-3 p-3 hover:bg-muted/40 text-sm">
+                        <div className="flex min-w-0 flex-1 items-start gap-2">
                           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: (cita.tipo_citas as any)?.color ?? "#94a3b8" }} />
-                          <div>
+                          <div className="min-w-0">
                             <p className="font-medium">{(cita.tipo_citas as any)?.nombre ?? "Sin tipo"}</p>
                             <p className="text-xs text-muted-foreground">
                               {format(new Date(cita.start_date), "dd MMM yyyy, HH:mm", { locale: es })}
                             </p>
+                            {cita.notas_text?.trim() && (
+                              <div className="mt-1 flex items-start gap-1.5 rounded bg-amber-50 px-2 py-1 text-xs text-amber-900 ring-1 ring-amber-200">
+                                <NotebookPen className="mt-0.5 h-3 w-3 shrink-0 text-amber-700" />
+                                <p className="whitespace-pre-wrap break-words">{cita.notas_text}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                         {cita.estado === "en_atencion" && activeOrden ? (

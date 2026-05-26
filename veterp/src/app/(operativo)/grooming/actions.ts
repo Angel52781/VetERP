@@ -20,7 +20,7 @@ export async function getGroomingDia() {
   const { data, error } = await supabase
     .from("citas")
     .select(`
-      id, start_date, end_date, estado,
+      id, start_date, end_date, estado, notas_text,
       tipo_citas:tipo_cita_id ( id, nombre, color, area ),
       clientes:cliente_id ( id, nombre, telefono ),
       mascotas:mascota_id (

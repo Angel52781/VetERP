@@ -27,6 +27,7 @@ export const citaSchema = z.object({
   tipo_cita_id: z.string().uuid({ message: "ID de tipo de cita invalido" }),
   start_date: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Fecha de inicio invalida" }),
   end_date: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Fecha de fin invalida" }),
+  notas_text: z.string().max(1000, "Las notas de cita no deben superar 1000 caracteres").optional().nullable(),
 });
 
 export type TipoCitaInput = z.input<typeof tipoCitaSchema>;

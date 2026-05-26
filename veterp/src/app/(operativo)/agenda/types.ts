@@ -27,6 +27,7 @@ export type CitaAgenda = {
   start_date: string;
   end_date: string;
   estado?: string | null;
+  notas_text?: string | null;
   tipo_cita_id: string;
   cliente_id: string;
   mascota_id: string;

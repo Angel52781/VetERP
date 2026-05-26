@@ -271,7 +271,7 @@ export async function getMascotaCompleta(mascotaId: string) {
     supabase
       .from("citas")
       .select(`
-        id, start_date, estado,
+        id, start_date, estado, notas_text,
         tipo_citas:tipo_cita_id (nombre, color)
       `)
       .eq("clinica_id", clinicaId)

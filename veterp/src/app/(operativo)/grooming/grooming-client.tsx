@@ -29,6 +29,7 @@ interface GroomingCardProps {
     id: string;
     start_date: string;
     estado: string;
+    notas_text?: string | null;
     tipo_citas: { nombre: string; color: string; area: string } | null;
     clientes: { id: string; nombre: string; telefono?: string | null } | null;
     mascotas: {
@@ -178,6 +179,12 @@ export function GroomingCard({ cita }: GroomingCardProps) {
                   Manejo: {shortText(mascota.notas_manejo, 42)}
                 </span>
               )}
+              {cita.notas_text?.trim() && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-sky-800 ring-1 ring-sky-200">
+                  <NotebookPen className="h-3 w-3" />
+                  Cita: {shortText(cita.notas_text, 48)}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -222,6 +229,16 @@ export function GroomingCard({ cita }: GroomingCardProps) {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Notas de manejo</p>
                 <p className="text-xs mt-0.5">{mascota.notas_manejo}</p>
+              </div>
+            </div>
+          )}
+
+          {cita.notas_text?.trim() && (
+            <div className="flex items-start gap-2 rounded bg-sky-50 border border-sky-200 px-3 py-2 text-sky-900">
+              <NotebookPen className="h-4 w-4 shrink-0 mt-0.5 text-sky-700" />
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Notas de cita</p>
+                <p className="text-xs mt-0.5 whitespace-pre-wrap break-words">{cita.notas_text}</p>
               </div>
             </div>
           )}

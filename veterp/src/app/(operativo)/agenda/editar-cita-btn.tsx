@@ -22,6 +22,7 @@ type EditableCita = {
   tipo_cita_id: string;
   start_date: string;
   end_date: string;
+  notas_text?: string | null;
 };
 
 interface EditarCitaBtnProps {
@@ -62,6 +63,7 @@ export function EditarCitaBtn({ cita, clientes, tiposCita, compact = false }: Ed
               tipo_cita_id: cita.tipo_cita_id,
               start_date: cita.start_date,
               end_date: cita.end_date,
+              notas_text: cita.notas_text ?? "",
             }}
             onSuccess={() => setOpen(false)}
           />
