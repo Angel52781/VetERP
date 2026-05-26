@@ -20,6 +20,7 @@ import {
   AREA_ORDER,
   getCitaAreaLabel,
   normalizeCitaArea,
+  type AgendaClienteSearch,
   type CitaAgenda,
   type CitaArea,
   type TipoCitaAgenda,
@@ -37,7 +38,7 @@ type AreaFilter = "todas" | CitaArea;
 
 interface AgendaClientProps {
   citas: CitaAgenda[];
-  clientes: { id: string; nombre: string }[];
+  clientes: AgendaClienteSearch[];
   tiposCita: TipoCitaAgenda[];
   tiposCitaGestion: TipoCitaAgenda[];
 }

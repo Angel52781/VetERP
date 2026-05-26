@@ -30,11 +30,11 @@ import {
 import { IniciarAtencionCitaBtn } from "./iniciar-atencion-cita-btn";
 import { CitaEstadoControl } from "./cita-estado-control";
 import { EditarCitaBtn } from "./editar-cita-btn";
-import { getCitaAreaLabel, type CitaAgenda, type TipoCitaAgenda } from "./types";
+import { getCitaAreaLabel, type AgendaClienteSearch, type CitaAgenda, type TipoCitaAgenda } from "./types";
 
 interface AgendaCalendarViewProps {
   citas: CitaAgenda[];
-  clientes: { id: string; nombre: string }[];
+  clientes: AgendaClienteSearch[];
   tiposCita: TipoCitaAgenda[];
 }
 

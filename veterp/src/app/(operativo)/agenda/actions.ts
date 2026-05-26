@@ -508,7 +508,17 @@ export async function getClientesParaAgenda() {
 
     const { data, error } = await supabase
       .from("clientes")
-      .select("id, nombre")
+      .select(`
+        id,
+        nombre,
+        telefono,
+        email,
+        mascotas (
+          id,
+          nombre,
+          codigo_text
+        )
+      `)
       .eq("clinica_id", clinicaId)
       .order("nombre");
 

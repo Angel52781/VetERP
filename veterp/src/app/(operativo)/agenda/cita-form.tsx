@@ -28,14 +28,23 @@ import { citaSchema, type CitaInput } from "@/lib/validators/agenda";
 import { createCita, getMascotasDeCliente, updateCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AREA_META, AREA_ORDER, normalizeCitaArea, type TipoCitaAgenda } from "./types";
+import { filterClienteSearchResults } from "./cita-search";
+import {
+  AREA_META,
+  AREA_ORDER,
+  normalizeCitaArea,
+  type AgendaClienteSearch,
+  type AgendaMascotaSearch,
+  type TipoCitaAgenda,
+} from "./types";
 
 import { format, addMinutes } from "date-fns";
 
 interface CitaFormProps {
-  clientes: { id: string; nombre: string }[];
+  clientes: AgendaClienteSearch[];
   tiposCita: TipoCitaAgenda[];
   onSuccess?: () => void;
   initialDate?: string;
@@ -68,8 +77,9 @@ export function CitaForm({
 }: CitaFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mascotas, setMascotas] = useState<{ id: string; nombre: string; codigo_text?: string | null }[]>([]);
+  const [mascotas, setMascotas] = useState<AgendaMascotaSearch[]>([]);
   const [loadingMascotas, setLoadingMascotas] = useState(false);
+  const [clienteSearch, setClienteSearch] = useState("");
   const [tipoSearch, setTipoSearch] = useState("");
 
   const defaultStartDate = toDateTimeLocalInput(initialValues?.start_date || initialDate, true);
@@ -97,6 +107,14 @@ export function CitaForm({
   const selectedClienteId = form.watch("cliente_id");
   const selectedTipoCitaId = form.watch("tipo_cita_id");
   const selectedStartDate = form.watch("start_date");
+  const selectedCliente = useMemo(
+    () => clientes.find((cliente) => cliente.id === selectedClienteId) ?? null,
+    [clientes, selectedClienteId],
+  );
+  const clienteSearchResults = useMemo(
+    () => filterClienteSearchResults(clientes, clienteSearch, 8),
+    [clientes, clienteSearch],
+  );
   const currentTipoCitaId = initialValues?.tipo_cita_id ?? null;
   const tiposCitaDisponibles = useMemo(() => {
     return tiposCita.filter((tipo) => !tipo.is_disabled || tipo.id === currentTipoCitaId);
@@ -187,28 +205,139 @@ export function CitaForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Responsable</FormLabel>
-              <Select
-                onValueChange={(val) => {
-                  field.onChange(val || "");
-                  form.resetField("mascota_id", { defaultValue: "" });
-                }}
-                value={field.value || ""}
-              >
+              <div className="space-y-2">
+                {selectedCliente ? (
+                  <div className="flex items-start justify-between gap-3 rounded-md border bg-muted/20 px-3 py-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">{selectedCliente.nombre}</p>
+                      {(selectedCliente.telefono || selectedCliente.email) && (
+                        <p className="truncate text-xs text-muted-foreground">
+                          {[selectedCliente.telefono, selectedCliente.email].filter(Boolean).join(" / ")}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs"
+                      onClick={() => {
+                        field.onChange("");
+                        form.resetField("mascota_id", { defaultValue: "" });
+                        setMascotas([]);
+                        setClienteSearch("");
+                      }}
+                    >
+                      Cambiar
+                    </Button>
+                  </div>
+                ) : null}
+
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un responsable">
-                      {field.value ? clientes.find((c) => c.id === field.value)?.nombre : "Selecciona un responsable"}
-                    </SelectValue>
-                  </SelectTrigger>
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      value={clienteSearch}
+                      onChange={(event) => setClienteSearch(event.target.value)}
+                      placeholder="Buscar responsable, telefono, email, paciente o codigo"
+                      className="pl-8"
+                    />
+                  </div>
                 </FormControl>
-                <SelectContent>
-                  {clientes.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+                {(clienteSearch.trim() || !field.value) && (
+                  <div className="max-h-72 overflow-y-auto rounded-md border bg-background">
+                    {clienteSearchResults.length === 0 ? (
+                      <div className="space-y-2 px-3 py-4 text-center">
+                        <p className="text-sm text-muted-foreground">
+                          No se encontraron responsables o pacientes.
+                        </p>
+                        <Link href="/clientes/nuevo" className="text-xs font-medium text-primary hover:underline">
+                          Crear cliente nuevo
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="divide-y">
+                        {clienteSearchResults.map((result) => {
+                          const cliente = result.cliente;
+                          const autoMascotaId =
+                            !result.matchesCliente && result.matchingMascotas.length === 1
+                              ? result.matchingMascotas[0].id
+                              : null;
+
+                          return (
+                            <button
+                              key={cliente.id}
+                              type="button"
+                              className="block w-full px-3 py-2 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
+                              onClick={() => {
+                                field.onChange(cliente.id);
+                                form.clearErrors("cliente_id");
+                                setMascotas(cliente.mascotas ?? []);
+                                setClienteSearch("");
+
+                                if (autoMascotaId) {
+                                  form.setValue("mascota_id", autoMascotaId, { shouldValidate: true });
+                                  form.clearErrors("mascota_id");
+                                  return;
+                                }
+
+                                form.resetField("mascota_id", { defaultValue: "" });
+                              }}
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-semibold">{cliente.nombre}</p>
+                                  {(cliente.telefono || cliente.email) && (
+                                    <p className="truncate text-xs text-muted-foreground">
+                                      {[cliente.telefono, cliente.email].filter(Boolean).join(" / ")}
+                                    </p>
+                                  )}
+                                </div>
+                                <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase text-muted-foreground">
+                                  Responsable
+                                </span>
+                              </div>
+
+                              {result.mascotas.length > 0 ? (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {result.mascotas.slice(0, 4).map((mascota) => (
+                                    <span
+                                      key={mascota.id}
+                                      className={cn(
+                                        "inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border px-2 py-0.5 text-xs",
+                                        autoMascotaId === mascota.id
+                                          ? "border-primary/40 bg-primary/5 text-primary"
+                                          : "bg-background text-muted-foreground",
+                                      )}
+                                    >
+                                      <span className="truncate">{mascota.nombre}</span>
+                                      {mascota.codigo_text?.trim() ? (
+                                        <span className="shrink-0 font-semibold">#{mascota.codigo_text}</span>
+                                      ) : null}
+                                    </span>
+                                  ))}
+                                  {result.mascotas.length > 4 ? (
+                                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                                      +{result.mascotas.length - 4} mas
+                                    </span>
+                                  ) : null}
+                                </div>
+                              ) : (
+                                <p className="mt-1 text-xs text-muted-foreground">Sin pacientes registrados.</p>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <Link href="/clientes/nuevo" className="inline-flex text-xs font-medium text-primary hover:underline">
+                  Crear cliente nuevo
+                </Link>
+              </div>
               <FormMessage />
             </FormItem>
           )}

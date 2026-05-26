@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CitaForm } from "./cita-form";
-import type { TipoCitaAgenda } from "./types";
+import type { AgendaClienteSearch, TipoCitaAgenda } from "./types";
 
 type EditableCita = {
   id: string;
@@ -27,7 +27,7 @@ type EditableCita = {
 
 interface EditarCitaBtnProps {
   cita: EditableCita;
-  clientes: { id: string; nombre: string }[];
+  clientes: AgendaClienteSearch[];
   tiposCita: TipoCitaAgenda[];
   compact?: boolean;
 }

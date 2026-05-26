@@ -22,6 +22,30 @@ export type TipoCitaAgenda = {
   is_disabled?: boolean | null;
 };
 
+export type AgendaMascotaSearch = {
+  id: string;
+  nombre: string;
+  codigo_text?: string | null;
+};
+
+export type AgendaClienteSearch = {
+  id: string;
+  nombre: string;
+  telefono?: string | null;
+  email?: string | null;
+  documento?: string | null;
+  dni?: string | null;
+  documento_text?: string | null;
+  mascotas?: AgendaMascotaSearch[] | null;
+};
+
+export type AgendaClienteSearchResult = {
+  cliente: AgendaClienteSearch;
+  mascotas: AgendaMascotaSearch[];
+  matchingMascotas: AgendaMascotaSearch[];
+  matchesCliente: boolean;
+};
+
 export type CitaAgenda = {
   id: string;
   start_date: string;
