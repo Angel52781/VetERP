@@ -141,7 +141,7 @@ export function AlmacenForm({
           )}
         />
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
         </div>
@@ -168,10 +168,10 @@ export function AlmacenesList({ almacenes }: { almacenes: Almacen[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-medium">Almacenes</h2>
         <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
-          <DialogTrigger render={<Button size="sm" />}>
+          <DialogTrigger render={<Button size="sm" className="w-full sm:w-auto" />}>
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Almacén
           </DialogTrigger>
@@ -190,7 +190,7 @@ export function AlmacenesList({ almacenes }: { almacenes: Almacen[] }) {
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table className="min-w-[640px]">
           <TableHeader>
             <TableRow>
               <TableHead>Nombre</TableHead>

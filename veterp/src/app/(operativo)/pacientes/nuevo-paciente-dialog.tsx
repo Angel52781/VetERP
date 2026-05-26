@@ -144,7 +144,7 @@ export function NuevoPacienteDialog({ clientes }: NuevoPacienteDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={<Button />}>
+      <DialogTrigger render={<Button className="w-full sm:w-auto" />}>
         <Plus className="mr-2 h-4 w-4" />
         Nuevo paciente
       </DialogTrigger>
@@ -312,10 +312,10 @@ export function NuevoPacienteDialog({ clientes }: NuevoPacienteDialogProps) {
           ) : null}
 
           <div className="flex flex-col-reverse gap-2 border-t pt-4 sm:flex-row sm:justify-end">
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={pending}>
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={pending} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button type="submit" disabled={pending || !selectedClienteId}>
+            <Button type="submit" disabled={pending || !selectedClienteId} className="w-full sm:w-auto">
               {pending ? "Creando..." : "Crear paciente"}
             </Button>
           </div>

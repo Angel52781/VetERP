@@ -90,17 +90,17 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
   });
 
   return (
-    <div className="container mx-auto py-8 max-w-5xl space-y-6">
+    <div className="mx-auto w-full max-w-5xl space-y-6 py-2 sm:py-4">
       <div className="mb-2">
         <Link href={safeReturnTo} className={buttonVariants({ variant: "ghost", size: "sm" })}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver
         </Link>
       </div>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight">Orden de Servicio</h1>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
             <p className="text-muted-foreground">Ref: ORD-{orden.id.slice(0, 8).toUpperCase()}</p>
             <span className="text-muted-foreground font-medium text-sm">•</span>
             <Link href={`/mascotas/${orden.mascota_id}?returnTo=${mascotaReturnTo}`} className="text-primary hover:underline font-medium text-sm">
@@ -138,30 +138,30 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
       <AlertasCriticasBanner alertas={(orden.mascotas as any)?.alertas_criticas} />
 
       <Tabs defaultValue={initialTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="resumen">Resumen</TabsTrigger>
-          <TabsTrigger value="notas">Atención Clínica</TabsTrigger>
-          <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
-          <TabsTrigger value="adjuntos">Adjuntos</TabsTrigger>
-          <TabsTrigger value="venta">Cobro</TabsTrigger>
+        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:grid sm:grid-cols-5">
+          <TabsTrigger value="resumen" className="min-w-[8.5rem] sm:min-w-0">Resumen</TabsTrigger>
+          <TabsTrigger value="notas" className="min-w-[10rem] sm:min-w-0">Atención Clínica</TabsTrigger>
+          <TabsTrigger value="seguimientos" className="min-w-[9rem] sm:min-w-0">Seguimientos</TabsTrigger>
+          <TabsTrigger value="adjuntos" className="min-w-[8rem] sm:min-w-0">Adjuntos</TabsTrigger>
+          <TabsTrigger value="venta" className="min-w-[7rem] sm:min-w-0">Cobro</TabsTrigger>
         </TabsList>
         
         <TabsContent value="resumen" className="mt-6 space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Responsable</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="grid grid-cols-3 gap-1 text-sm">
+                <div className="grid gap-2 text-sm sm:grid-cols-3">
                   <span className="font-medium text-muted-foreground">Nombre:</span>
-                  <span className="col-span-2 font-medium">{orden.clientes?.nombre}</span>
+                  <span className="font-medium sm:col-span-2">{orden.clientes?.nombre}</span>
                   
                   <span className="font-medium text-muted-foreground">Teléfono:</span>
-                  <span className="col-span-2">{orden.clientes?.telefono || "N/A"}</span>
+                  <span className="sm:col-span-2">{orden.clientes?.telefono || "N/A"}</span>
                   
                   <span className="font-medium text-muted-foreground">Email:</span>
-                  <span className="col-span-2">{orden.clientes?.email || "N/A"}</span>
+                  <span className="break-words sm:col-span-2">{orden.clientes?.email || "N/A"}</span>
                 </div>
               </CardContent>
             </Card>
@@ -171,9 +171,9 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
                 <CardTitle>Paciente</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="grid grid-cols-3 gap-1 text-sm">
+                <div className="grid gap-2 text-sm sm:grid-cols-3">
                   <span className="font-medium text-muted-foreground">Nombre:</span>
-                  <span className="col-span-2 font-medium">
+                  <span className="font-medium sm:col-span-2">
                     <Link href={`/mascotas/${orden.mascota_id}?returnTo=${mascotaReturnTo}`} className="text-primary hover:underline">
                       {orden.mascotas?.nombre}
                     </Link>
@@ -182,18 +182,18 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
                   {(orden.mascotas as any)?.codigo_text?.trim() ? (
                     <>
                       <span className="font-medium text-muted-foreground">Código:</span>
-                      <span className="col-span-2">#{(orden.mascotas as any).codigo_text}</span>
+                      <span className="sm:col-span-2">#{(orden.mascotas as any).codigo_text}</span>
                     </>
                   ) : null}
                   
                   <span className="font-medium text-muted-foreground">Especie:</span>
-                  <span className="col-span-2">{formatSpeciesLabel(orden.mascotas?.especie)}</span>
+                  <span className="sm:col-span-2">{formatSpeciesLabel(orden.mascotas?.especie)}</span>
                   
                   <span className="font-medium text-muted-foreground">Raza:</span>
-                  <span className="col-span-2">{formatBreedLabel(orden.mascotas?.raza)}</span>
+                  <span className="sm:col-span-2">{formatBreedLabel(orden.mascotas?.raza)}</span>
 
                   <span className="font-medium text-muted-foreground">Edad:</span>
-                  <span className="col-span-2">
+                  <span className="sm:col-span-2">
                     {pacienteAge !== null ? `${pacienteAge} años` : "N/A"}
                   </span>
                 </div>
@@ -212,7 +212,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
               <CardTitle>Detalles de la Orden</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 md:grid-cols-3">
                 <div>
                   <p className="font-medium text-muted-foreground">Fecha de creación</p>
                   <p>{format(new Date(orden.created_at), "dd/MM/yyyy HH:mm", { locale: es })}</p>
@@ -239,7 +239,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
         <TabsContent value="notas" className="mt-6 space-y-6">
           <SignosVitalesForm ordenId={id} entradas={orden.entradas_clinicas || []} />
           
-          <div className="grid md:grid-cols-3 gap-6 pt-6 border-t">
+          <div className="grid gap-6 border-t pt-6 md:grid-cols-3">
             <div className="md:col-span-2">
               <h2 className="text-xl font-semibold mb-4">Evolución y Notas</h2>
               <EntradasList entradas={orden.entradas_clinicas || []} />

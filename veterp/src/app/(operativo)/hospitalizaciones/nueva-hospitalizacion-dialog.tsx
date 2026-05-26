@@ -141,7 +141,7 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={<Button />}>
+      <DialogTrigger render={<Button className="w-full sm:w-auto" />}>
         <Plus className="mr-2 h-4 w-4" />
         Nuevo internamiento
       </DialogTrigger>
@@ -208,7 +208,7 @@ export function NuevaHospitalizacionDialog({ pacientes }: NuevaHospitalizacionDi
                                     : "border-border hover:border-primary/50 hover:bg-muted/50"
                                 }`}
                               >
-                                <div className="flex items-start justify-between gap-3">
+                                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                                   <div className="min-w-0">
                                     <div className="flex flex-wrap items-center gap-2">
                                       <p className="truncate text-sm font-semibold">{paciente.nombre}</p>

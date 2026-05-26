@@ -55,7 +55,7 @@ export default async function AjustesPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
 
       <Tabs defaultValue="catalogo" className="w-full">
-        <TabsList>
+        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:flex-wrap sm:justify-start">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="staff">Staff</TabsTrigger>
           <TabsTrigger value="catalogo">Catálogo</TabsTrigger>

@@ -106,15 +106,15 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold tracking-tight">Pacientes</h1>
           <p className="text-sm text-muted-foreground">
             {mascotasFiltradas.length} paciente{mascotasFiltradas.length !== 1 ? "s" : ""} en vista operativa
           </p>
         </div>
-        <div className="flex w-full max-w-3xl flex-col gap-2 sm:flex-row sm:items-center md:justify-end">
+        <div className="flex w-full max-w-3xl flex-col gap-2 md:items-end">
           <NuevoPacienteDialog clientes={clientes ?? []} />
-          <form className="flex flex-1 items-center gap-2" method="get">
+          <form className="flex w-full flex-col gap-2 sm:flex-row sm:items-center" method="get">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -124,9 +124,9 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
                 className="pl-9"
               />
             </div>
-            <Button type="submit" variant="outline">Buscar</Button>
+            <Button type="submit" variant="outline" className="w-full sm:w-auto">Buscar</Button>
             {query ? (
-              <Link href="/pacientes" className={buttonVariants({ variant: "ghost" })}>
+              <Link href="/pacientes" className={buttonVariants({ variant: "ghost", className: "w-full sm:w-auto" })}>
                 Limpiar
               </Link>
             ) : null}
@@ -206,10 +206,10 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 xl:justify-end">
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center xl:justify-end">
                   <Link
                     href={`/mascotas/${mascota.id}?returnTo=${encodeURIComponent("/pacientes")}`}
-                    className={buttonVariants({ variant: "outline", size: "sm", className: "h-8" })}
+                    className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 w-full sm:w-auto" })}
                   >
                     Ver ficha
                   </Link>

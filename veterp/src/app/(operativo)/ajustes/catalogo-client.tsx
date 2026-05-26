@@ -161,7 +161,7 @@ export function ItemCatalogoForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="kind"
@@ -202,7 +202,7 @@ export function ItemCatalogoForm({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="categoria_id"
@@ -294,7 +294,7 @@ export function ItemCatalogoForm({
         />
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
         </div>
@@ -374,10 +374,10 @@ export function CatalogoList({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-medium">Servicios y Productos</h2>
         <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
-          <DialogTrigger render={<Button size="sm" />}>
+          <DialogTrigger render={<Button size="sm" className="w-full sm:w-auto" />}>
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Ítem
           </DialogTrigger>
@@ -397,7 +397,7 @@ export function CatalogoList({
         </Dialog>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 bg-muted/20 p-3 rounded-lg border border-dashed">
+      <div className="flex flex-col gap-2 rounded-lg border border-dashed bg-muted/20 p-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -408,7 +408,7 @@ export function CatalogoList({
           />
         </div>
         <Select value={categoriaFilter} onValueChange={(v) => { setCategoriaFilter(v as string); setPage(1); }}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Categoría" />
           </SelectTrigger>
           <SelectContent>
@@ -417,7 +417,7 @@ export function CatalogoList({
           </SelectContent>
         </Select>
         <Select value={tipoFilter} onValueChange={(v) => { setTipoFilter(v as string); setPage(1); }}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-full sm:w-[140px]">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -427,7 +427,7 @@ export function CatalogoList({
           </SelectContent>
         </Select>
         <Select value={estadoFilter} onValueChange={(v) => { setEstadoFilter(v as string); setPage(1); }}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-full sm:w-[140px]">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
           <SelectContent>
@@ -436,13 +436,13 @@ export function CatalogoList({
             <SelectItem value="inactivos">Solo inactivos</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="ghost" size="icon" onClick={clearFilters} title="Limpiar filtros">
+        <Button variant="ghost" size="icon" onClick={clearFilters} title="Limpiar filtros" className="w-full sm:w-8">
           <FilterX className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table className="min-w-[720px]">
           <TableHeader>
             <TableRow>
               <TableHead>Nombre</TableHead>
@@ -509,7 +509,7 @@ export function CatalogoList({
       </div>
 
       {filteredItems.length > 0 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground px-2">
+        <div className="flex flex-col gap-3 px-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <div>
             Mostrando {((page - 1) * itemsPerPage) + 1} a {Math.min(page * itemsPerPage, filteredItems.length)} de {filteredItems.length} ítems
           </div>

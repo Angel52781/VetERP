@@ -85,7 +85,7 @@ export function TiposCitaManager({ tiposCita }: TiposCitaManagerProps) {
             </p>
           </div>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger render={<Button variant="outline" />}>
+            <DialogTrigger render={<Button variant="outline" className="w-full sm:w-auto" />}>
               <Plus className="mr-2 h-4 w-4" />
               Crear tipo
             </DialogTrigger>
@@ -146,7 +146,7 @@ export function TiposCitaManager({ tiposCita }: TiposCitaManagerProps) {
                 <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
                   {group.tipos.map((tipo) => (
                     <div key={tipo.id} className="rounded-lg border bg-background p-3">
-                      <div className="flex items-start justify-between gap-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="h-3 w-3 rounded-full" style={{ backgroundColor: tipo.color || "#64748b" }} />
@@ -159,9 +159,9 @@ export function TiposCitaManager({ tiposCita }: TiposCitaManagerProps) {
                         </Badge>
                       </div>
 
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                         <Dialog open={editingId === tipo.id} onOpenChange={(open) => setEditingId(open ? tipo.id : null)}>
-                          <DialogTrigger render={<Button size="sm" variant="outline" />}>
+                          <DialogTrigger render={<Button size="sm" variant="outline" className="w-full sm:w-auto" />}>
                             <Edit2 className="mr-2 h-3.5 w-3.5" />
                             Editar
                           </DialogTrigger>
@@ -178,6 +178,7 @@ export function TiposCitaManager({ tiposCita }: TiposCitaManagerProps) {
                           variant={tipo.is_disabled ? "secondary" : "ghost"}
                           onClick={() => toggleDisabled(tipo)}
                           disabled={pending}
+                          className="w-full sm:w-auto"
                         >
                           {tipo.is_disabled ? (
                             <ToggleRight className="mr-2 h-3.5 w-3.5" />

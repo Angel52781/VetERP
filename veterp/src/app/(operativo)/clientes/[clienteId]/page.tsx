@@ -204,14 +204,14 @@ export default async function ClienteDetallePage({
       </div>
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
           <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-2xl shrink-0 select-none shadow-sm border border-primary/20">
             {cliente.nombre.charAt(0).toUpperCase()}
           </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{cliente.nombre}</h1>
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
+          <div className="min-w-0">
+            <h1 className="break-words text-3xl font-bold tracking-tight">{cliente.nombre}</h1>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
               {cliente.telefono && (
                 <span className="flex items-center gap-1.5 font-medium">
                   <Phone className="h-4 w-4 text-primary/70" /> {cliente.telefono}
@@ -229,11 +229,11 @@ export default async function ClienteDetallePage({
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {ordenActiva ? (
             <Link
               href={`/orden_y_colas/${ordenActiva.id}?returnTo=${clienteReturnTo}`}
-              className={buttonVariants({ variant: "secondary", size: "sm" })}
+              className={buttonVariants({ variant: "secondary", size: "sm", className: "w-full sm:w-auto" })}
             >
               Ver atención
             </Link>
@@ -248,7 +248,7 @@ export default async function ClienteDetallePage({
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <Card>
           <CardContent className="p-4 flex flex-col justify-center">
             <p className="text-sm font-medium text-muted-foreground">Pacientes totales</p>
@@ -297,8 +297,8 @@ export default async function ClienteDetallePage({
               <span className="group-open:hidden">Ver movimientos del estado de cuenta</span>
               <span className="hidden group-open:inline">Ocultar movimientos del estado de cuenta</span>
             </summary>
-            <div className="mt-3 rounded-md border overflow-hidden bg-background">
-              <Table>
+            <div className="mt-3 overflow-hidden rounded-md border bg-background">
+              <Table className="min-w-[860px]">
                 <TableHeader className="bg-muted/50">
                   <TableRow>
                     <TableHead>Fecha</TableHead>
@@ -356,7 +356,7 @@ export default async function ClienteDetallePage({
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Pacientes */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-base flex items-center gap-2">
@@ -375,7 +375,7 @@ export default async function ClienteDetallePage({
                     const edad = getAgeFromDateOnly(m.nacimiento, now);
                     const ordenMascotaActiva = ordenActivaByMascota.get(m.id);
                     return (
-                      <div key={m.id} className="flex items-center gap-3 py-3 -mx-2 px-2 rounded transition-colors hover:bg-muted/40">
+                      <div key={m.id} className="-mx-2 flex flex-col gap-3 rounded px-2 py-3 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center">
                         <Link
                           href={`/mascotas/${m.id}?returnTo=${clienteReturnTo}`}
                           className="flex min-w-0 flex-1 items-center gap-3 group"
@@ -401,7 +401,7 @@ export default async function ClienteDetallePage({
                         {ordenMascotaActiva ? (
                           <Link
                             href={`/orden_y_colas/${ordenMascotaActiva.id}?returnTo=${clienteReturnTo}`}
-                            className={buttonVariants({ variant: "outline", size: "sm" })}
+                            className={buttonVariants({ variant: "outline", size: "sm", className: "w-full sm:w-auto" })}
                           >
                             Ver atención
                           </Link>
@@ -443,7 +443,7 @@ export default async function ClienteDetallePage({
                       <Link
                         key={o.id}
                         href={`/orden_y_colas/${o.id}?returnTo=${clienteReturnTo}`}
-                        className="flex items-center gap-3 py-3 hover:bg-muted/40 -mx-2 px-2 rounded transition-colors"
+                        className="-mx-2 flex flex-col gap-3 rounded px-2 py-3 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center"
                       >
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">

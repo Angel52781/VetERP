@@ -71,26 +71,26 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
       )}
 
       {/* Controles superiores */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-        <div className="flex flex-wrap gap-2 flex-1">
-          <div className="relative">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="grid w-full gap-2 sm:flex sm:flex-1 sm:flex-wrap">
+          <div className="relative w-full sm:w-auto">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar nombre o SKU..."
-              className="pl-8 w-56"
+              className="w-full pl-8 sm:w-56"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
             />
           </div>
           <Select value={filtroCategoria} onValueChange={(v) => setFiltroCategoria(v ?? "todas")}>
-            <SelectTrigger className="w-40"><SelectValue placeholder="Categoría" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-40"><SelectValue placeholder="Categoría" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="todas">Todas las categorías</SelectItem>
               {categorias.map((c) => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={filtroEstado} onValueChange={(v) => setFiltroEstado(v ?? "activos")}>
-            <SelectTrigger className="w-36"><SelectValue placeholder="Estado" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-36"><SelectValue placeholder="Estado" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="activos">Solo activos</SelectItem>
               <SelectItem value="inactivos">Solo inactivos</SelectItem>
@@ -99,7 +99,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
           </Select>
         </div>
         <Dialog open={dialog?.tipo === "nuevo"} onOpenChange={(o) => !o && cerrar()}>
-          <DialogTrigger render={<Button className="gap-2 shrink-0" />} onClick={() => setDialog({ tipo: "nuevo" })}>
+          <DialogTrigger render={<Button className="w-full gap-2 sm:w-auto sm:shrink-0" />} onClick={() => setDialog({ tipo: "nuevo" })}>
             <Plus className="h-4 w-4" />
             Nuevo producto
           </DialogTrigger>
@@ -110,8 +110,8 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
       </div>
 
       {/* Tabla */}
-      <div className="rounded-lg border overflow-hidden">
-        <Table>
+      <div className="overflow-hidden rounded-lg border">
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow className="bg-muted/40">
               <TableHead>Producto</TableHead>
@@ -166,7 +166,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
                       }
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
+                      <div className="flex flex-wrap items-center gap-1">
                         {/* Entrada */}
                         <Dialog open={dialog?.tipo === "movimiento" && dialog.producto.id === p.id && dialog.accion === "entrada"} onOpenChange={(o) => !o && cerrar()}>
                           <DialogTrigger render={<Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-600 hover:text-emerald-700" title="Entrada" />} onClick={() => setDialog({ tipo: "movimiento", producto: p, accion: "entrada" })}>

@@ -133,11 +133,11 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
   return (
     <Card className="overflow-hidden border border-border/80 bg-card shadow-sm">
       <div className="flex flex-col gap-3 border-b bg-muted/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <h2 className="min-w-[150px] text-lg font-semibold capitalize tracking-tight text-foreground">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <h2 className="text-lg font-semibold capitalize tracking-tight text-foreground sm:min-w-[150px]">
             {format(weekStart, "MMMM yyyy", { locale: es })}
           </h2>
-          <div className="flex items-center rounded-md border bg-background p-0.5">
+          <div className="flex w-full items-center justify-between rounded-md border bg-background p-0.5 sm:w-auto sm:justify-start">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={prevWeek}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -335,7 +335,7 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                               </div>
                             ) : null}
                           </div>
-                          <div className="border-t pt-3 space-y-3">
+                          <div className="space-y-3 border-t pt-3">
                             <CitaEstadoControl citaId={cita.id} estado={cita.estado} startDate={cita.start_date} compact />
                             <EditarCitaBtn cita={cita} clientes={clientes} tiposCita={tiposCita} compact />
                             <IniciarAtencionCitaBtn

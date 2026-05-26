@@ -106,7 +106,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FormField control={form.control} name="nombre" render={({ field }) => (
               <FormItem className="col-span-2">
                 <FormLabel>Nombre *</FormLabel>
@@ -221,7 +221,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
               <div className="col-span-2 mt-2 flex flex-col gap-3 rounded-md border bg-muted/20 p-3">
                 <h4 className="text-sm font-medium leading-none">Stock Inicial (Opcional)</h4>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <FormField control={form.control} name="stock_inicial" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Cantidad inicial</FormLabel>
@@ -270,7 +270,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
             )}
           </div>
           <div className="flex justify-end pt-1">
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
               {loading ? "Guardando..." : (initialData ? "Guardar cambios" : "Crear producto")}
             </Button>
           </div>

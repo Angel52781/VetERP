@@ -124,23 +124,23 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const hospitalizacionActiva = hospitalizacionesOrdenadas.find((h: any) => h.estado_text === "activa");
 
   return (
-    <div className="container mx-auto py-6 max-w-5xl space-y-5">
+    <div className="mx-auto w-full max-w-5xl space-y-5">
       {/* Back */}
       <Link href={safeReturnTo} className={buttonVariants({ variant: "ghost", size: "sm" })}>
         <ArrowLeft className="mr-2 h-4 w-4" /> Volver
       </Link>
 
       {/* ── HEADER ── */}
-      <div className="rounded-xl border bg-card p-5 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div className="space-y-4 rounded-xl border bg-card p-4 sm:p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           {/* Identity */}
-          <div className="flex items-start gap-4">
+          <div className="flex min-w-0 items-start gap-4">
             <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <Stethoscope className="h-7 w-7" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight">{mascota.nombre}</h1>
+                <h1 className="break-words text-2xl font-bold tracking-tight">{mascota.nombre}</h1>
                 {mascota.codigo_text?.trim() && (
                   <Badge variant="outline">#{mascota.codigo_text}</Badge>
                 )}
@@ -154,7 +154,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                 {ageString && ` · ${ageString}`}
                 {mascota.nacimiento && ` · Nac. ${birthDateString}`}
               </p>
-              <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+              <p className="mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-muted-foreground">
                 <User className="h-3.5 w-3.5" />
                 Responsable:{" "}
                 <Link href={`/clientes/${mascota.cliente_id}`} className="hover:underline text-foreground font-medium ml-1">
@@ -170,7 +170,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
             <BtnNuevaAtencion clienteId={mascota.cliente_id} mascotaId={mascota.id} compact label="Nueva atención" />
             <AgendarCitaPacienteBtn
               clienteId={mascota.cliente_id}
@@ -187,7 +187,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
         </div>
 
         {/* KPI strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 border-t">
+        <div className="grid grid-cols-2 gap-3 border-t pt-1 sm:grid-cols-4">
           <div className="text-center">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Atenciones</p>
             <p className="text-xl font-bold">{ordenes?.length ?? 0}</p>
@@ -226,7 +226,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
       )}
 
       {/* ── 2-col quick summary ── */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Responsable card */}
         <Card>
           <CardHeader className="pb-2">
@@ -298,12 +298,12 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
       {/* ── TABS ── */}
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="historia">Historia clínica</TabsTrigger>
-          <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
-          <TabsTrigger value="hospitalizaciones">Hospitalizaciones</TabsTrigger>
-          <TabsTrigger value="ordenes">Atenciones</TabsTrigger>
-          <TabsTrigger value="citas">Citas</TabsTrigger>
+        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:grid sm:grid-cols-5">
+          <TabsTrigger value="historia" className="min-w-[10rem] sm:min-w-0">Historia clínica</TabsTrigger>
+          <TabsTrigger value="seguimientos" className="min-w-[9rem] sm:min-w-0">Seguimientos</TabsTrigger>
+          <TabsTrigger value="hospitalizaciones" className="min-w-[10rem] sm:min-w-0">Hospitalizaciones</TabsTrigger>
+          <TabsTrigger value="ordenes" className="min-w-[8rem] sm:min-w-0">Atenciones</TabsTrigger>
+          <TabsTrigger value="citas" className="min-w-[7rem] sm:min-w-0">Citas</TabsTrigger>
         </TabsList>
 
         {/* Historia clínica */}
@@ -319,7 +319,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               const isSOAP = e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje";
               return (
                 <Card key={e.id} className="overflow-hidden">
-                  <div className="bg-muted/40 px-4 py-2.5 border-b flex justify-between items-center">
+                  <div className="flex flex-col gap-2 border-b bg-muted/40 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-2">
                       <Stethoscope className="w-4 h-4 text-primary" />
                       <span className="font-semibold text-sm">
@@ -332,7 +332,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                   </div>
                   <CardContent className="p-4 space-y-3">
                     {(e.peso_kg_num || e.temperatura_c_num || e.frecuencia_cardiaca_num || e.frecuencia_respiratoria_num) && (
-                      <div className="flex flex-wrap gap-2 pb-3 border-b border-dashed text-xs">
+                      <div className="flex flex-wrap gap-2 border-b border-dashed pb-3 text-xs">
                         {e.peso_kg_num && <span className="bg-secondary/30 rounded px-2 py-0.5">⚖️ {e.peso_kg_num} kg</span>}
                         {e.temperatura_c_num && <span className="bg-secondary/30 rounded px-2 py-0.5">🌡️ {e.temperatura_c_num} °C</span>}
                         {e.frecuencia_cardiaca_num && <span className="bg-secondary/30 rounded px-2 py-0.5">❤️ {e.frecuencia_cardiaca_num} lpm</span>}
@@ -524,8 +524,8 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                   {ordenes.map((orden) => {
                     const st = ORDEN_ESTADO[orden.estado_text] ?? ORDEN_ESTADO.closed;
                     return (
-                      <div key={orden.id} className="flex items-center justify-between p-3 hover:bg-muted/40">
-                        <div>
+                      <div key={orden.id} className="flex flex-col gap-3 p-3 hover:bg-muted/40 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
                           <p className="text-sm font-medium">ORD-{orden.id.slice(0, 8).toUpperCase()}</p>
                           <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                             <Clock className="h-3 w-3" />
@@ -534,7 +534,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                               : format(new Date(orden.created_at), "dd/MM/yyyy HH:mm")}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                           <span className={`text-xs px-2 py-0.5 rounded-full ${st.cls}`}>{st.label}</span>
                           <Link
                             href={`/orden_y_colas/${orden.id}?returnTo=${ordenReturnTo}`}
@@ -609,7 +609,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
       {/* ── SECCIONES 360 FUTURAS ── */}
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Módulos próximos</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { icon: Scissors, label: "Grooming", desc: "Historial de baños, cortes y observaciones de manejo." },
             { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },

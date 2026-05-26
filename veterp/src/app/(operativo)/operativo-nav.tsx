@@ -69,7 +69,9 @@ export function OperativoNav({ mobile = false, isAdminOrOwner, hideCaja }: Opera
               className={cn(
                 buttonVariants({
                   variant: mobile ? "outline" : "ghost",
-                  className: mobile ? "h-8 whitespace-nowrap px-3 text-xs" : "w-full justify-start",
+                  className: mobile
+                    ? "h-9 whitespace-nowrap rounded-full px-3.5 text-xs"
+                    : "w-full justify-start",
                 }),
                 active && (mobile ? "border-primary text-primary" : "bg-muted text-foreground"),
               )}

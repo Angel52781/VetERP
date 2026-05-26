@@ -273,12 +273,12 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                   </div>
                   <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-700">Pagada</Badge>
                 </CardHeader>
-                <CardContent className="p-4 grid md:grid-cols-2 gap-4">
+                <CardContent className="grid gap-4 p-4 md:grid-cols-2">
                   <div>
                     <h4 className="text-xs font-semibold mb-2 text-muted-foreground">Ítems Cobrados:</h4>
                     <ul className="text-sm space-y-1">
                       {vp.items_venta?.map((iv: any) => (
-                        <li key={iv.id} className="flex justify-between border-b border-dashed border-border/50 pb-1">
+                        <li key={iv.id} className="flex items-start justify-between gap-3 border-b border-dashed border-border/50 pb-1">
                           <span>{iv.cantidad}x {iv.items_catalogo?.nombre}</span>
                           <span className="text-muted-foreground">{formatMoneyPEN(iv.total_linea)}</span>
                         </li>
@@ -293,7 +293,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                     <h4 className="text-xs font-semibold mb-2 text-muted-foreground">Pagos Aplicados:</h4>
                     <ul className="text-sm space-y-1">
                       {vp.ledger?.map((l: any) => (
-                        <li key={l.id} className="flex justify-between border-b border-dashed border-border/50 pb-1">
+                        <li key={l.id} className="flex items-start justify-between gap-3 border-b border-dashed border-border/50 pb-1">
                           <span className="capitalize">{l.metodo_pago || 'efectivo'}</span>
                           <span className="text-emerald-600 font-medium">{formatMoneyPEN(l.monto)}</span>
                         </li>
@@ -310,7 +310,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
       {/* VENTA ABIERTA (Activa) */}
       {abierta ? (
         <div className="space-y-6 pt-4 border-t border-border/50">
-          <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-xl font-semibold">Cobro Pendiente</h2>
               <p className="text-sm text-muted-foreground">Agrega servicios o productos y registra el pago para cerrar el cobro.</p>
@@ -318,14 +318,14 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
             <Badge variant="secondary" className="text-sm px-4 py-1">{getVentaStatusMeta("abierta").label}</Badge>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="space-y-6 lg:col-span-2">
               <Card>
                 <CardHeader className="pb-4">
                   <CardTitle>Ítems del Cobro</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid gap-2 mb-6 items-end sm:grid-cols-[minmax(0,1fr)_6rem_auto]">
+                  <div className="mb-6 grid gap-3 sm:grid-cols-[minmax(0,1fr)_6rem_auto] sm:items-end">
                     <div className="min-w-0 space-y-1">
                       <label className="text-xs font-medium">Producto/Servicio</label>
                       <div className="flex flex-wrap gap-1">
@@ -366,7 +366,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                         />
                       </div>
                     </div>
-                    <div className="w-24 space-y-1">
+                    <div className="w-full space-y-1 sm:w-24">
                       <label className="text-xs font-medium">Cantidad</label>
                       <Input 
                         type="number" 
@@ -375,7 +375,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                         onChange={e => setCantidad(Number(e.target.value))} 
                       />
                     </div>
-                    <Button onClick={() => handleAddItem(abierta.id)} disabled={!selectedItem || loadingAction}>
+                    <Button className="w-full sm:w-auto" onClick={() => handleAddItem(abierta.id)} disabled={!selectedItem || loadingAction}>
                       {loadingAction ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                     </Button>
                   </div>
@@ -431,7 +431,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                     : null}
 
                   {abierta.items_venta && abierta.items_venta.length > 0 ? (
-                    <Table>
+                    <Table className="min-w-[640px]">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Ítem</TableHead>
@@ -474,7 +474,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                     <CardTitle>Historial de Pagos Parciales</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Table>
+                    <Table className="min-w-[520px]">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Fecha</TableHead>
@@ -499,8 +499,8 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
               )}
             </div>
 
-            <div className="space-y-6">
-              <Card className="bg-primary/5 border-primary/20 sticky top-6">
+            <div className="space-y-6 lg:col-span-1">
+              <Card className="sticky top-6 border-primary/20 bg-primary/5">
                 <CardHeader>
                   <CardTitle>Totales del Cobro</CardTitle>
                 </CardHeader>
@@ -550,7 +550,7 @@ export function VentaPanel({ ordenId, clienteId, itemsCatalogo, initialVentas }:
                             Copiar resumen
                           </Button>
                         </div>
-                        <div className="grid grid-cols-2 gap-2 text-muted-foreground">
+                        <div className="grid gap-2 text-muted-foreground sm:grid-cols-2">
                           <span>Items: {itemsCount}</span>
                           <span>Total: {formatMoneyPEN(abierta.total)}</span>
                           <span>Pagado: {formatMoneyPEN(totalPagado)}</span>

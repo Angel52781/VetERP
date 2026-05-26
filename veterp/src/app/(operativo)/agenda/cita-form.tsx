@@ -221,7 +221,7 @@ export function CitaForm({
             <FormItem className="space-y-3">
               <FormLabel>Paciente</FormLabel>
               <FormControl>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {loadingMascotas ? (
                     <div className="col-span-2 flex items-center justify-center p-4 border rounded-md bg-muted/20">
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -350,7 +350,7 @@ export function CitaForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="start_date"

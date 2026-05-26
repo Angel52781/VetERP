@@ -25,8 +25,8 @@ export default async function OperativoLayout({
   const clinica = clinicaRes.data;
 
   return (
-    <div className="flex flex-1">
-      <aside className="hidden w-72 border-r bg-background px-4 py-6 md:block">
+    <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+      <aside className="hidden w-72 shrink-0 border-r bg-background px-4 py-6 md:block">
         <div className="mb-8 px-1">
           <Link href="/app" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shrink-0">
@@ -57,25 +57,27 @@ export default async function OperativoLayout({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b px-4 py-3">
-          <div className="flex items-center gap-2">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b px-3 py-3 sm:px-4">
+          <div className="flex min-w-0 items-center gap-2">
             <Link href="/app" className="font-bold tracking-tight text-sm md:hidden">
               {clinica?.nombre || "VetERP"}
             </Link>
-            <span className="hidden md:inline-block text-xs text-muted-foreground font-medium">
+            <span className="hidden truncate text-xs font-medium text-muted-foreground md:inline-block">
               Panel de Gestión {clinica?.nombre ? `— ${clinica.nombre}` : ""}
             </span>
           </div>
           <AppUserMenu email={user?.email ?? ""} isAdminOrOwner={isAdminOrOwner} />
         </header>
 
-        <nav className="border-b px-4 py-3 md:hidden">
-          <div className="flex gap-2 overflow-x-auto pb-1">
+        <nav className="border-b px-3 py-3 sm:px-4 md:hidden">
+          <div className="-mb-1 flex gap-2 overflow-x-auto pb-1">
             <OperativoNav mobile isAdminOrOwner={isAdminOrOwner} hideCaja={hideCaja} />
           </div>
         </nav>
 
-        <main className="flex min-w-0 flex-1 flex-col px-4 py-6">{children}</main>
+        <main className="flex min-w-0 flex-1 flex-col px-3 py-4 sm:px-4 sm:py-6 lg:px-6">
+          {children}
+        </main>
       </div>
     </div>
   );
