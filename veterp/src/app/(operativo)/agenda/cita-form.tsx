@@ -14,16 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { citaSchema, type CitaInput } from "@/lib/validators/agenda";
 import { createCita, getMascotasDeCliente, updateCita } from "./actions";
 import { toast } from "sonner";
@@ -66,6 +56,19 @@ function getTipoCitaLabel(tipo: TipoCitaAgenda) {
   const area = AREA_META[normalizeCitaArea(tipo.area)].shortLabel;
   return `${area} · ${tipo.nombre} (${tipo.duracion_min} min)`;
 }
+
+function normalizeSearchValue(value: string | null | undefined) {
+  return (value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+const sectionClass = "min-w-0 overflow-hidden rounded-lg border bg-muted/20 p-3";
+const sectionTitleClass = "text-xs font-semibold uppercase tracking-wide text-muted-foreground";
+const hiddenScrollbarClass =
+  "overflow-x-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
 export function CitaForm({
   clientes,
@@ -113,7 +116,7 @@ export function CitaForm({
     [clientes, selectedClienteId],
   );
   const clienteSearchResults = useMemo(
-    () => filterClienteSearchResults(clientes, clienteSearch, 8),
+    () => filterClienteSearchResults(clientes, clienteSearch, 5),
     [clientes, clienteSearch],
   );
   const currentTipoCitaId = initialValues?.tipo_cita_id ?? null;
@@ -128,18 +131,25 @@ export function CitaForm({
   const selectedAreaPresentation = selectedTipoCita
     ? getCitaAreaPresentation(selectedTipoCita.area)
     : null;
-  const tiposCitaAgrupados = useMemo(() => {
-    const query = tipoSearch.trim().toLowerCase();
-    return AREA_ORDER.map((area) => ({
-      area,
-      tipos: tiposCitaDisponibles
-        .filter((tipo) => normalizeCitaArea(tipo.area) === area)
-        .filter((tipo) => {
-          if (!query) return true;
-          return tipo.nombre.toLowerCase().includes(query) || AREA_META[area].label.toLowerCase().includes(query);
-        })
-        .sort((a, b) => Number(a.is_disabled) - Number(b.is_disabled) || a.nombre.localeCompare(b.nombre, "es")),
-    })).filter((group) => group.tipos.length > 0);
+  const tiposCitaResultados = useMemo(() => {
+    const query = normalizeSearchValue(tipoSearch);
+    return tiposCitaDisponibles
+      .filter((tipo) => {
+        if (!query) return true;
+        const area = normalizeCitaArea(tipo.area);
+        return (
+          normalizeSearchValue(tipo.nombre).includes(query) ||
+          normalizeSearchValue(AREA_META[area].label).includes(query) ||
+          normalizeSearchValue(AREA_META[area].shortLabel).includes(query)
+        );
+      })
+      .sort((a, b) => {
+        const areaDelta =
+          AREA_ORDER.indexOf(normalizeCitaArea(a.area)) - AREA_ORDER.indexOf(normalizeCitaArea(b.area));
+        if (areaDelta !== 0) return areaDelta;
+        return Number(a.is_disabled) - Number(b.is_disabled) || a.nombre.localeCompare(b.nombre, "es");
+      })
+      .slice(0, 6);
   }, [tipoSearch, tiposCitaDisponibles]);
 
   const [isEndDateManual, setIsEndDateManual] = useState(false);
@@ -207,20 +217,32 @@ export function CitaForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full min-w-0 space-y-3 overflow-x-hidden">
         <FormField
           control={form.control}
           name="cliente_id"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Responsable</FormLabel>
-              <div className="space-y-2">
+            <FormItem className={sectionClass}>
+              <FormLabel className={sectionTitleClass}>Responsable</FormLabel>
+              <div className="min-w-0 space-y-2 overflow-x-hidden">
+                <FormControl>
+                  <div className="relative min-w-0">
+                    <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      value={clienteSearch}
+                      onChange={(event) => setClienteSearch(event.target.value)}
+                      placeholder="Buscar responsable, telefono, email, paciente o codigo"
+                      className="w-full min-w-0 pl-8"
+                    />
+                  </div>
+                </FormControl>
+
                 {selectedCliente ? (
-                  <div className="flex items-start justify-between gap-3 rounded-md border bg-muted/20 px-3 py-2">
+                  <div className="flex min-w-0 items-start justify-between gap-2 rounded-md border bg-background px-2.5 py-1.5">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold">{selectedCliente.nombre}</p>
                       {(selectedCliente.telefono || selectedCliente.email) && (
-                        <p className="truncate text-xs text-muted-foreground">
+                        <p className="truncate text-[11px] text-muted-foreground">
                           {[selectedCliente.telefono, selectedCliente.email].filter(Boolean).join(" / ")}
                         </p>
                       )}
@@ -229,7 +251,7 @@ export function CitaForm({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2 text-xs"
+                      className="h-7 shrink-0 px-2 text-xs"
                       onClick={() => {
                         field.onChange("");
                         form.resetField("mascota_id", { defaultValue: "" });
@@ -242,28 +264,13 @@ export function CitaForm({
                   </div>
                 ) : null}
 
-                <FormControl>
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      value={clienteSearch}
-                      onChange={(event) => setClienteSearch(event.target.value)}
-                      placeholder="Buscar responsable, telefono, email, paciente o codigo"
-                      className="pl-8"
-                    />
-                  </div>
-                </FormControl>
-
                 {(clienteSearch.trim() || !field.value) && (
-                  <div className="max-h-72 overflow-y-auto rounded-md border bg-background">
+                  <div className={cn("max-h-48 overflow-y-auto rounded-md border bg-background", hiddenScrollbarClass)}>
                     {clienteSearchResults.length === 0 ? (
-                      <div className="space-y-2 px-3 py-4 text-center">
-                        <p className="text-sm text-muted-foreground">
+                      <div className="space-y-1.5 px-3 py-3 text-center">
+                        <p className="text-xs text-muted-foreground">
                           No se encontraron responsables o pacientes.
                         </p>
-                        <Link href="/clientes/nuevo" className="text-xs font-medium text-primary hover:underline">
-                          Crear cliente nuevo
-                        </Link>
                       </div>
                     ) : (
                       <div className="divide-y">
@@ -278,7 +285,7 @@ export function CitaForm({
                             <button
                               key={cliente.id}
                               type="button"
-                              className="block w-full px-3 py-2 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
+                              className="block w-full min-w-0 px-2.5 py-1.5 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
                               onClick={() => {
                                 field.onChange(cliente.id);
                                 form.clearErrors("cliente_id");
@@ -294,27 +301,27 @@ export function CitaForm({
                                 form.resetField("mascota_id", { defaultValue: "" });
                               }}
                             >
-                              <div className="flex items-start justify-between gap-3">
+                              <div className="flex min-w-0 items-start justify-between gap-2">
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold">{cliente.nombre}</p>
                                   {(cliente.telefono || cliente.email) && (
-                                    <p className="truncate text-xs text-muted-foreground">
+                                    <p className="truncate text-[11px] text-muted-foreground">
                                       {[cliente.telefono, cliente.email].filter(Boolean).join(" / ")}
                                     </p>
                                   )}
                                 </div>
-                                <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase text-muted-foreground">
+                                <span className="shrink-0 rounded bg-muted px-1.5 py-0 text-[9px] font-medium uppercase text-muted-foreground">
                                   Responsable
                                 </span>
                               </div>
 
                               {result.mascotas.length > 0 ? (
-                                <div className="mt-2 flex flex-wrap gap-1.5">
-                                  {result.mascotas.slice(0, 4).map((mascota) => (
+                                <div className="mt-1.5 flex flex-wrap gap-1">
+                                  {result.mascotas.slice(0, 3).map((mascota) => (
                                     <span
                                       key={mascota.id}
                                       className={cn(
-                                        "inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border px-2 py-0.5 text-xs",
+                                        "inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border px-1.5 py-0 text-[11px]",
                                         autoMascotaId === mascota.id
                                           ? "border-primary/40 bg-primary/5 text-primary"
                                           : "bg-background text-muted-foreground",
@@ -326,9 +333,9 @@ export function CitaForm({
                                       ) : null}
                                     </span>
                                   ))}
-                                  {result.mascotas.length > 4 ? (
-                                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                                      +{result.mascotas.length - 4} mas
+                                  {result.mascotas.length > 3 ? (
+                                    <span className="rounded-full bg-muted px-1.5 py-0 text-[11px] text-muted-foreground">
+                                      +{result.mascotas.length - 3} mas
                                     </span>
                                   ) : null}
                                 </div>
@@ -343,7 +350,7 @@ export function CitaForm({
                   </div>
                 )}
 
-                <Link href="/clientes/nuevo" className="inline-flex text-xs font-medium text-primary hover:underline">
+                <Link href="/clientes/nuevo" className="inline-flex w-fit text-xs font-medium text-primary hover:underline">
                   Crear cliente nuevo
                 </Link>
               </div>
@@ -356,21 +363,21 @@ export function CitaForm({
           control={form.control}
           name="mascota_id"
           render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Paciente</FormLabel>
+            <FormItem className={sectionClass}>
+              <FormLabel className={sectionTitleClass}>Paciente</FormLabel>
               <FormControl>
-                <div className="grid grid-cols-2 gap-2">
+                <div className={cn("grid max-h-32 min-w-0 grid-cols-1 gap-1.5 overflow-y-auto rounded-md bg-background p-1.5 sm:grid-cols-2", hiddenScrollbarClass)}>
                   {loadingMascotas ? (
-                    <div className="col-span-2 flex items-center justify-center p-4 border rounded-md bg-muted/20">
+                    <div className="col-span-full flex items-center justify-center rounded-md bg-muted/20 p-3">
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       <span className="text-sm text-muted-foreground">Cargando...</span>
                     </div>
                   ) : !selectedClienteId ? (
-                    <div className="col-span-2 p-4 border border-dashed rounded-md text-center bg-muted/10">
+                    <div className="col-span-full rounded-md border border-dashed bg-muted/10 p-3 text-center">
                       <p className="text-xs text-muted-foreground italic">Selecciona un responsable primero</p>
                     </div>
                   ) : mascotas.length === 0 ? (
-                    <div className="col-span-2 p-4 border border-dashed rounded-md text-center bg-destructive/5 border-destructive/20">
+                    <div className="col-span-full rounded-md border border-dashed border-destructive/20 bg-destructive/5 p-3 text-center">
                       <p className="text-xs text-destructive">El responsable no tiene pacientes</p>
                     </div>
                   ) : (
@@ -383,7 +390,7 @@ export function CitaForm({
                           form.clearErrors("mascota_id");
                         }}
                         className={cn(
-                          "relative flex flex-col items-start p-3 text-left border rounded-lg transition-all",
+                          "relative flex min-h-14 min-w-0 flex-col items-start rounded-md border p-2 text-left transition-all",
                           "hover:border-primary/50 hover:bg-accent/50",
                           field.value === m.id
                             ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
@@ -391,7 +398,7 @@ export function CitaForm({
                         )}
                       >
                         <span className={cn(
-                          "text-sm font-bold truncate w-full",
+                          "w-full truncate text-sm font-semibold",
                           field.value === m.id ? "text-primary" : "text-foreground"
                         )}>
                           {m.nombre}
@@ -401,7 +408,7 @@ export function CitaForm({
                             #{m.codigo_text}
                           </span>
                         ) : null}
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase mt-1">
+                        <span className="mt-1 text-[10px] font-medium uppercase text-muted-foreground">
                           Paciente
                         </span>
                         {field.value === m.id && (
@@ -421,77 +428,94 @@ export function CitaForm({
           control={form.control}
           name="tipo_cita_id"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de Cita</FormLabel>
-              <Select
-                onValueChange={(val) => {
-                  field.onChange(val || "");
-                  form.trigger("tipo_cita_id");
-                  setTipoSearch("");
-                }}
-                value={field.value || ""}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecciona un tipo de cita">
-                      {field.value
-                        ? (() => {
-                            const tipo = tiposCitaDisponibles.find((item) => item.id === field.value);
-                            return tipo ? getTipoCitaLabel(tipo) : "Selecciona un tipo de cita";
-                          })()
-                        : "Selecciona un tipo de cita"}
-                    </SelectValue>
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent alignItemWithTrigger className="max-h-96">
-                  <div className="sticky top-0 z-10 border-b bg-popover p-2">
-                    <div className="relative">
-                      <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        value={tipoSearch}
-                        onChange={(event) => setTipoSearch(event.target.value)}
-                        placeholder="Buscar tipo o área"
-                        className="h-8 pl-8"
-                      />
-                    </div>
+            <FormItem className={sectionClass}>
+              <FormLabel className={sectionTitleClass}>Tipo de Cita</FormLabel>
+              <FormControl>
+                <div className="min-w-0 space-y-2 overflow-x-hidden">
+                  <div className="relative min-w-0">
+                    <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      value={tipoSearch}
+                      onChange={(event) => setTipoSearch(event.target.value)}
+                      placeholder="Buscar tipo o area"
+                      className="w-full min-w-0 pl-8"
+                    />
                   </div>
-                  {tiposCitaAgrupados.length === 0 ? (
-                    <div className="px-3 py-4 text-center text-xs text-muted-foreground">
-                      Sin tipos para la búsqueda.
+
+                  {selectedTipoCita ? (
+                    <div className="flex min-w-0 items-start justify-between gap-2 rounded-md border bg-background px-2.5 py-1.5">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">{getTipoCitaLabel(selectedTipoCita)}</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 shrink-0 px-2 text-xs"
+                        onClick={() => {
+                          field.onChange("");
+                          setTipoSearch("");
+                        }}
+                      >
+                        Cambiar
+                      </Button>
                     </div>
-                  ) : (
-                    tiposCitaAgrupados.map((group, index) => (
-                      <SelectGroup key={group.area}>
-                        {index > 0 && <SelectSeparator />}
-                        <SelectLabel className="font-semibold uppercase tracking-wide">
-                          {AREA_META[group.area].label}
-                        </SelectLabel>
-                        {group.tipos.map((tipo) => (
-                          <SelectItem key={tipo.id} value={tipo.id}>
-                            <span className="flex min-w-0 flex-col py-0.5 leading-tight">
-                              <span className="truncate font-medium">
-                                {tipo.nombre}{tipo.is_disabled ? " (inactivo)" : ""}
-                              </span>
-                              <span className="text-[11px] text-muted-foreground">
-                                {AREA_META[group.area].shortLabel} · {tipo.duracion_min} min
-                              </span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+                  ) : null}
+
+                  {tipoSearch.trim() || !field.value ? (
+                    <div className={cn("max-h-48 overflow-y-auto rounded-md border bg-background p-1", hiddenScrollbarClass)}>
+                      {tiposCitaResultados.length === 0 ? (
+                        <div className="px-3 py-3 text-center text-xs text-muted-foreground">
+                          Sin tipos para la busqueda.
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          {tiposCitaResultados.map((tipo) => {
+                            const area = normalizeCitaArea(tipo.area);
+
+                            return (
+                              <button
+                                key={tipo.id}
+                                type="button"
+                                className={cn(
+                                  "flex min-h-10 w-full min-w-0 items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none",
+                                  field.value === tipo.id ? "bg-primary/5 text-primary" : "text-foreground",
+                                )}
+                                onClick={() => {
+                                  field.onChange(tipo.id);
+                                  form.trigger("tipo_cita_id");
+                                  setTipoSearch("");
+                                }}
+                              >
+                                <span className="min-w-0">
+                                  <span className="block truncate font-medium">
+                                    {tipo.nombre}{tipo.is_disabled ? " (inactivo)" : ""}
+                                  </span>
+                                  <span className="block text-[11px] text-muted-foreground">
+                                    {AREA_META[area].label} - {tipo.duracion_min} min
+                                  </span>
+                                </span>
+                                <span className="shrink-0 rounded-full border px-1.5 py-0 text-[10px] text-muted-foreground">
+                                  {AREA_META[area].shortLabel}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              </FormControl>
               <FormMessage />
               {selectedTipoCita && selectedAreaPresentation ? (
-                <div className={cn("mt-3 rounded-md border px-3 py-2 text-sm", selectedAreaPresentation.panelClass)}>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className={cn("h-2.5 w-2.5 rounded-full", selectedAreaPresentation.dotClass)} />
+                <div className={cn("mt-2 min-w-0 overflow-hidden rounded-md border px-2.5 py-1.5 text-xs", selectedAreaPresentation.panelClass)}>
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    <span className={cn("h-2 w-2 rounded-full", selectedAreaPresentation.dotClass)} />
                     <span className="font-semibold">Area: {selectedAreaPresentation.label}</span>
                   </div>
-                  <div className="mt-1 grid gap-1 text-xs sm:grid-cols-2">
-                    <p>
+                  <div className="mt-1 flex min-w-0 flex-wrap gap-x-3 gap-y-1">
+                    <p className="min-w-0 truncate">
                       <span className="font-semibold">Tipo:</span> {selectedTipoCita.nombre}
                     </p>
                     <p>
@@ -499,7 +523,7 @@ export function CitaForm({
                     </p>
                   </div>
                   {selectedTipoArea === "movilidad" ? (
-                    <p className="mt-2 border-t border-current/20 pt-2 text-xs">
+                    <p className="mt-1.5 border-t border-current/20 pt-1.5">
                       Usa las notas de cita para direccion, referencia, horario de recojo o indicaciones de traslado.
                     </p>
                   ) : null}
@@ -509,49 +533,53 @@ export function CitaForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="start_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Fecha y Hora de Inicio</FormLabel>
-                <FormControl>
-                  <Input type="datetime-local" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className={sectionClass}>
+          <p className={sectionTitleClass}>Horario</p>
+          <div className="mt-2 grid min-w-0 gap-3 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="start_date"
+              render={({ field }) => (
+                <FormItem className="min-w-0">
+                  <FormLabel>Fecha y Hora de Inicio</FormLabel>
+                  <FormControl>
+                    <Input type="datetime-local" className="w-full min-w-0" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="end_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Fecha y Hora de Fin</FormLabel>
-                <FormControl>
-                  <Input
-                    type="datetime-local"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setIsEndDateManual(true);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="end_date"
+              render={({ field }) => (
+                <FormItem className="min-w-0">
+                  <FormLabel>Fecha y Hora de Fin</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="datetime-local"
+                      className="w-full min-w-0"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setIsEndDateManual(true);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <FormField
           control={form.control}
           name="notas_text"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notas de cita</FormLabel>
+            <FormItem className={sectionClass}>
+              <FormLabel className={sectionTitleClass}>Notas de cita</FormLabel>
               <FormControl>
                 <Textarea
                   name={field.name}
@@ -560,7 +588,7 @@ export function CitaForm({
                   value={field.value ?? ""}
                   onChange={field.onChange}
                   rows={3}
-                  className="resize-none"
+                  className="min-w-0 resize-none"
                   placeholder="Ej: cuidado con orejas, otitis, temperamento, direccion para movilidad u observaciones para grooming."
                 />
               </FormControl>

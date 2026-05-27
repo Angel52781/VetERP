@@ -89,8 +89,8 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
               <Calendar className="mr-2 h-4 w-4" />
               Nueva Cita
             </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
+            <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] max-w-lg overflow-y-auto overflow-x-hidden sm:max-w-lg">
+              <DialogHeader className="min-w-0 pr-8">
                 <DialogTitle>Programar cita</DialogTitle>
               </DialogHeader>
               <CitaForm

@@ -46,12 +46,25 @@ type SeguimientosLoadResult = {
   reason: string | null;
 };
 
-function isTableOrSchemaError(error: PostgrestError | null) {
+type MascotaAdjuntosLoadResult = {
+  data: MascotaAdjunto[];
+  unavailable: boolean;
+  reason: string | null;
+};
+
+function logSupabaseError(context: string, error: unknown) {
+  console.error(context, JSON.stringify(error, null, 2));
+}
+
+function isTableOrSchemaError(error: PostgrestError | null, tableName?: string) {
   if (!error) return false;
+  const message = `${error.message ?? ""} ${error.details ?? ""} ${error.hint ?? ""}`;
   return (
     error.code === "42P01" ||
+    error.code === "PGRST200" ||
     error.code === "PGRST205" ||
-    /schema cache|relation .* does not exist|table .* does not exist|seguimientos_clinicos/i.test(error.message)
+    /schema cache|relation .* does not exist|table .* does not exist|Could not find the table/i.test(message) ||
+    (!!tableName && message.includes(tableName))
   );
 }
 
@@ -247,6 +260,10 @@ function buildSeguimientosUnavailableMessage() {
   return "Seguimientos clínicos no disponible: falta aplicar la migración 0013_seguimientos_clinicos.sql";
 }
 
+function buildMascotaAdjuntosUnavailableMessage() {
+  return "La tabla mascota_adjuntos no esta disponible; aplica migracion 0031 o recarga schema cache.";
+}
+
 async function loadSeguimientosWithRecovery(
   supabase: SupabaseClient,
   clinicaId: string,
@@ -307,6 +324,76 @@ async function loadSeguimientosWithRecovery(
   };
 }
 
+async function queryMascotaAdjuntos(
+  supabase: SupabaseClient,
+  clinicaId: string,
+  mascotaId: string,
+) {
+  return supabase
+    .from(MASCOTA_ADJUNTOS_TABLE)
+    .select(`
+      id,
+      mascota_id,
+      cliente_id,
+      nombre_archivo_text,
+      tipo_text,
+      storage_path_text,
+      mime_type_text,
+      size_bytes,
+      notas_text,
+      subido_por,
+      created_at
+    `)
+    .eq("clinica_id", clinicaId)
+    .eq("mascota_id", mascotaId)
+    .order("created_at", { ascending: false });
+}
+
+async function loadMascotaAdjuntosWithRecovery(
+  supabase: SupabaseClient,
+  clinicaId: string,
+  mascotaId: string,
+): Promise<MascotaAdjuntosLoadResult> {
+  let result = await queryMascotaAdjuntos(supabase, clinicaId, mascotaId);
+
+  if (result.error && isTableOrSchemaError(result.error, MASCOTA_ADJUNTOS_TABLE)) {
+    logSupabaseError("[loadMascotaAdjuntosWithRecovery] schema/cache error", result.error);
+    const refreshResult = await refreshSchemaCache(supabase);
+    if (refreshResult.error) {
+      logSupabaseError("[loadMascotaAdjuntosWithRecovery] refresh schema cache error", refreshResult.error);
+    }
+    if (refreshResult.refreshed) {
+      result = await queryMascotaAdjuntos(supabase, clinicaId, mascotaId);
+    }
+  }
+
+  if (result.error) {
+    logSupabaseError("[loadMascotaAdjuntosWithRecovery] adjuntos error", result.error);
+    if (isTableOrSchemaError(result.error, MASCOTA_ADJUNTOS_TABLE)) {
+      return {
+        data: [],
+        unavailable: true,
+        reason: buildMascotaAdjuntosUnavailableMessage(),
+      };
+    }
+    return {
+      data: [],
+      unavailable: false,
+      reason: result.error.message,
+    };
+  }
+
+  const adjuntos = await Promise.all(
+    ((result.data ?? []) as MascotaAdjuntoRow[]).map((adjunto) => signMascotaAdjunto(supabase, adjunto)),
+  );
+
+  return {
+    data: adjuntos,
+    unavailable: false,
+    reason: null,
+  };
+}
+
 export async function getMascotaAdjuntos(mascotaId: string) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
@@ -317,34 +404,12 @@ export async function getMascotaAdjuntos(mascotaId: string) {
       return { error: "La mascota no pertenece a la clinica activa.", data: [] as MascotaAdjunto[] };
     }
 
-    const { data, error } = await supabase
-      .from(MASCOTA_ADJUNTOS_TABLE)
-      .select(`
-        id,
-        mascota_id,
-        cliente_id,
-        nombre_archivo_text,
-        tipo_text,
-        storage_path_text,
-        mime_type_text,
-        size_bytes,
-        notas_text,
-        subido_por,
-        created_at
-      `)
-      .eq("clinica_id", clinicaId)
-      .eq("mascota_id", mascotaId)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      return { error: error.message, data: [] as MascotaAdjunto[] };
+    const result = await loadMascotaAdjuntosWithRecovery(supabase, clinicaId, mascotaId);
+    if (result.unavailable || result.reason) {
+      return { error: result.reason, data: result.data };
     }
 
-    const adjuntos = await Promise.all(
-      ((data ?? []) as MascotaAdjuntoRow[]).map((adjunto) => signMascotaAdjunto(supabase, adjunto)),
-    );
-
-    return { error: null, data: adjuntos };
+    return { error: null, data: result.data };
   } catch (err: any) {
     return { error: err.message || "Error al cargar adjuntos clinicos", data: [] as MascotaAdjunto[] };
   }
@@ -363,6 +428,10 @@ export async function getMascotaAdjuntoSignedUrl(adjuntoId: string) {
       .maybeSingle();
 
     if (error) {
+      logSupabaseError("[getMascotaAdjuntoSignedUrl] adjunto error", error);
+      if (isTableOrSchemaError(error, MASCOTA_ADJUNTOS_TABLE)) {
+        return { error: buildMascotaAdjuntosUnavailableMessage(), data: null };
+      }
       return { error: error.message, data: null };
     }
     if (!adjunto) {
@@ -425,9 +494,7 @@ export async function uploadMascotaAdjunto(formData: FormData) {
       return { error: uploadError.message || "Error al subir el archivo.", data: null };
     }
 
-    const { data, error: insertError } = await supabase
-      .from(MASCOTA_ADJUNTOS_TABLE)
-      .insert({
+    const insertPayload = {
         id: adjuntoId,
         clinica_id: clinicaId,
         mascota_id: validated.mascota_id,
@@ -439,18 +506,39 @@ export async function uploadMascotaAdjunto(formData: FormData) {
         size_bytes: validated.file.size,
         notas_text: validated.notas_text ?? null,
         subido_por: userId,
-      })
-      .select("id")
-      .single();
+      };
 
-    if (insertError) {
+    const insertAdjunto = () =>
+      supabase
+        .from(MASCOTA_ADJUNTOS_TABLE)
+        .insert(insertPayload)
+        .select("id")
+        .single();
+
+    let insertResult = await insertAdjunto();
+    if (insertResult.error && isTableOrSchemaError(insertResult.error, MASCOTA_ADJUNTOS_TABLE)) {
+      logSupabaseError("[uploadMascotaAdjunto] insert schema/cache error", insertResult.error);
+      const refreshResult = await refreshSchemaCache(supabase);
+      if (refreshResult.error) {
+        logSupabaseError("[uploadMascotaAdjunto] refresh schema cache error", refreshResult.error);
+      }
+      if (refreshResult.refreshed) {
+        insertResult = await insertAdjunto();
+      }
+    }
+
+    if (insertResult.error) {
+      logSupabaseError("[uploadMascotaAdjunto] insert error", insertResult.error);
       await supabase.storage.from(MASCOTA_ADJUNTO_BUCKET).remove([filePath]);
       uploadedPath = null;
-      return { error: insertError.message, data: null };
+      if (isTableOrSchemaError(insertResult.error, MASCOTA_ADJUNTOS_TABLE)) {
+        return { error: buildMascotaAdjuntosUnavailableMessage(), data: null };
+      }
+      return { error: insertResult.error.message, data: null };
     }
 
     revalidatePath(`/mascotas/${validated.mascota_id}`);
-    return { error: null, data };
+    return { error: null, data: insertResult.data };
   } catch (err: any) {
     if (uploadedPath) {
       try {
@@ -469,7 +557,7 @@ export async function getMascotaCompleta(mascotaId: string) {
   const clinicaId = await requireClinicaIdFromCookies();
   const supabase = await createClient();
 
-  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes, hospitalizacionesRes, adjuntosRes] = await Promise.all([
+  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes, hospitalizacionesRes] = await Promise.all([
     supabase
       .from("mascotas")
       .select(`
@@ -536,28 +624,15 @@ export async function getMascotaCompleta(mascotaId: string) {
       .eq("clinica_id", clinicaId)
       .eq("mascota_id", mascotaId)
       .order("internado_at", { ascending: false }),
-
-    supabase
-      .from(MASCOTA_ADJUNTOS_TABLE)
-      .select(`
-        id,
-        mascota_id,
-        cliente_id,
-        nombre_archivo_text,
-        tipo_text,
-        storage_path_text,
-        mime_type_text,
-        size_bytes,
-        notas_text,
-        subido_por,
-        created_at
-      `)
-      .eq("clinica_id", clinicaId)
-      .eq("mascota_id", mascotaId)
-      .order("created_at", { ascending: false }),
   ]);
 
   const seguimientos = await loadSeguimientosWithRecovery(supabase, clinicaId, mascotaId);
+  const adjuntosResult = await loadMascotaAdjuntosWithRecovery(supabase, clinicaId, mascotaId);
+  if (mascotaRes.error) logSupabaseError("[getMascotaCompleta] mascota error", mascotaRes.error);
+  if (ordenesRes.error) logSupabaseError("[getMascotaCompleta] ordenes error", ordenesRes.error);
+  if (citasRes.error) logSupabaseError("[getMascotaCompleta] citas error", citasRes.error);
+  if (tiposCitaRes.error) logSupabaseError("[getMascotaCompleta] tipos cita error", tiposCitaRes.error);
+  if (hospitalizacionesRes.error) logSupabaseError("[getMascotaCompleta] hospitalizaciones error", hospitalizacionesRes.error);
   const hospitalizaciones = hospitalizacionesRes.data ?? [];
   const hospitalizacionIds = hospitalizaciones.map((h: any) => h.id).filter(Boolean);
   const controlesRes = hospitalizacionIds.length
@@ -584,6 +659,8 @@ export async function getMascotaCompleta(mascotaId: string) {
         .order("registrado_at", { ascending: false })
     : { data: [] as any[], error: null };
 
+  if (controlesRes.error) logSupabaseError("[getMascotaCompleta] controles hospitalizacion error", controlesRes.error);
+
   const ultimoControlByHospitalizacion = new Map<string, any>();
   for (const control of controlesRes.data ?? []) {
     if (!ultimoControlByHospitalizacion.has(control.hospitalizacion_id)) {
@@ -591,18 +668,12 @@ export async function getMascotaCompleta(mascotaId: string) {
     }
   }
 
-  const adjuntos = adjuntosRes.error
-    ? []
-    : await Promise.all(
-        ((adjuntosRes.data ?? []) as MascotaAdjuntoRow[]).map((adjunto) => signMascotaAdjunto(supabase, adjunto)),
-      );
-
   return { 
     mascota: mascotaRes.data, 
     ordenes: ordenesRes.data ?? [],
     citas: citasRes.data ?? [],
     tiposCita: tiposCitaRes.data ?? [],
-    adjuntos,
+    adjuntos: adjuntosResult.data,
     seguimientos: seguimientos.data,
     hospitalizaciones: hospitalizaciones.map((hospitalizacion: any) => ({
       ...hospitalizacion,
@@ -610,7 +681,9 @@ export async function getMascotaCompleta(mascotaId: string) {
     })),
     seguimientoFeatureUnavailable: seguimientos.unavailable,
     seguimientoFeatureReason: seguimientos.reason,
-    error: mascotaRes.error?.message || hospitalizacionesRes.error?.message || controlesRes.error?.message || adjuntosRes.error?.message
+    adjuntosFeatureUnavailable: adjuntosResult.unavailable,
+    adjuntosFeatureReason: adjuntosResult.reason,
+    error: mascotaRes.error?.message || hospitalizacionesRes.error?.message || controlesRes.error?.message
   };
 }
 

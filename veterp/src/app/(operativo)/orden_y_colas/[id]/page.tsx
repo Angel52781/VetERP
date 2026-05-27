@@ -12,7 +12,7 @@ import { NuevaEntradaForm } from "./nueva-entrada-form";
 import { AdjuntosPanel } from "./adjuntos-panel";
 import { VentaPanel } from "./venta-panel";
 import { SignosVitalesForm } from "./signos-vitales-form";
-import { ArrowLeft } from "lucide-react";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions";
 import { SeguimientosCard } from "../../seguimientos-card";
@@ -40,8 +40,32 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
     getVentasDeOrden(id)
   ]);
 
-  if (error || !orden) {
+  if (!orden && !error) {
     notFound();
+  }
+
+  if (error || !orden) {
+    return (
+      <div className="container mx-auto py-8 max-w-5xl space-y-4">
+        <Link href="/atenciones" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Volver
+        </Link>
+        <Card className="border-destructive/40">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              No se pudo cargar la orden
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              {error ?? "Orden de servicio no encontrada para la clinica activa."}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const {

@@ -19,6 +19,7 @@ import {
   type CreateTratamientoHospitalizacionInput,
   type UpdateTratamientoHospitalizacionInput,
 } from "@/lib/validators/hospitalizaciones";
+import type { PostgrestError } from "@supabase/supabase-js";
 
 type HospitalizacionRow = {
   id: string;
@@ -37,6 +38,39 @@ type TratamientoHospitalizacionRow = {
   estado_text: string;
   notas_text: string | null;
 };
+
+function logSupabaseError(context: string, error: unknown) {
+  console.error(context, JSON.stringify(error, null, 2));
+}
+
+function isMissingRpcFunctionError(error: PostgrestError | null) {
+  if (!error) return false;
+  return error.code === "PGRST202" || /Could not find the function/i.test(error.message);
+}
+
+function isTableOrSchemaError(error: PostgrestError | null, tableName: string) {
+  if (!error) return false;
+  const message = `${error.message ?? ""} ${error.details ?? ""} ${error.hint ?? ""}`;
+  return (
+    error.code === "42P01" ||
+    error.code === "PGRST200" ||
+    error.code === "PGRST205" ||
+    /schema cache|relation .* does not exist|table .* does not exist|Could not find the table/i.test(message) ||
+    message.includes(tableName)
+  );
+}
+
+async function refreshSchemaCache(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { error } = await supabase.rpc("reload_postgrest_schema_cache");
+  if (isMissingRpcFunctionError(error)) {
+    return { refreshed: false, error: null };
+  }
+  return { refreshed: !error, error };
+}
+
+function buildTratamientosUnavailableMessage() {
+  return "Tratamientos de hospitalizacion no disponible: aplica migracion 0029 o recarga schema cache.";
+}
 
 function cleanText(value: string | null | undefined) {
   const trimmed = value?.trim();
@@ -171,12 +205,15 @@ export async function getHospitalizaciones() {
     ]);
 
     if (hospitalizacionesRes.error) {
+      logSupabaseError("[getHospitalizaciones] hospitalizaciones error", hospitalizacionesRes.error);
       return { error: hospitalizacionesRes.error.message, data: null };
     }
     if (pacientesRes.error) {
+      logSupabaseError("[getHospitalizaciones] pacientes error", pacientesRes.error);
       return { error: pacientesRes.error.message, data: null };
     }
     if (controlesHoyRes.error) {
+      logSupabaseError("[getHospitalizaciones] controlesHoy error", controlesHoyRes.error);
       return { error: controlesHoyRes.error.message, data: null };
     }
 
@@ -211,6 +248,7 @@ export async function getHospitalizaciones() {
       : { data: [], error: null };
 
     if (controlesRes.error) {
+      logSupabaseError("[getHospitalizaciones] controles error", controlesRes.error);
       return { error: controlesRes.error.message, data: null };
     }
 
@@ -304,6 +342,7 @@ export async function createHospitalizacion(input: CreateHospitalizacionInput) {
       .single();
 
     if (error) {
+      logSupabaseError("[createHospitalizacion] insert error", error);
       return { error: error.message, data: null };
     }
 
@@ -677,9 +716,10 @@ export async function getHospitalizacionById(id: string) {
       `)
       .eq("id", id)
       .eq("clinica_id", clinicaId)
-      .single();
+      .maybeSingle();
 
     if (error) {
+      logSupabaseError("[getHospitalizacionById] hospitalizacion error", error);
       return { error: error.message, data: null };
     }
 
@@ -687,32 +727,52 @@ export async function getHospitalizacionById(id: string) {
       return { error: "Hospitalización no encontrada.", data: null };
     }
 
-    const { data: tratamientos, error: tratamientosError } = await supabase
-      .from("hospitalizacion_tratamientos")
-      .select(`
-        id,
-        clinica_id,
-        hospitalizacion_id,
-        mascota_id,
-        nombre_text,
-        dosis_text,
-        via_text,
-        frecuencia_text,
-        indicaciones_text,
-        responsable_text,
-        notas_text,
-        orden_num,
-        estado_text,
-        iniciado_at,
-        terminado_at,
-        created_at,
-        updated_at
-      `)
-      .eq("clinica_id", clinicaId)
-      .eq("hospitalizacion_id", id);
+    const queryTratamientos = () =>
+      supabase
+        .from("hospitalizacion_tratamientos")
+        .select(`
+          id,
+          clinica_id,
+          hospitalizacion_id,
+          mascota_id,
+          nombre_text,
+          dosis_text,
+          via_text,
+          frecuencia_text,
+          indicaciones_text,
+          responsable_text,
+          notas_text,
+          orden_num,
+          estado_text,
+          iniciado_at,
+          terminado_at,
+          created_at,
+          updated_at
+        `)
+        .eq("clinica_id", clinicaId)
+        .eq("hospitalizacion_id", id);
 
-    if (tratamientosError) {
-      return { error: tratamientosError.message, data: null };
+    let tratamientosResult = await queryTratamientos();
+    if (tratamientosResult.error && isTableOrSchemaError(tratamientosResult.error, "hospitalizacion_tratamientos")) {
+      logSupabaseError("[getHospitalizacionById] tratamientos schema/cache error", tratamientosResult.error);
+      const refreshResult = await refreshSchemaCache(supabase);
+      if (refreshResult.error) {
+        logSupabaseError("[getHospitalizacionById] refresh schema cache error", refreshResult.error);
+      }
+      if (refreshResult.refreshed) {
+        tratamientosResult = await queryTratamientos();
+      }
+    }
+
+    if (tratamientosResult.error) {
+      logSupabaseError("[getHospitalizacionById] tratamientos error", tratamientosResult.error);
+      if (isTableOrSchemaError(tratamientosResult.error, "hospitalizacion_tratamientos")) {
+        (data as any).hospitalizacion_tratamientos = [];
+        (data as any).tratamientosFeatureUnavailable = true;
+        (data as any).tratamientosFeatureReason = buildTratamientosUnavailableMessage();
+      } else {
+        return { error: tratamientosResult.error.message, data: null };
+      }
     }
 
     const estadoRank: Record<string, number> = {
@@ -721,16 +781,18 @@ export async function getHospitalizacionById(id: string) {
       suspendido: 1,
     };
 
-    (data as any).hospitalizacion_tratamientos = (tratamientos ?? []).sort((a: any, b: any) => {
-      const estadoDiff = (estadoRank[a.estado_text] ?? 9) - (estadoRank[b.estado_text] ?? 9);
-      if (estadoDiff !== 0) return estadoDiff;
+    if (!(data as any).tratamientosFeatureUnavailable) {
+      (data as any).hospitalizacion_tratamientos = (tratamientosResult.data ?? []).sort((a: any, b: any) => {
+        const estadoDiff = (estadoRank[a.estado_text] ?? 9) - (estadoRank[b.estado_text] ?? 9);
+        if (estadoDiff !== 0) return estadoDiff;
 
-      const ordenA = a.orden_num ?? 9999;
-      const ordenB = b.orden_num ?? 9999;
-      if (ordenA !== ordenB) return ordenA - ordenB;
+        const ordenA = a.orden_num ?? 9999;
+        const ordenB = b.orden_num ?? 9999;
+        if (ordenA !== ordenB) return ordenA - ordenB;
 
-      return new Date(a.iniciado_at).getTime() - new Date(b.iniciado_at).getTime();
-    });
+        return new Date(a.iniciado_at).getTime() - new Date(b.iniciado_at).getTime();
+      });
+    }
 
     // Sort controles by registrado_at desc
     if (data.hospitalizacion_controles) {

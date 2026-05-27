@@ -57,6 +57,8 @@ type TipoFilter = TipoAdjuntoMascota | "todos";
 type MascotaAdjuntosCardProps = {
   mascotaId: string;
   adjuntos: MascotaAdjunto[];
+  featureUnavailable?: boolean;
+  featureUnavailableReason?: string;
 };
 
 function formatFileSize(sizeBytes: number | null) {
@@ -81,7 +83,12 @@ function validateClientFile(file: File | null) {
   return null;
 }
 
-export function MascotaAdjuntosCard({ mascotaId, adjuntos }: MascotaAdjuntosCardProps) {
+export function MascotaAdjuntosCard({
+  mascotaId,
+  adjuntos,
+  featureUnavailable = false,
+  featureUnavailableReason,
+}: MascotaAdjuntosCardProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -158,8 +165,8 @@ export function MascotaAdjuntosCard({ mascotaId, adjuntos }: MascotaAdjuntosCard
           <CardDescription>Examenes, fotos, recetas y documentos clinicos del paciente.</CardDescription>
         </div>
 
-        <Dialog open={open} onOpenChange={(nextOpen) => !isUploading && setOpen(nextOpen)}>
-          <DialogTrigger render={<Button size="sm" className="gap-2" />}>
+        <Dialog open={open} onOpenChange={(nextOpen) => !isUploading && !featureUnavailable && setOpen(nextOpen)}>
+          <DialogTrigger render={<Button size="sm" className="gap-2" disabled={featureUnavailable} />}>
             <Plus className="h-4 w-4" />
             Subir archivo
           </DialogTrigger>
@@ -236,6 +243,13 @@ export function MascotaAdjuntosCard({ mascotaId, adjuntos }: MascotaAdjuntosCard
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {featureUnavailable ? (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            {featureUnavailableReason ??
+              "La tabla mascota_adjuntos no esta disponible; aplica migracion 0031 o recarga schema cache."}
+          </div>
+        ) : null}
+
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">{filteredAdjuntos.length} adjunto(s) visibles</p>
           <Select value={filter} onValueChange={(value) => setFilter(value as TipoFilter)}>

@@ -49,8 +49,28 @@ export default async function HospitalizacionDetailPage({ params }: PageProps) {
   const { id } = await params;
   const result = await getHospitalizacionById(id);
 
-  if (result.error || !result.data) {
+  if ((result as any).notFound) {
     notFound();
+  }
+
+  if (result.error || !result.data) {
+    return (
+      <div className="space-y-4">
+        <Link href="/hospitalizaciones" className={buttonVariants({ variant: "ghost", size: "sm", className: "-ml-3 text-muted-foreground" })}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Volver a hospitalizaciones
+        </Link>
+        <Card className="border-destructive/40">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              No se pudo cargar el detalle
+            </CardTitle>
+            <CardDescription>{result.error ?? "Error inesperado al cargar la hospitalizacion."}</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
   }
 
   const hospitalizacion = result.data;
@@ -194,6 +214,11 @@ export default async function HospitalizacionDetailPage({ params }: PageProps) {
             estadoHospitalizacion={hospitalizacion.estado_text}
             tratamientos={tratamientos}
           />
+          {(hospitalizacion as any).tratamientosFeatureUnavailable ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {(hospitalizacion as any).tratamientosFeatureReason}
+            </div>
+          ) : null}
 
           <Card>
             <CardHeader>

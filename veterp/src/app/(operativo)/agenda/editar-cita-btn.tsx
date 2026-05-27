@@ -48,8 +48,8 @@ export function EditarCitaBtn({ cita, clientes, tiposCita, compact = false }: Ed
         <Pencil className="mr-1 h-3.5 w-3.5" />
         Editar cita
       </DialogTrigger>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] max-w-lg overflow-y-auto overflow-x-hidden sm:max-w-lg">
+        <DialogHeader className="min-w-0 pr-8">
           <DialogTitle>Editar Cita</DialogTitle>
         </DialogHeader>
         {open && (

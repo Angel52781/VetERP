@@ -12,6 +12,41 @@ import {
   type EntradaClinicaInput,
 } from "@/lib/validators/atencion";
 import { v4 as uuidv4 } from "uuid";
+import type { PostgrestError } from "@supabase/supabase-js";
+
+function logSupabaseError(context: string, error: unknown) {
+  console.error(context, JSON.stringify(error, null, 2));
+}
+
+function isMissingRpcFunctionError(error: PostgrestError | null) {
+  if (!error) return false;
+  return error.code === "PGRST202" || /Could not find the function/i.test(error.message);
+}
+
+function isHceSchemaError(error: PostgrestError | null) {
+  if (!error) return false;
+  const message = `${error.message ?? ""} ${error.details ?? ""} ${error.hint ?? ""}`;
+  return (
+    error.code === "42703" ||
+    error.code === "42P01" ||
+    error.code === "PGRST200" ||
+    error.code === "PGRST204" ||
+    error.code === "PGRST205" ||
+    /schema cache|relationship|relation .* does not exist|column .* does not exist|Could not find/i.test(message) ||
+    message.includes("entradas_clinicas_ediciones") ||
+    message.includes("ediciones_count") ||
+    message.includes("editado_at") ||
+    message.includes("editado_por")
+  );
+}
+
+async function refreshSchemaCache(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { error } = await supabase.rpc("reload_postgrest_schema_cache");
+  if (isMissingRpcFunctionError(error)) {
+    return { refreshed: false, error: null };
+  }
+  return { refreshed: !error, error };
+}
 
 async function ensureOrdenInClinica(supabase: any, clinicaId: string, ordenId: string) {
   const { data: orden } = await supabase
@@ -77,69 +112,116 @@ export async function getOrdenCompleta(id: string) {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
 
-    const { data, error } = await supabase
-      .from("ordenes_servicio")
-      .select(`
-        *,
-        clientes:cliente_id (
-          id,
-          nombre,
-          telefono,
-          email
-        ),
-        mascotas:mascota_id (
-          id,
-          nombre,
-          codigo_text,
-          especie,
-          raza,
-          nacimiento,
-          alertas_criticas,
-          notas_manejo
-        ),
-        entradas_clinicas (
-          id,
-          tipo_text,
-          texto_text,
-          motivo_consulta_text,
-          peso_kg_num,
-          temperatura_c_num,
-          frecuencia_cardiaca_num,
-          frecuencia_respiratoria_num,
-          observaciones_text,
-          diagnostico_text,
-          anamnesis_text,
-          plan_tratamiento_text,
-          editado_at,
-          editado_por,
-          ediciones_count,
-          fecha_date,
-          created_at,
-          entradas_clinicas_ediciones (
+    const queryOrden = (includeHceAuditColumns = true) =>
+      supabase
+        .from("ordenes_servicio")
+        .select(`
+          *,
+          clientes:cliente_id (
             id,
-            entrada_clinica_id,
-            editado_por,
-            motivo_text,
-            before_data,
-            after_data,
+            nombre,
+            telefono,
+            email
+          ),
+          mascotas:mascota_id (
+            id,
+            nombre,
+            codigo_text,
+            especie,
+            raza,
+            nacimiento,
+            alertas_criticas,
+            notas_manejo
+          ),
+          entradas_clinicas (
+            id,
+            tipo_text,
+            texto_text,
+            motivo_consulta_text,
+            peso_kg_num,
+            temperatura_c_num,
+            frecuencia_cardiaca_num,
+            frecuencia_respiratoria_num,
+            observaciones_text,
+            diagnostico_text,
+            anamnesis_text,
+            plan_tratamiento_text,
+            ${includeHceAuditColumns ? "editado_at, editado_por, ediciones_count," : ""}
+            fecha_date,
+            created_at
+          ),
+          adjuntos (
+            id,
+            archivo_url,
+            descripcion_text,
+            fecha_date,
             created_at
           )
-        ),
-        adjuntos (
-          id,
-          archivo_url,
-          descripcion_text,
-          fecha_date,
-          created_at
-        )
-      `)
-      .eq("id", id)
-      .eq("clinica_id", clinicaId)
-      .single();
+        `)
+        .eq("id", id)
+        .eq("clinica_id", clinicaId)
+        .maybeSingle();
 
-    if (error) {
-      console.error("Error fetching orden completa:", error);
-      return { error: error.message, data: null };
+    let ordenResult = await queryOrden(true);
+    if (ordenResult.error && isHceSchemaError(ordenResult.error)) {
+      logSupabaseError("[getOrdenCompleta] orden HCE schema/cache error", ordenResult.error);
+      const refreshResult = await refreshSchemaCache(supabase);
+      if (refreshResult.error) {
+        logSupabaseError("[getOrdenCompleta] refresh schema cache error", refreshResult.error);
+      }
+      ordenResult = await queryOrden(true);
+      if (ordenResult.error && isHceSchemaError(ordenResult.error)) {
+        ordenResult = await queryOrden(false);
+      }
+    }
+
+    if (ordenResult.error) {
+      logSupabaseError("Error fetching orden completa", ordenResult.error);
+      return { error: ordenResult.error.message, data: null };
+    }
+
+    const data = ordenResult.data;
+    if (!data) {
+      return { error: "Orden de servicio no encontrada para la clinica activa.", data: null };
+    }
+
+    const entradaIds = (data.entradas_clinicas ?? []).map((entrada: any) => entrada.id).filter(Boolean);
+    if (entradaIds.length > 0) {
+      let edicionesResult = await supabase
+        .from("entradas_clinicas_ediciones")
+        .select("id, entrada_clinica_id, editado_por, motivo_text, before_data, after_data, created_at")
+        .eq("clinica_id", clinicaId)
+        .in("entrada_clinica_id", entradaIds);
+
+      if (edicionesResult.error && isHceSchemaError(edicionesResult.error)) {
+        logSupabaseError("[getOrdenCompleta] ediciones HCE schema/cache error", edicionesResult.error);
+        const refreshResult = await refreshSchemaCache(supabase);
+        if (refreshResult.error) {
+          logSupabaseError("[getOrdenCompleta] refresh ediciones schema cache error", refreshResult.error);
+        }
+        if (refreshResult.refreshed) {
+          edicionesResult = await supabase
+            .from("entradas_clinicas_ediciones")
+            .select("id, entrada_clinica_id, editado_por, motivo_text, before_data, after_data, created_at")
+            .eq("clinica_id", clinicaId)
+            .in("entrada_clinica_id", entradaIds);
+        }
+      }
+
+      if (edicionesResult.error) {
+        logSupabaseError("[getOrdenCompleta] ediciones HCE error", edicionesResult.error);
+      } else {
+        const edicionesByEntradaId = new Map<string, any[]>();
+        for (const edicion of edicionesResult.data ?? []) {
+          const current = edicionesByEntradaId.get(edicion.entrada_clinica_id) ?? [];
+          current.push(edicion);
+          edicionesByEntradaId.set(edicion.entrada_clinica_id, current);
+        }
+        data.entradas_clinicas = (data.entradas_clinicas ?? []).map((entrada: any) => ({
+          ...entrada,
+          entradas_clinicas_ediciones: edicionesByEntradaId.get(entrada.id) ?? [],
+        }));
+      }
     }
 
     // Replace stored filePath with a fresh Signed URL valid for 1 hour

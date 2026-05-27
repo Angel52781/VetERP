@@ -49,7 +49,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const { returnTo, tab } = (await searchParams) ?? {};
   const {
     mascota, ordenes, citas, tiposCita, adjuntos, seguimientos, hospitalizaciones,
-    seguimientoFeatureUnavailable, seguimientoFeatureReason, error,
+    seguimientoFeatureUnavailable, seguimientoFeatureReason, adjuntosFeatureUnavailable, adjuntosFeatureReason, error,
   } = await getMascotaCompleta(id);
 
   if (!mascota) notFound();
@@ -643,7 +643,12 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
         {/* Adjuntos */}
         <TabsContent value="adjuntos" className="mt-4">
-          <MascotaAdjuntosCard mascotaId={id} adjuntos={adjuntos || []} />
+          <MascotaAdjuntosCard
+            mascotaId={id}
+            adjuntos={adjuntos || []}
+            featureUnavailable={adjuntosFeatureUnavailable}
+            featureUnavailableReason={adjuntosFeatureReason ?? undefined}
+          />
         </TabsContent>
       </Tabs>
 
