@@ -13,7 +13,7 @@ import {
   subWeeks,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Clock, NotebookPen, PawPrint, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, MapPin, NotebookPen, PawPrint, User } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import {
 import { IniciarAtencionCitaBtn } from "./iniciar-atencion-cita-btn";
 import { CitaEstadoControl } from "./cita-estado-control";
 import { EditarCitaBtn } from "./editar-cita-btn";
-import { getCitaAreaPresentation, type AgendaClienteSearch, type CitaAgenda, type TipoCitaAgenda } from "./types";
+import { getCitaAreaPresentation, normalizeCitaArea, type AgendaClienteSearch, type CitaAgenda, type TipoCitaAgenda } from "./types";
 import { cn } from "@/lib/utils";
 
 interface AgendaCalendarViewProps {
@@ -239,6 +239,7 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                     {dayCitas.map((cita) => {
                       const style = getEventStyle(cita, dayCitas);
                       const areaPresentation = getCitaAreaPresentation(cita.tipo_citas?.area);
+                      const isMovilidad = normalizeCitaArea(cita.tipo_citas?.area) === "movilidad";
                       const durationMinutes = getCitaDurationMinutes(cita);
 
                       return (
@@ -297,9 +298,11 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                                 Tipo: {cita.tipo_citas?.nombre || "Consulta"}
                                 {durationMinutes ? ` / ${durationMinutes} min` : ""}
                               </p>
-                              {areaPresentation.shortLabel === "Movilidad" ? (
+                              {isMovilidad ? (
                                 <p className="mt-1 border-t border-current/20 pt-1">
-                                  Revisa notas para direccion, referencia o indicaciones de traslado.
+                                  {cita.movilidad_direccion_text?.trim()
+                                    ? "Movilidad con direccion estructurada."
+                                    : "Sin direccion estructurada; revisa notas de cita."}
                                 </p>
                               ) : null}
                             </div>
@@ -349,6 +352,25 @@ export function AgendaCalendarView({ citas, clientes, tiposCita }: AgendaCalenda
                                 </span>
                               </div>
                             </div>
+
+                            {isMovilidad && (cita.movilidad_direccion_text?.trim() || cita.movilidad_referencia_text?.trim()) ? (
+                              <div className="flex items-start gap-2.5 border-t pt-2.5">
+                                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                                <div>
+                                  <span className="block font-semibold">Movilidad</span>
+                                  {cita.movilidad_direccion_text?.trim() ? (
+                                    <p className="mt-0.5 whitespace-pre-wrap break-words text-muted-foreground">
+                                      {cita.movilidad_direccion_text}
+                                    </p>
+                                  ) : null}
+                                  {cita.movilidad_referencia_text?.trim() ? (
+                                    <p className="mt-1 whitespace-pre-wrap break-words text-muted-foreground">
+                                      {cita.movilidad_referencia_text}
+                                    </p>
+                                  ) : null}
+                                </div>
+                              </div>
+                            ) : null}
 
                             {cita.notas_text?.trim() ? (
                               <div className="flex items-start gap-2.5 border-t pt-2.5">

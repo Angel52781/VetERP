@@ -20,7 +20,7 @@ import { createCita, getMascotasDeCliente, updateCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, MapPin, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { filterClienteSearchResults } from "./cita-search";
 import {
@@ -106,12 +106,16 @@ export function CitaForm({
       start_date: defaultStartDate,
       end_date: defaultEndDate,
       notas_text: initialValues?.notas_text ?? "",
+      movilidad_usa_direccion_cliente: initialValues?.movilidad_usa_direccion_cliente ?? false,
+      movilidad_direccion_text: initialValues?.movilidad_direccion_text ?? "",
+      movilidad_referencia_text: initialValues?.movilidad_referencia_text ?? "",
     },
   });
 
   const selectedClienteId = form.watch("cliente_id");
   const selectedTipoCitaId = form.watch("tipo_cita_id");
   const selectedStartDate = form.watch("start_date");
+  const movilidadUsaDireccionCliente = form.watch("movilidad_usa_direccion_cliente");
   const selectedCliente = useMemo(
     () => clientes.find((cliente) => cliente.id === selectedClienteId) ?? null,
     [clientes, selectedClienteId],
@@ -119,6 +123,8 @@ export function CitaForm({
   const selectedClienteDocumento = selectedCliente
     ? formatClienteDocumento(selectedCliente.tipo_documento_text, selectedCliente.numero_documento_text)
     : null;
+  const selectedClienteDireccion = selectedCliente?.direccion_principal_text?.trim() || "";
+  const selectedClienteReferencia = selectedCliente?.referencia_direccion_text?.trim() || "";
   const clienteSearchResults = useMemo(
     () => filterClienteSearchResults(clientes, clienteSearch, 5),
     [clientes, clienteSearch],
@@ -132,6 +138,7 @@ export function CitaForm({
     [selectedTipoCitaId, tiposCitaDisponibles],
   );
   const selectedTipoArea = selectedTipoCita ? normalizeCitaArea(selectedTipoCita.area) : null;
+  const isMovilidadSelected = selectedTipoArea === "movilidad";
   const selectedAreaPresentation = selectedTipoCita
     ? getCitaAreaPresentation(selectedTipoCita.area)
     : null;
@@ -157,6 +164,11 @@ export function CitaForm({
   }, [tipoSearch, tiposCitaDisponibles]);
 
   const [isEndDateManual, setIsEndDateManual] = useState(false);
+
+  function syncDireccionResponsable() {
+    form.setValue("movilidad_direccion_text", selectedClienteDireccion, { shouldValidate: true });
+    form.setValue("movilidad_referencia_text", selectedClienteReferencia, { shouldValidate: true });
+  }
 
   useEffect(() => {
     async function fetchMascotas() {
@@ -196,6 +208,14 @@ export function CitaForm({
     }
   }, [selectedTipoCitaId, selectedStartDate, tiposCitaDisponibles, form, isEndDateManual]);
 
+  useEffect(() => {
+    if (selectedTipoArea === "movilidad") return;
+
+    form.setValue("movilidad_usa_direccion_cliente", false);
+    form.setValue("movilidad_direccion_text", null);
+    form.setValue("movilidad_referencia_text", null);
+  }, [form, selectedTipoArea]);
+
   async function onSubmit(data: CitaInput) {
     setIsSubmitting(true);
     const { error } = citaId ? await updateCita(citaId, data) : await createCita(data);
@@ -214,6 +234,9 @@ export function CitaForm({
       start_date: defaultStartDate,
       end_date: defaultEndDate,
       notas_text: initialValues?.notas_text ?? "",
+      movilidad_usa_direccion_cliente: initialValues?.movilidad_usa_direccion_cliente ?? false,
+      movilidad_direccion_text: initialValues?.movilidad_direccion_text ?? "",
+      movilidad_referencia_text: initialValues?.movilidad_referencia_text ?? "",
     });
     router.refresh();
     if (onSuccess) onSuccess();
@@ -264,6 +287,9 @@ export function CitaForm({
                       onClick={() => {
                         field.onChange("");
                         form.resetField("mascota_id", { defaultValue: "" });
+                        form.setValue("movilidad_usa_direccion_cliente", false);
+                        form.setValue("movilidad_direccion_text", null);
+                        form.setValue("movilidad_referencia_text", null);
                         setMascotas([]);
                         setClienteSearch("");
                       }}
@@ -300,6 +326,15 @@ export function CitaForm({
                                 form.clearErrors("cliente_id");
                                 setMascotas(cliente.mascotas ?? []);
                                 setClienteSearch("");
+
+                                if (form.getValues("movilidad_usa_direccion_cliente")) {
+                                  form.setValue("movilidad_direccion_text", cliente.direccion_principal_text?.trim() || "", {
+                                    shouldValidate: true,
+                                  });
+                                  form.setValue("movilidad_referencia_text", cliente.referencia_direccion_text?.trim() || "", {
+                                    shouldValidate: true,
+                                  });
+                                }
 
                                 if (autoMascotaId) {
                                   form.setValue("mascota_id", autoMascotaId, { shouldValidate: true });
@@ -538,7 +573,7 @@ export function CitaForm({
                   </div>
                   {selectedTipoArea === "movilidad" ? (
                     <p className="mt-1.5 border-t border-current/20 pt-1.5">
-                      Usa las notas de cita para direccion, referencia, horario de recojo o indicaciones de traslado.
+                      Registra direccion y referencia en Movilidad; usa notas para observaciones generales.
                     </p>
                   ) : null}
                 </div>
@@ -546,6 +581,100 @@ export function CitaForm({
             </FormItem>
           )}
         />
+
+        {isMovilidadSelected ? (
+          <div className={sectionClass}>
+            <div className="flex min-w-0 items-center gap-2">
+              <MapPin className="h-4 w-4 shrink-0 text-amber-700" />
+              <p className={sectionTitleClass}>Movilidad</p>
+            </div>
+
+            <div className="mt-2 space-y-2">
+              <FormField
+                control={form.control}
+                name="movilidad_usa_direccion_cliente"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <label className="flex min-w-0 items-start gap-2 rounded-md border bg-background px-2.5 py-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(field.value)}
+                          onChange={(event) => {
+                            field.onChange(event.target.checked);
+                            if (event.target.checked) {
+                              syncDireccionResponsable();
+                            }
+                          }}
+                          className="mt-0.5 h-4 w-4 shrink-0"
+                        />
+                        <span className="min-w-0">
+                          <span className="block font-medium">Usar direccion del responsable</span>
+                          {selectedClienteDireccion ? (
+                            <span className="mt-0.5 block text-xs text-muted-foreground">
+                              {selectedClienteDireccion}
+                              {selectedClienteReferencia ? ` / ${selectedClienteReferencia}` : ""}
+                            </span>
+                          ) : (
+                            <span className="mt-0.5 block text-xs text-amber-700">
+                              El responsable no tiene direccion registrada. Ingresa una direccion manual.
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="movilidad_direccion_text"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Direccion de movilidad</FormLabel>
+                    <FormControl>
+                      <Input
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        disabled={Boolean(movilidadUsaDireccionCliente)}
+                        placeholder="Direccion de recojo o traslado"
+                        className="w-full min-w-0"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="movilidad_referencia_text"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Referencia / indicaciones de traslado</FormLabel>
+                    <FormControl>
+                      <Input
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        placeholder="Ej: porton negro, llamar al llegar, recojo en recepcion"
+                        className="w-full min-w-0"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        ) : null}
 
         <div className={sectionClass}>
           <p className={sectionTitleClass}>Horario</p>
@@ -569,7 +698,7 @@ export function CitaForm({
               name="end_date"
               render={({ field }) => (
                 <FormItem className="min-w-0">
-                  <FormLabel>Fecha y Hora de Fin</FormLabel>
+                  <FormLabel>{isMovilidadSelected ? "Fin estimado" : "Fecha y Hora de Fin"}</FormLabel>
                   <FormControl>
                     <Input
                       type="datetime-local"

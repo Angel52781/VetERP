@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import {
   citaSchema,
+  resolveCitaMovilidadFields,
   tipoCitaDisabledSchema,
   tipoCitaSchema,
   tipoCitaUpdateSchema,
@@ -42,7 +43,12 @@ async function validateCitaRelations(
   options: { allowDisabledTipoCitaId?: string | null } = {},
 ) {
   const [{ data: cliente }, { data: mascota }, { data: tipoCita }] = await Promise.all([
-    supabase.from("clientes").select("id").eq("id", clienteId).eq("clinica_id", clinicaId).maybeSingle(),
+    supabase
+      .from("clientes")
+      .select("id, direccion_principal_text, referencia_direccion_text")
+      .eq("id", clienteId)
+      .eq("clinica_id", clinicaId)
+      .maybeSingle(),
     supabase
       .from("mascotas")
       .select("id, cliente_id")
@@ -51,21 +57,23 @@ async function validateCitaRelations(
       .maybeSingle(),
     supabase
       .from("tipo_citas")
-      .select("id, is_disabled")
+      .select("id, is_disabled, area")
       .eq("id", tipoCitaId)
       .eq("clinica_id", clinicaId)
       .maybeSingle(),
   ]);
 
-  if (!cliente) return "El cliente no pertenece a la clinica activa.";
-  if (!mascota) return "La mascota no pertenece a la clinica activa.";
-  if (!tipoCita) return "El tipo de cita no pertenece a la clinica activa.";
+  if (!cliente) return { error: "El cliente no pertenece a la clinica activa.", cliente: null, mascota: null, tipoCita: null };
+  if (!mascota) return { error: "La mascota no pertenece a la clinica activa.", cliente, mascota: null, tipoCita: null };
+  if (!tipoCita) return { error: "El tipo de cita no pertenece a la clinica activa.", cliente, mascota, tipoCita: null };
   if (tipoCita.is_disabled && tipoCita.id !== options.allowDisabledTipoCitaId) {
-    return "El tipo de cita esta inactivo para nuevas programaciones.";
+    return { error: "El tipo de cita esta inactivo para nuevas programaciones.", cliente, mascota, tipoCita };
   }
-  if (mascota.cliente_id !== clienteId) return "La mascota no pertenece al cliente seleccionado.";
+  if (mascota.cliente_id !== clienteId) {
+    return { error: "La mascota no pertenece al cliente seleccionado.", cliente, mascota, tipoCita };
+  }
 
-  return null;
+  return { error: null, cliente, mascota, tipoCita };
 }
 
 export async function createTipoCita(input: TipoCitaInput) {
@@ -171,15 +179,24 @@ export async function createCita(input: CitaInput) {
     const supabase = await createClient();
 
     const validatedData = citaSchema.parse(input);
-    const relationError = await validateCitaRelations(
+    const relationResult = await validateCitaRelations(
       supabase,
       clinicaId,
       validatedData.cliente_id,
       validatedData.mascota_id,
       validatedData.tipo_cita_id,
     );
-    if (relationError) {
-      return { error: relationError, data: null };
+    if (relationResult.error) {
+      return { error: relationResult.error, data: null };
+    }
+
+    const movilidadResult = resolveCitaMovilidadFields(validatedData, {
+      isMovilidad: relationResult.tipoCita?.area === "movilidad",
+      clienteDireccion: relationResult.cliente?.direccion_principal_text,
+      clienteReferencia: relationResult.cliente?.referencia_direccion_text,
+    });
+    if (movilidadResult.error || !movilidadResult.data) {
+      return { error: movilidadResult.error || "No se pudo validar la movilidad de la cita.", data: null };
     }
 
     const startDate = new Date(validatedData.start_date).toISOString();
@@ -194,6 +211,7 @@ export async function createCita(input: CitaInput) {
         start_date: startDate,
         end_date: endDate,
         notas_text: validatedData.notas_text?.trim() || null,
+        ...movilidadResult.data,
         clinica_id: clinicaId,
       })
       .select()
@@ -273,6 +291,9 @@ export async function getCitas(startDate: string, endDate: string) {
         end_date,
         estado,
         notas_text,
+        movilidad_usa_direccion_cliente,
+        movilidad_direccion_text,
+        movilidad_referencia_text,
         tipo_cita_id,
         cliente_id,
         mascota_id,
@@ -461,7 +482,7 @@ export async function updateCita(citaId: string, input: CitaInput) {
       return { error: "Solo se pueden reprogramar citas programadas o confirmadas.", data: null };
     }
 
-    const relationError = await validateCitaRelations(
+    const relationResult = await validateCitaRelations(
       supabase,
       clinicaId,
       validatedData.cliente_id,
@@ -469,8 +490,17 @@ export async function updateCita(citaId: string, input: CitaInput) {
       validatedData.tipo_cita_id,
       { allowDisabledTipoCitaId: cita.tipo_cita_id },
     );
-    if (relationError) {
-      return { error: relationError, data: null };
+    if (relationResult.error) {
+      return { error: relationResult.error, data: null };
+    }
+
+    const movilidadResult = resolveCitaMovilidadFields(validatedData, {
+      isMovilidad: relationResult.tipoCita?.area === "movilidad",
+      clienteDireccion: relationResult.cliente?.direccion_principal_text,
+      clienteReferencia: relationResult.cliente?.referencia_direccion_text,
+    });
+    if (movilidadResult.error || !movilidadResult.data) {
+      return { error: movilidadResult.error || "No se pudo validar la movilidad de la cita.", data: null };
     }
 
     const startDate = new Date(validatedData.start_date).toISOString();
@@ -485,6 +515,7 @@ export async function updateCita(citaId: string, input: CitaInput) {
         start_date: startDate,
         end_date: endDate,
         notas_text: validatedData.notas_text?.trim() || null,
+        ...movilidadResult.data,
       })
       .eq("id", citaId)
       .eq("clinica_id", clinicaId)
@@ -516,6 +547,7 @@ export async function getClientesParaAgenda() {
         tipo_documento_text,
         numero_documento_text,
         direccion_principal_text,
+        referencia_direccion_text,
         mascotas (
           id,
           nombre,

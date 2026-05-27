@@ -73,6 +73,7 @@ export type AgendaClienteSearch = {
   tipo_documento_text?: string | null;
   numero_documento_text?: string | null;
   direccion_principal_text?: string | null;
+  referencia_direccion_text?: string | null;
   documento?: string | null;
   dni?: string | null;
   documento_text?: string | null;
@@ -92,6 +93,9 @@ export type CitaAgenda = {
   end_date: string;
   estado?: string | null;
   notas_text?: string | null;
+  movilidad_usa_direccion_cliente?: boolean | null;
+  movilidad_direccion_text?: string | null;
+  movilidad_referencia_text?: string | null;
   tipo_cita_id: string;
   cliente_id: string;
   mascota_id: string;

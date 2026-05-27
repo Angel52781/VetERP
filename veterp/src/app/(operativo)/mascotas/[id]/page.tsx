@@ -627,15 +627,39 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                 <div className="divide-y rounded-md border">
                   {citas.map((cita) => {
                     const est = CITA_ESTADO_META[cita.estado] ?? CITA_ESTADO_META.programada;
+                    const tipoCita = cita.tipo_citas as any;
+                    const isMovilidad = tipoCita?.area === "movilidad";
                     return (
                       <div key={cita.id} className="flex items-start justify-between gap-3 p-3 hover:bg-muted/40 text-sm">
                         <div className="flex min-w-0 flex-1 items-start gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: (cita.tipo_citas as any)?.color ?? "#94a3b8" }} />
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tipoCita?.color ?? "#94a3b8" }} />
                           <div className="min-w-0">
-                            <p className="font-medium">{(cita.tipo_citas as any)?.nombre ?? "Sin tipo"}</p>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-medium">{tipoCita?.nombre ?? "Sin tipo"}</p>
+                              {isMovilidad ? (
+                                <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                                  Movilidad
+                                </Badge>
+                              ) : null}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                               {format(new Date(cita.start_date), "dd MMM yyyy, HH:mm", { locale: es })}
                             </p>
+                            {isMovilidad && (cita.movilidad_direccion_text?.trim() || cita.movilidad_referencia_text?.trim()) ? (
+                              <div className="mt-1 flex items-start gap-1.5 rounded bg-amber-50 px-2 py-1 text-xs text-amber-900 ring-1 ring-amber-200">
+                                <MapPin className="mt-0.5 h-3 w-3 shrink-0 text-amber-700" />
+                                <div className="min-w-0">
+                                  {cita.movilidad_direccion_text?.trim() ? (
+                                    <p className="whitespace-pre-wrap break-words">{cita.movilidad_direccion_text}</p>
+                                  ) : null}
+                                  {cita.movilidad_referencia_text?.trim() ? (
+                                    <p className="mt-0.5 whitespace-pre-wrap break-words text-amber-800">
+                                      {cita.movilidad_referencia_text}
+                                    </p>
+                                  ) : null}
+                                </div>
+                              </div>
+                            ) : null}
                             {cita.notas_text?.trim() && (
                               <div className="mt-1 flex items-start gap-1.5 rounded bg-amber-50 px-2 py-1 text-xs text-amber-900 ring-1 ring-amber-200">
                                 <NotebookPen className="mt-0.5 h-3 w-3 shrink-0 text-amber-700" />

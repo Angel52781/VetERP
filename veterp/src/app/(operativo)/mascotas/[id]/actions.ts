@@ -605,7 +605,10 @@ export async function getMascotaCompleta(mascotaId: string) {
       .from("citas")
       .select(`
         id, start_date, estado, notas_text,
-        tipo_citas:tipo_cita_id (nombre, color)
+        movilidad_usa_direccion_cliente,
+        movilidad_direccion_text,
+        movilidad_referencia_text,
+        tipo_citas:tipo_cita_id (nombre, color, area)
       `)
       .eq("clinica_id", clinicaId)
       .eq("mascota_id", mascotaId)

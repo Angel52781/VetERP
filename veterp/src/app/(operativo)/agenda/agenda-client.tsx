@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, Calendar as CalendarIcon, Clock, NotebookPen, PawPrint, User } from "lucide-react";
+import { Calendar, Calendar as CalendarIcon, Clock, MapPin, NotebookPen, PawPrint, User } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -143,6 +143,7 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                         {dateCitas.map((cita) => {
                           const areaPresentation = getCitaAreaPresentation(cita.tipo_citas?.area);
+                          const isMovilidad = normalizeCitaArea(cita.tipo_citas?.area) === "movilidad";
 
                           return (
                           <Card key={cita.id} className="overflow-hidden">
@@ -191,6 +192,22 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                                   "Paciente desconocido"
                                 )}
                               </div>
+                              {isMovilidad && cita.movilidad_direccion_text?.trim() ? (
+                                <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-amber-900">
+                                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700" />
+                                  <div className="min-w-0">
+                                    <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                                      Direccion
+                                    </p>
+                                    <p className="break-words text-xs">{cita.movilidad_direccion_text}</p>
+                                    {cita.movilidad_referencia_text?.trim() ? (
+                                      <p className="mt-0.5 break-words text-[11px] text-amber-800">
+                                        {cita.movilidad_referencia_text}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                </div>
+                              ) : null}
                               {cita.notas_text?.trim() ? (
                                 <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-amber-900">
                                   <NotebookPen className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700" />

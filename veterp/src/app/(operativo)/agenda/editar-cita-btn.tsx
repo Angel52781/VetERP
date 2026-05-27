@@ -23,6 +23,9 @@ type EditableCita = {
   start_date: string;
   end_date: string;
   notas_text?: string | null;
+  movilidad_usa_direccion_cliente?: boolean | null;
+  movilidad_direccion_text?: string | null;
+  movilidad_referencia_text?: string | null;
 };
 
 interface EditarCitaBtnProps {
@@ -64,6 +67,9 @@ export function EditarCitaBtn({ cita, clientes, tiposCita, compact = false }: Ed
               start_date: cita.start_date,
               end_date: cita.end_date,
               notas_text: cita.notas_text ?? "",
+              movilidad_usa_direccion_cliente: cita.movilidad_usa_direccion_cliente ?? false,
+              movilidad_direccion_text: cita.movilidad_direccion_text ?? "",
+              movilidad_referencia_text: cita.movilidad_referencia_text ?? "",
             }}
             onSuccess={() => setOpen(false)}
           />
