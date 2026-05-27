@@ -7,11 +7,17 @@ import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { createClient } from "@/lib/supabase/server";
 import {
   altaHospitalizacionSchema,
+  cambiarEstadoTratamientoHospitalizacionSchema,
   createHospitalizacionControlSchema,
   createHospitalizacionSchema,
+  createTratamientoHospitalizacionSchema,
+  updateTratamientoHospitalizacionSchema,
   type AltaHospitalizacionInput,
+  type CambiarEstadoTratamientoHospitalizacionInput,
   type CreateHospitalizacionControlInput,
   type CreateHospitalizacionInput,
+  type CreateTratamientoHospitalizacionInput,
+  type UpdateTratamientoHospitalizacionInput,
 } from "@/lib/validators/hospitalizaciones";
 
 type HospitalizacionRow = {
@@ -24,16 +30,41 @@ type HospitalizacionRow = {
   alta_notas_text: string | null;
 };
 
+type TratamientoHospitalizacionRow = {
+  id: string;
+  hospitalizacion_id: string;
+  mascota_id: string;
+  estado_text: string;
+  notas_text: string | null;
+};
+
 function cleanText(value: string | null | undefined) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
 }
 
-function revalidateHospitalizacionPaths(row?: { mascota_id?: string | null } | null) {
+function revalidateHospitalizacionPaths(
+  row?: { id?: string | null; hospitalizacion_id?: string | null; mascota_id?: string | null } | null,
+) {
   revalidatePath("/hospitalizaciones");
+  const hospitalizacionId = row?.hospitalizacion_id ?? row?.id;
+  if (hospitalizacionId) {
+    revalidatePath(`/hospitalizaciones/${hospitalizacionId}`);
+  }
   if (row?.mascota_id) {
     revalidatePath(`/mascotas/${row.mascota_id}`);
   }
+}
+
+function appendNotasTratamiento(
+  current: string | null | undefined,
+  incoming: string | null | undefined,
+) {
+  const nextNota = cleanText(incoming);
+  const currentNota = cleanText(current);
+  if (!nextNota) return currentNota;
+  if (!currentNota) return nextNota;
+  return `${currentNota}\n${nextNota}`;
 }
 
 async function getHospitalizacionActiva(
@@ -50,6 +81,21 @@ async function getHospitalizacionActiva(
     .maybeSingle();
 
   return data as HospitalizacionRow | null;
+}
+
+async function getTratamientoHospitalizacion(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  clinicaId: string,
+  id: string,
+) {
+  const { data } = await supabase
+    .from("hospitalizacion_tratamientos")
+    .select("id, hospitalizacion_id, mascota_id, estado_text, notas_text")
+    .eq("id", id)
+    .eq("clinica_id", clinicaId)
+    .maybeSingle();
+
+  return data as TratamientoHospitalizacionRow | null;
 }
 
 export async function getHospitalizaciones() {
@@ -325,6 +371,214 @@ export async function createHospitalizacionControl(input: CreateHospitalizacionC
   }
 }
 
+export async function createTratamientoHospitalizacion(input: CreateTratamientoHospitalizacionInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = createTratamientoHospitalizacionSchema.parse(input);
+
+    const hospitalizacion = await getHospitalizacionActiva(
+      supabase,
+      clinicaId,
+      validated.hospitalizacion_id,
+    );
+
+    if (!hospitalizacion) {
+      return { error: "La hospitalizacion activa no pertenece a la clinica actual.", data: null };
+    }
+    if (hospitalizacion.mascota_id !== validated.mascota_id) {
+      return { error: "El tratamiento no corresponde al paciente internado.", data: null };
+    }
+
+    const { data, error } = await supabase
+      .from("hospitalizacion_tratamientos")
+      .insert({
+        clinica_id: clinicaId,
+        hospitalizacion_id: validated.hospitalizacion_id,
+        mascota_id: validated.mascota_id,
+        nombre_text: validated.nombre_text,
+        dosis_text: cleanText(validated.dosis_text),
+        via_text: cleanText(validated.via_text),
+        frecuencia_text: cleanText(validated.frecuencia_text),
+        indicaciones_text: cleanText(validated.indicaciones_text),
+        responsable_text: cleanText(validated.responsable_text),
+        notas_text: cleanText(validated.notas_text),
+        orden_num: validated.orden_num ?? null,
+        estado_text: "activo",
+      })
+      .select("id, hospitalizacion_id, mascota_id")
+      .single();
+
+    if (error) {
+      return { error: error.message, data: null };
+    }
+
+    revalidateHospitalizacionPaths(data);
+    return { error: null, data };
+  } catch (error: unknown) {
+    return {
+      error: error instanceof Error ? error.message : "Error al crear tratamiento",
+      data: null,
+    };
+  }
+}
+
+export async function updateTratamientoHospitalizacion(input: UpdateTratamientoHospitalizacionInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = updateTratamientoHospitalizacionSchema.parse(input);
+
+    const tratamiento = await getTratamientoHospitalizacion(supabase, clinicaId, validated.id);
+    if (!tratamiento) {
+      return { error: "Tratamiento no encontrado para la clinica actual.", data: null };
+    }
+    if (
+      tratamiento.hospitalizacion_id !== validated.hospitalizacion_id ||
+      tratamiento.mascota_id !== validated.mascota_id
+    ) {
+      return { error: "El tratamiento no coincide con la hospitalizacion seleccionada.", data: null };
+    }
+    if (tratamiento.estado_text !== "activo") {
+      return { error: "Solo se pueden editar tratamientos activos.", data: null };
+    }
+
+    const hospitalizacion = await getHospitalizacionActiva(
+      supabase,
+      clinicaId,
+      validated.hospitalizacion_id,
+    );
+    if (!hospitalizacion) {
+      return { error: "La hospitalizacion activa no pertenece a la clinica actual.", data: null };
+    }
+    if (hospitalizacion.mascota_id !== validated.mascota_id) {
+      return { error: "El tratamiento no corresponde al paciente internado.", data: null };
+    }
+
+    const { data, error } = await supabase
+      .from("hospitalizacion_tratamientos")
+      .update({
+        nombre_text: validated.nombre_text,
+        dosis_text: cleanText(validated.dosis_text),
+        via_text: cleanText(validated.via_text),
+        frecuencia_text: cleanText(validated.frecuencia_text),
+        indicaciones_text: cleanText(validated.indicaciones_text),
+        responsable_text: cleanText(validated.responsable_text),
+        notas_text: cleanText(validated.notas_text),
+        orden_num: validated.orden_num ?? null,
+      })
+      .eq("id", validated.id)
+      .eq("clinica_id", clinicaId)
+      .select("id, hospitalizacion_id, mascota_id")
+      .maybeSingle();
+
+    if (error) {
+      return { error: error.message, data: null };
+    }
+    if (!data) {
+      return { error: "No se pudo actualizar el tratamiento activo.", data: null };
+    }
+
+    revalidateHospitalizacionPaths(data);
+    return { error: null, data };
+  } catch (error: unknown) {
+    return {
+      error: error instanceof Error ? error.message : "Error al actualizar tratamiento",
+      data: null,
+    };
+  }
+}
+
+async function cambiarEstadoTratamientoHospitalizacion(
+  input: CambiarEstadoTratamientoHospitalizacionInput,
+  estado: "terminado" | "suspendido",
+) {
+  const clinicaId = await requireClinicaIdFromCookies();
+  const supabase = await createClient();
+  const validated = cambiarEstadoTratamientoHospitalizacionSchema.parse(input);
+
+  const tratamiento = await getTratamientoHospitalizacion(supabase, clinicaId, validated.id);
+  if (!tratamiento) {
+    return { error: "Tratamiento no encontrado para la clinica actual.", data: null };
+  }
+  if (
+    tratamiento.hospitalizacion_id !== validated.hospitalizacion_id ||
+    tratamiento.mascota_id !== validated.mascota_id
+  ) {
+    return { error: "El tratamiento no coincide con la hospitalizacion seleccionada.", data: null };
+  }
+  if (tratamiento.estado_text === estado) {
+    return { error: `El tratamiento ya esta ${estado}.`, data: null };
+  }
+  if (tratamiento.estado_text !== "activo") {
+    return {
+      error: `El tratamiento ya esta ${tratamiento.estado_text} y no puede cambiarse desde aqui.`,
+      data: null,
+    };
+  }
+
+  const hospitalizacion = await getHospitalizacionActiva(
+    supabase,
+    clinicaId,
+    validated.hospitalizacion_id,
+  );
+  if (!hospitalizacion) {
+    return { error: "La hospitalizacion activa no pertenece a la clinica actual.", data: null };
+  }
+  if (hospitalizacion.mascota_id !== validated.mascota_id) {
+    return { error: "El tratamiento no corresponde al paciente internado.", data: null };
+  }
+
+  const { data, error } = await supabase
+    .from("hospitalizacion_tratamientos")
+    .update({
+      estado_text: estado,
+      terminado_at: new Date().toISOString(),
+      notas_text: appendNotasTratamiento(tratamiento.notas_text, validated.notas_text),
+    })
+    .eq("id", validated.id)
+    .eq("clinica_id", clinicaId)
+    .eq("estado_text", "activo")
+    .select("id, hospitalizacion_id, mascota_id")
+    .maybeSingle();
+
+  if (error) {
+    return { error: error.message, data: null };
+  }
+  if (!data) {
+    return { error: "No se pudo cambiar el estado del tratamiento activo.", data: null };
+  }
+
+  revalidateHospitalizacionPaths(data);
+  return { error: null, data };
+}
+
+export async function terminarTratamientoHospitalizacion(
+  input: CambiarEstadoTratamientoHospitalizacionInput,
+) {
+  try {
+    return await cambiarEstadoTratamientoHospitalizacion(input, "terminado");
+  } catch (error: unknown) {
+    return {
+      error: error instanceof Error ? error.message : "Error al terminar tratamiento",
+      data: null,
+    };
+  }
+}
+
+export async function suspenderTratamientoHospitalizacion(
+  input: CambiarEstadoTratamientoHospitalizacionInput,
+) {
+  try {
+    return await cambiarEstadoTratamientoHospitalizacion(input, "suspendido");
+  } catch (error: unknown) {
+    return {
+      error: error instanceof Error ? error.message : "Error al suspender tratamiento",
+      data: null,
+    };
+  }
+}
+
 export async function darAltaHospitalizacion(input: AltaHospitalizacionInput) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
@@ -432,6 +686,51 @@ export async function getHospitalizacionById(id: string) {
     if (!data) {
       return { error: "Hospitalización no encontrada.", data: null };
     }
+
+    const { data: tratamientos, error: tratamientosError } = await supabase
+      .from("hospitalizacion_tratamientos")
+      .select(`
+        id,
+        clinica_id,
+        hospitalizacion_id,
+        mascota_id,
+        nombre_text,
+        dosis_text,
+        via_text,
+        frecuencia_text,
+        indicaciones_text,
+        responsable_text,
+        notas_text,
+        orden_num,
+        estado_text,
+        iniciado_at,
+        terminado_at,
+        created_at,
+        updated_at
+      `)
+      .eq("clinica_id", clinicaId)
+      .eq("hospitalizacion_id", id);
+
+    if (tratamientosError) {
+      return { error: tratamientosError.message, data: null };
+    }
+
+    const estadoRank: Record<string, number> = {
+      activo: 0,
+      terminado: 1,
+      suspendido: 1,
+    };
+
+    (data as any).hospitalizacion_tratamientos = (tratamientos ?? []).sort((a: any, b: any) => {
+      const estadoDiff = (estadoRank[a.estado_text] ?? 9) - (estadoRank[b.estado_text] ?? 9);
+      if (estadoDiff !== 0) return estadoDiff;
+
+      const ordenA = a.orden_num ?? 9999;
+      const ordenB = b.orden_num ?? 9999;
+      if (ordenA !== ordenB) return ordenA - ordenB;
+
+      return new Date(a.iniciado_at).getTime() - new Date(b.iniciado_at).getTime();
+    });
 
     // Sort controles by registrado_at desc
     if (data.hospitalizacion_controles) {

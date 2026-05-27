@@ -7,6 +7,35 @@ const optionalText = (max = 1000) =>
     .optional()
     .nullable();
 
+const optionalTrimmedText = (max = 1000) =>
+  z.preprocess(
+    (value) => {
+      if (typeof value !== "string") return value;
+      const trimmed = value.trim();
+      return trimmed ? trimmed : null;
+    },
+    z
+      .string()
+      .max(max, `No debe superar ${max} caracteres`)
+      .optional()
+      .nullable(),
+  );
+
+const optionalOrdenTratamiento = z.preprocess(
+  (value) => {
+    if (value === "" || value === null || value === undefined) return undefined;
+    return Number(value);
+  },
+  z
+    .number({
+      message: "El orden debe ser un numero valido",
+    })
+    .int("El orden debe ser un numero entero")
+    .min(0, "El orden no puede ser menor a 0")
+    .max(999, "El orden no puede ser mayor a 999")
+    .optional(),
+);
+
 const optionalPositiveNumber = (label: string) =>
   z
     .number({
@@ -24,6 +53,9 @@ const optionalPercent = z
   .optional();
 
 export const hospitalizacionEstadoValues = ["activa", "alta", "cancelada"] as const;
+export const tratamientoEstadoValues = ["activo", "terminado", "suspendido"] as const;
+
+export const tratamientoEstadoSchema = z.enum(tratamientoEstadoValues);
 
 export const createHospitalizacionSchema = z.object({
   mascota_id: z.string().uuid("ID de paciente invalido"),
@@ -58,7 +90,42 @@ export const altaHospitalizacionSchema = z.object({
   alta_notas_text: optionalText(1500),
 });
 
+export const createTratamientoHospitalizacionSchema = z.object({
+  hospitalizacion_id: z.string().uuid("ID de hospitalizacion invalido"),
+  mascota_id: z.string().uuid("ID de paciente invalido"),
+  nombre_text: z
+    .string()
+    .trim()
+    .min(2, "El tratamiento debe tener al menos 2 caracteres")
+    .max(160, "El tratamiento no debe superar 160 caracteres"),
+  dosis_text: optionalTrimmedText(160),
+  via_text: optionalTrimmedText(120),
+  frecuencia_text: optionalTrimmedText(120),
+  indicaciones_text: optionalTrimmedText(1000),
+  responsable_text: optionalTrimmedText(160),
+  notas_text: optionalTrimmedText(1000),
+  orden_num: optionalOrdenTratamiento,
+});
+
+export const updateTratamientoHospitalizacionSchema =
+  createTratamientoHospitalizacionSchema.extend({
+    id: z.string().uuid("ID de tratamiento invalido"),
+  });
+
+export const cambiarEstadoTratamientoHospitalizacionSchema = z.object({
+  id: z.string().uuid("ID de tratamiento invalido"),
+  hospitalizacion_id: z.string().uuid("ID de hospitalizacion invalido"),
+  mascota_id: z.string().uuid("ID de paciente invalido"),
+  notas_text: optionalTrimmedText(1000),
+});
+
 export type CreateHospitalizacionInput = z.infer<typeof createHospitalizacionSchema>;
 export type CreateHospitalizacionControlInput = z.infer<typeof createHospitalizacionControlSchema>;
 export type AltaHospitalizacionInput = z.infer<typeof altaHospitalizacionSchema>;
+export type CreateTratamientoHospitalizacionInput = z.infer<typeof createTratamientoHospitalizacionSchema>;
+export type UpdateTratamientoHospitalizacionInput = z.infer<typeof updateTratamientoHospitalizacionSchema>;
+export type CambiarEstadoTratamientoHospitalizacionInput = z.infer<
+  typeof cambiarEstadoTratamientoHospitalizacionSchema
+>;
 export type HospitalizacionEstado = (typeof hospitalizacionEstadoValues)[number];
+export type TratamientoEstado = (typeof tratamientoEstadoValues)[number];

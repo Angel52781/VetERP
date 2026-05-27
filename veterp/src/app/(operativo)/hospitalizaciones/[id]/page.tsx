@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { AlertTriangle, ArrowLeft, BedDouble, Calendar, Clock, HeartPulse, User, Phone, Thermometer, Droplets, ActivitySquare, Pill } from "lucide-react";
+import { AlertTriangle, ArrowLeft, BedDouble, Calendar, Clock, HeartPulse, User, Phone, Thermometer, Droplets, ActivitySquare } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { getHospitalizacionById } from "../actions";
 import { NuevoControlDialog } from "../nuevo-control-dialog";
 import { AltaHospitalizacionDialog } from "../alta-hospitalizacion-dialog";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
+import { TratamientosHospitalizacionCard } from "../tratamientos-hospitalizacion-card";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,7 @@ export default async function HospitalizacionDetailPage({ params }: PageProps) {
   const mascota = hospitalizacion.mascotas as any;
   const cliente = hospitalizacion.clientes as any;
   const controles = hospitalizacion.hospitalizacion_controles || [];
+  const tratamientos = (hospitalizacion as any).hospitalizacion_tratamientos || [];
   const isActiva = hospitalizacion.estado_text === "activa";
 
   return (
@@ -184,7 +186,15 @@ export default async function HospitalizacionDetailPage({ params }: PageProps) {
           </Card>
         </div>
 
-        <div className="md:col-span-2">
+        <div className="space-y-6 md:col-span-2">
+          <TratamientosHospitalizacionCard
+            hospitalizacionId={hospitalizacion.id}
+            mascotaId={hospitalizacion.mascota_id}
+            pacienteNombre={mascota?.nombre ?? "Paciente"}
+            estadoHospitalizacion={hospitalizacion.estado_text}
+            tratamientos={tratamientos}
+          />
+
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center justify-between">
