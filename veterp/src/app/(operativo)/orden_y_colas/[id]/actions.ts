@@ -1,19 +1,75 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireClinicaIdFromCookies } from "@/lib/clinica";
-import { entradaClinicaSchema, EntradaClinicaInput, adjuntoSchema, AdjuntoInput } from "@/lib/validators/atencion";
+import { requireClinicaIdFromCookies, requireUserRole } from "@/lib/clinica";
+import {
+  adjuntoSchema,
+  editarEntradaClinicaSchema,
+  entradaClinicaSchema,
+  type AdjuntoInput,
+  type EditarEntradaClinicaInput,
+  type EntradaClinicaInput,
+} from "@/lib/validators/atencion";
 import { v4 as uuidv4 } from "uuid";
 
 async function ensureOrdenInClinica(supabase: any, clinicaId: string, ordenId: string) {
   const { data: orden } = await supabase
     .from("ordenes_servicio")
-    .select("id")
+    .select("id, mascota_id")
     .eq("id", ordenId)
     .eq("clinica_id", clinicaId)
     .maybeSingle();
 
   return orden;
+}
+
+type EntradaClinicaAuditRow = {
+  id: string;
+  orden_id: string;
+  tipo_text: string | null;
+  texto_text: string | null;
+  motivo_consulta_text: string | null;
+  peso_kg_num: number | string | null;
+  temperatura_c_num: number | string | null;
+  frecuencia_cardiaca_num: number | null;
+  frecuencia_respiratoria_num: number | null;
+  observaciones_text: string | null;
+  diagnostico_text: string | null;
+  anamnesis_text: string | null;
+  plan_tratamiento_text: string | null;
+  editado_at?: string | null;
+  editado_por?: string | null;
+  ediciones_count?: number | null;
+};
+
+function cleanText(value: string | null | undefined) {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
+function buildEntradaAuditData(row: EntradaClinicaAuditRow) {
+  return {
+    tipo_text: row.tipo_text ?? null,
+    texto_text: row.texto_text ?? null,
+    motivo_consulta_text: row.motivo_consulta_text ?? null,
+    peso_kg_num: row.peso_kg_num ?? null,
+    temperatura_c_num: row.temperatura_c_num ?? null,
+    frecuencia_cardiaca_num: row.frecuencia_cardiaca_num ?? null,
+    frecuencia_respiratoria_num: row.frecuencia_respiratoria_num ?? null,
+    observaciones_text: row.observaciones_text ?? null,
+    diagnostico_text: row.diagnostico_text ?? null,
+    anamnesis_text: row.anamnesis_text ?? null,
+    plan_tratamiento_text: row.plan_tratamiento_text ?? null,
+  };
+}
+
+async function getCurrentUserId(supabase: any) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user?.id ?? null;
 }
 
 export async function getOrdenCompleta(id: string) {
@@ -54,8 +110,20 @@ export async function getOrdenCompleta(id: string) {
           diagnostico_text,
           anamnesis_text,
           plan_tratamiento_text,
+          editado_at,
+          editado_por,
+          ediciones_count,
           fecha_date,
-          created_at
+          created_at,
+          entradas_clinicas_ediciones (
+            id,
+            entrada_clinica_id,
+            editado_por,
+            motivo_text,
+            before_data,
+            after_data,
+            created_at
+          )
         ),
         adjuntos (
           id,
@@ -110,6 +178,7 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
     const clinicaId = await requireClinicaIdFromCookies();
     const validatedData = entradaClinicaSchema.parse(input);
     const supabase = await createClient();
+    const userId = await getCurrentUserId(supabase);
     const orden = await ensureOrdenInClinica(supabase, clinicaId, validatedData.orden_id);
     if (!orden) {
       return { error: "La orden no pertenece a la clínica activa.", data: null };
@@ -128,30 +197,11 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
       const existing = existingRows && existingRows.length > 0 ? existingRows[0] : null;
 
       if (existing) {
-        const { data, error } = await supabase
-          .from("entradas_clinicas")
-          .update({
-            tipo_text: "Nota Clínica de Evolución",
-            texto_text: validatedData.texto_text,
-            motivo_consulta_text: validatedData.motivo_consulta_text,
-            peso_kg_num: validatedData.peso_kg_num,
-            temperatura_c_num: validatedData.temperatura_c_num,
-            frecuencia_cardiaca_num: validatedData.frecuencia_cardiaca_num,
-            frecuencia_respiratoria_num: validatedData.frecuencia_respiratoria_num,
-            observaciones_text: validatedData.observaciones_text,
-            diagnostico_text: validatedData.diagnostico_text,
-            anamnesis_text: validatedData.anamnesis_text,
-            plan_tratamiento_text: validatedData.plan_tratamiento_text,
-          })
-          .eq("id", existing.id)
-          .select()
-          .single();
-
-        if (error) {
-          console.error("Error updating entrada clinica:", error);
-          return { error: error.message, data: null };
-        }
-        return { error: null, data };
+        return {
+          error:
+            "La entrada SOAP ya existe. Para corregirla usa Editar entrada y registra el motivo de edicion.",
+          data: existing,
+        };
       }
     }
 
@@ -171,6 +221,7 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
         diagnostico_text: validatedData.diagnostico_text,
         anamnesis_text: validatedData.anamnesis_text,
         plan_tratamiento_text: validatedData.plan_tratamiento_text,
+        autor_user_id: userId,
         fecha_date: new Date().toISOString(),
       })
       .select()
@@ -185,6 +236,135 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
   } catch (error: any) {
     console.error("Exception in createEntradaClinica:", error);
     return { error: error.message || "Error al crear la entrada clínica", data: null };
+  }
+}
+
+export async function updateEntradaClinicaConAuditoria(input: EditarEntradaClinicaInput) {
+  try {
+    const { clinicaId } = await requireUserRole(["owner", "admin"]);
+    const validatedData = editarEntradaClinicaSchema.parse(input);
+    const supabase = await createClient();
+    const userId = await getCurrentUserId(supabase);
+
+    if (!userId) {
+      return { error: "No se pudo identificar al usuario que edita la entrada.", data: null };
+    }
+
+    const { data: entradaActual, error: entradaError } = await supabase
+      .from("entradas_clinicas")
+      .select(`
+        id,
+        orden_id,
+        tipo_text,
+        texto_text,
+        motivo_consulta_text,
+        peso_kg_num,
+        temperatura_c_num,
+        frecuencia_cardiaca_num,
+        frecuencia_respiratoria_num,
+        observaciones_text,
+        diagnostico_text,
+        anamnesis_text,
+        plan_tratamiento_text,
+        editado_at,
+        editado_por,
+        ediciones_count
+      `)
+      .eq("id", validatedData.id)
+      .eq("clinica_id", clinicaId)
+      .maybeSingle();
+
+    if (entradaError) {
+      return { error: entradaError.message, data: null };
+    }
+    if (!entradaActual) {
+      return { error: "Entrada clinica no encontrada para la clinica activa.", data: null };
+    }
+
+    const orden = await ensureOrdenInClinica(supabase, clinicaId, entradaActual.orden_id);
+    if (!orden) {
+      return { error: "La orden de la entrada no pertenece a la clinica activa.", data: null };
+    }
+
+    const beforeData = buildEntradaAuditData(entradaActual as EntradaClinicaAuditRow);
+    const now = new Date().toISOString();
+    const updatePayload = {
+      tipo_text: validatedData.tipo_text,
+      texto_text: cleanText(validatedData.texto_text) ?? "",
+      motivo_consulta_text: cleanText(validatedData.motivo_consulta_text),
+      peso_kg_num: validatedData.peso_kg_num ?? null,
+      temperatura_c_num: validatedData.temperatura_c_num ?? null,
+      frecuencia_cardiaca_num: validatedData.frecuencia_cardiaca_num ?? null,
+      frecuencia_respiratoria_num: validatedData.frecuencia_respiratoria_num ?? null,
+      observaciones_text: cleanText(validatedData.observaciones_text),
+      diagnostico_text: cleanText(validatedData.diagnostico_text),
+      anamnesis_text: cleanText(validatedData.anamnesis_text),
+      plan_tratamiento_text: cleanText(validatedData.plan_tratamiento_text),
+      editado_at: now,
+      editado_por: userId,
+      ediciones_count: Number(entradaActual.ediciones_count ?? 0) + 1,
+    };
+
+    const { data: entradaActualizada, error: updateError } = await supabase
+      .from("entradas_clinicas")
+      .update(updatePayload)
+      .eq("id", validatedData.id)
+      .eq("clinica_id", clinicaId)
+      .select(`
+        id,
+        orden_id,
+        tipo_text,
+        texto_text,
+        motivo_consulta_text,
+        peso_kg_num,
+        temperatura_c_num,
+        frecuencia_cardiaca_num,
+        frecuencia_respiratoria_num,
+        observaciones_text,
+        diagnostico_text,
+        anamnesis_text,
+        plan_tratamiento_text,
+        editado_at,
+        editado_por,
+        ediciones_count
+      `)
+      .maybeSingle();
+
+    if (updateError) {
+      return { error: updateError.message, data: null };
+    }
+    if (!entradaActualizada) {
+      return { error: "No se pudo actualizar la entrada clinica.", data: null };
+    }
+
+    const afterData = buildEntradaAuditData(entradaActualizada as EntradaClinicaAuditRow);
+    const { error: auditError } = await supabase
+      .from("entradas_clinicas_ediciones")
+      .insert({
+        clinica_id: clinicaId,
+        entrada_clinica_id: entradaActualizada.id,
+        orden_id: entradaActualizada.orden_id,
+        editado_por: userId,
+        motivo_text: validatedData.motivo_edicion_text,
+        before_data: beforeData,
+        after_data: afterData,
+      });
+
+    if (auditError) {
+      return { error: `La entrada se actualizo, pero fallo la auditoria: ${auditError.message}`, data: null };
+    }
+
+    revalidatePath(`/orden_y_colas/${entradaActualizada.orden_id}`);
+    if (orden.mascota_id) {
+      revalidatePath(`/mascotas/${orden.mascota_id}`);
+    }
+
+    return { error: null, data: entradaActualizada };
+  } catch (error: any) {
+    return {
+      error: error.message || "Error al editar entrada clinica con auditoria",
+      data: null,
+    };
   }
 }
 

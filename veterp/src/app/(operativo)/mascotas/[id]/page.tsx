@@ -319,16 +319,28 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               const isSOAP = e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje";
               return (
                 <Card key={e.id} className="overflow-hidden">
-                  <div className="bg-muted/40 px-4 py-2.5 border-b flex justify-between items-center">
-                    <div className="flex items-center gap-2">
+                  <div className="bg-muted/40 px-4 py-2.5 border-b flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-wrap items-center gap-2">
                       <Stethoscope className="w-4 h-4 text-primary" />
                       <span className="font-semibold text-sm">
                         {e.motivo_consulta_text ? `Consulta: ${e.motivo_consulta_text}` : e.tipo_text}
                       </span>
+                      {Number(e.ediciones_count ?? 0) > 0 && (
+                        <Badge className="bg-amber-100 text-amber-900 border-none">
+                          Editada {Number(e.ediciones_count ?? 0)}
+                        </Badge>
+                      )}
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      {format(new Date(e.created_at), "dd MMM yyyy, HH:mm", { locale: es })}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>{format(new Date(e.created_at), "dd MMM yyyy, HH:mm", { locale: es })}</span>
+                      {e.editado_at && <span>Ultima edicion: {format(new Date(e.editado_at), "dd/MM/yyyy HH:mm")}</span>}
+                      <Link
+                        href={`/orden_y_colas/${e.orden_id}?returnTo=${ordenReturnTo}`}
+                        className={buttonVariants({ variant: "outline", size: "sm" })}
+                      >
+                        Ver atencion
+                      </Link>
+                    </div>
                   </div>
                   <CardContent className="p-4 space-y-3">
                     {(e.peso_kg_num || e.temperatura_c_num || e.frecuencia_cardiaca_num || e.frecuencia_respiratoria_num) && (
@@ -349,6 +361,26 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                     ) : (
                       e.texto_text && <p className="text-sm whitespace-pre-wrap">{e.texto_text}</p>
                     )}
+                    {e.entradas_clinicas_ediciones?.length ? (
+                      <div className="rounded-lg border border-dashed p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          Historial de ediciones
+                        </p>
+                        <div className="mt-2 space-y-2">
+                          {[...e.entradas_clinicas_ediciones]
+                            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                            .map((edicion: any) => (
+                              <div key={edicion.id} className="rounded-md bg-muted/30 px-3 py-2 text-sm">
+                                <p className="text-xs text-muted-foreground">
+                                  {format(new Date(edicion.created_at), "dd/MM/yyyy HH:mm")} - Usuario{" "}
+                                  {edicion.editado_por ? edicion.editado_por.slice(0, 8) : "no registrado"}
+                                </p>
+                                <p className="mt-1 whitespace-pre-wrap">{edicion.motivo_text}</p>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ) : null}
                   </CardContent>
                 </Card>
               );

@@ -18,6 +18,7 @@ import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions"
 import { SeguimientosCard } from "../../seguimientos-card";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { getAgeFromDateOnly } from "@/lib/date-only";
+import { getUserRole } from "@/lib/clinica";
 import { getOrderFinancialStatus, getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 
 interface PageProps {
@@ -48,6 +49,8 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
     seguimientoFeatureUnavailable,
     seguimientoFeatureReason,
   } = await getSeguimientosMascota(orden.mascota_id);
+  const role = await getUserRole();
+  const canEditEntradasClinicas = role === "owner" || role === "admin";
 
   const decodedReturnTo =
     typeof returnTo === "string"
@@ -237,12 +240,19 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
         </TabsContent>
         
         <TabsContent value="notas" className="mt-6 space-y-6">
-          <SignosVitalesForm ordenId={id} entradas={orden.entradas_clinicas || []} />
+          <SignosVitalesForm
+            ordenId={id}
+            entradas={orden.entradas_clinicas || []}
+            canEditEntradas={canEditEntradasClinicas}
+          />
           
           <div className="grid md:grid-cols-3 gap-6 pt-6 border-t">
             <div className="md:col-span-2">
               <h2 className="text-xl font-semibold mb-4">Evolución y Notas</h2>
-              <EntradasList entradas={orden.entradas_clinicas || []} />
+              <EntradasList
+                entradas={orden.entradas_clinicas || []}
+                canEdit={canEditEntradasClinicas}
+              />
             </div>
             <div>
               <NuevaEntradaForm ordenId={id} />

@@ -261,7 +261,15 @@ export async function getMascotaCompleta(mascotaId: string) {
           motivo_consulta_text, peso_kg_num, temperatura_c_num,
           frecuencia_cardiaca_num, frecuencia_respiratoria_num,
           observaciones_text, diagnostico_text,
-          anamnesis_text, plan_tratamiento_text
+          anamnesis_text, plan_tratamiento_text,
+          editado_at, editado_por, ediciones_count,
+          entradas_clinicas_ediciones (
+            id,
+            entrada_clinica_id,
+            editado_por,
+            motivo_text,
+            created_at
+          )
         )
       `)
       .eq("clinica_id", clinicaId)

@@ -17,9 +17,10 @@ import { toast } from "sonner";
 interface SignosVitalesFormProps {
   ordenId: string;
   entradas: any[];
+  canEditEntradas?: boolean;
 }
 
-export function SignosVitalesForm({ ordenId, entradas }: SignosVitalesFormProps) {
+export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }: SignosVitalesFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,6 +44,11 @@ export function SignosVitalesForm({ ordenId, entradas }: SignosVitalesFormProps)
   });
 
   async function onSubmit(data: SignosVitalesInput) {
+    if (notaPrincipal) {
+      toast.error("La entrada SOAP ya existe. Las correcciones deben hacerse desde Editar entrada con motivo.");
+      return;
+    }
+
     setIsSubmitting(true);
     const result = await createEntradaClinica({
       orden_id: ordenId,
@@ -63,7 +69,7 @@ export function SignosVitalesForm({ ordenId, entradas }: SignosVitalesFormProps)
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success(notaPrincipal ? "Expediente actualizado" : "Expediente registrado");
+      toast.success("Expediente registrado");
       router.refresh();
     }
   }
@@ -78,6 +84,15 @@ export function SignosVitalesForm({ ordenId, entradas }: SignosVitalesFormProps)
         <CardDescription>Registre la historia clínica, signos vitales, examen físico, diagnóstico y plan de tratamiento (Formato SOAP).</CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
+        {notaPrincipal ? (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+            Esta orden ya tiene expediente SOAP.{" "}
+            {canEditEntradas
+              ? "Usa Editar entrada en la lista inferior para corregirlo con auditoria."
+              : "Las correcciones requieren owner/admin; puedes agregar una nueva nota de evolucion."}
+          </div>
+        ) : null}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             
@@ -230,7 +245,7 @@ export function SignosVitalesForm({ ordenId, entradas }: SignosVitalesFormProps)
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" disabled={isSubmitting} size="lg">
+              <Button type="submit" disabled={isSubmitting || Boolean(notaPrincipal)} size="lg">
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {notaPrincipal ? "Actualizar Expediente" : "Guardar Expediente Clínico"}
               </Button>
