@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import {
   clienteSchema,
-  tipoDocumentoClienteLabels,
+  formatTipoDocumentoLabel,
   tipoDocumentoClienteValues,
   type ClienteFormValues,
 } from "@/lib/validators/clientes";
@@ -118,13 +118,15 @@ export default function NuevoClientePage() {
                     }}
                   >
                     <SelectTrigger id="tipo_documento_text" className="w-full">
-                      <SelectValue placeholder="Sin documento" />
+                      <SelectValue placeholder="Sin documento">
+                        {formatTipoDocumentoLabel(form.watch("tipo_documento_text"))}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Sin documento</SelectItem>
                       {tipoDocumentoClienteValues.map((tipo) => (
                         <SelectItem key={tipo} value={tipo}>
-                          {tipoDocumentoClienteLabels[tipo]}
+                          {formatTipoDocumentoLabel(tipo)}
                         </SelectItem>
                       ))}
                     </SelectContent>

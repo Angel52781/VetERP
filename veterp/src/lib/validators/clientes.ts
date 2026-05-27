@@ -63,13 +63,21 @@ export const clienteSchema = z.object({
 
 export type ClienteFormValues = z.input<typeof clienteSchema>;
 
+export function formatTipoDocumentoLabel(tipoDocumento?: string | null) {
+  const tipo = tipoDocumento?.trim().toLowerCase() as (typeof tipoDocumentoClienteValues)[number] | undefined;
+
+  if (!tipo || !tipoDocumentoClienteValues.includes(tipo)) return "Sin documento";
+
+  return tipoDocumentoClienteLabels[tipo];
+}
+
 export function formatClienteDocumento(tipoDocumento?: string | null, numeroDocumento?: string | null) {
   const tipo = tipoDocumento?.trim().toLowerCase() as (typeof tipoDocumentoClienteValues)[number] | undefined;
   const numero = numeroDocumento?.trim();
 
   if (!tipo || !numero || !tipoDocumentoClienteValues.includes(tipo)) return null;
 
-  return `${tipoDocumentoClienteLabels[tipo]} ${numero}`;
+  return `${formatTipoDocumentoLabel(tipo)} ${numero}`;
 }
 
 export const mascotaSchema = z.object({

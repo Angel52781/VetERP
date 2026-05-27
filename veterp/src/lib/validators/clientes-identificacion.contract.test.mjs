@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { clienteSchema } from "./clientes.ts";
+import { clienteSchema, formatTipoDocumentoLabel } from "./clientes.ts";
 
 test("valida identificacion y direccion opcionales de cliente", () => {
   const parsed = clienteSchema.parse({
@@ -45,4 +45,13 @@ test("valida identificacion y direccion opcionales de cliente", () => {
       }),
     /numero de documento/i,
   );
+});
+
+test("formatea labels visibles de tipo de documento", () => {
+  assert.equal(formatTipoDocumentoLabel("dni"), "DNI");
+  assert.equal(formatTipoDocumentoLabel("ce"), "CE");
+  assert.equal(formatTipoDocumentoLabel("pasaporte"), "Pasaporte");
+  assert.equal(formatTipoDocumentoLabel("ruc"), "RUC");
+  assert.equal(formatTipoDocumentoLabel("otro"), "Otro");
+  assert.equal(formatTipoDocumentoLabel(null), "Sin documento");
 });
