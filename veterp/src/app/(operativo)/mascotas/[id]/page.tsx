@@ -6,6 +6,7 @@ import { BtnNuevaAtencion } from "./btn-nueva-atencion";
 import { getMascotaCompleta } from "./actions";
 import { SeguimientosCard } from "./seguimientos-card";
 import { MascotaEditDialog } from "./mascota-edit-dialog";
+import { MascotaAdjuntosCard } from "./mascota-adjuntos-card";
 import { AgendarCitaPacienteBtn } from "@/app/(operativo)/pacientes/agendar-cita-paciente-btn";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Clock, Calendar, ArrowLeft, NotebookPen, Phone, User,
   Stethoscope, FileText, AlertCircle, Scissors,
-  BedDouble, FlaskConical, Syringe, FolderOpen, Activity,
+  BedDouble, FlaskConical, Syringe, Activity,
   CheckCircle2,
 } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
@@ -47,7 +48,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const { id } = await params;
   const { returnTo, tab } = (await searchParams) ?? {};
   const {
-    mascota, ordenes, citas, tiposCita, seguimientos, hospitalizaciones,
+    mascota, ordenes, citas, tiposCita, adjuntos, seguimientos, hospitalizaciones,
     seguimientoFeatureUnavailable, seguimientoFeatureReason, error,
   } = await getMascotaCompleta(id);
 
@@ -86,7 +87,9 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
     : `/clientes/${mascota.cliente_id}`;
   const ordenReturnTo = encodeURIComponent(`/mascotas/${id}`);
   const defaultTab =
-    tab === "seguimientos"
+    tab === "adjuntos"
+      ? "adjuntos"
+      : tab === "seguimientos"
       ? "seguimientos"
       : tab === "hospitalizaciones"
         ? "hospitalizaciones"
@@ -298,12 +301,13 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
       {/* ── TABS ── */}
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
           <TabsTrigger value="historia">Historia clínica</TabsTrigger>
           <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
           <TabsTrigger value="hospitalizaciones">Hospitalizaciones</TabsTrigger>
           <TabsTrigger value="ordenes">Atenciones</TabsTrigger>
           <TabsTrigger value="citas">Citas</TabsTrigger>
+          <TabsTrigger value="adjuntos">Adjuntos</TabsTrigger>
         </TabsList>
 
         {/* Historia clínica */}
@@ -636,6 +640,11 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Adjuntos */}
+        <TabsContent value="adjuntos" className="mt-4">
+          <MascotaAdjuntosCard mascotaId={id} adjuntos={adjuntos || []} />
+        </TabsContent>
       </Tabs>
 
       {/* ── SECCIONES 360 FUTURAS ── */}
@@ -646,7 +655,6 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             { icon: Scissors, label: "Grooming", desc: "Historial de baños, cortes y observaciones de manejo." },
             { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },
             { icon: Syringe, label: "Procedimientos", desc: "Cirugías, vacunas y procedimientos clínicos." },
-            { icon: FolderOpen, label: "Archivos adjuntos", desc: "Radiografías, ecografías y documentos." },
             { icon: Activity, label: "Actividad", desc: "Registro de cambios y auditoría del expediente." },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="rounded-lg border border-dashed p-4 flex items-start gap-3 opacity-60">
