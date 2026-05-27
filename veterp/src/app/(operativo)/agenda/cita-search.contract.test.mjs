@@ -9,6 +9,8 @@ const clientes = [
     nombre: "María García",
     telefono: "999-111-222",
     email: "maria@example.com",
+    tipo_documento_text: "dni",
+    numero_documento_text: "12345678",
     mascotas: [
       { id: "mascota-1", nombre: "Luna", codigo_text: "PAC-042" },
       { id: "mascota-2", nombre: "Rocky", codigo_text: null },
@@ -23,10 +25,11 @@ const clientes = [
   },
 ];
 
-test("filtra responsables por nombre, telefono, email, paciente y codigo", () => {
+test("filtra responsables por nombre, telefono, email, documento, paciente y codigo", () => {
   assert.deepEqual(filterClienteSearchResults(clientes, "garcia").map((result) => result.cliente.id), ["cliente-1"]);
   assert.deepEqual(filterClienteSearchResults(clientes, "999111").map((result) => result.cliente.id), ["cliente-1"]);
   assert.deepEqual(filterClienteSearchResults(clientes, "carlos@example").map((result) => result.cliente.id), ["cliente-2"]);
+  assert.deepEqual(filterClienteSearchResults(clientes, "12345678").map((result) => result.cliente.id), ["cliente-1"]);
 
   const porPaciente = filterClienteSearchResults(clientes, "luna");
   assert.equal(porPaciente[0]?.cliente.id, "cliente-1");

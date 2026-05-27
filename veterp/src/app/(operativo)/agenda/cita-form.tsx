@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { citaSchema, type CitaInput } from "@/lib/validators/agenda";
+import { formatClienteDocumento } from "@/lib/validators/clientes";
 import { createCita, getMascotasDeCliente, updateCita } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -115,6 +116,9 @@ export function CitaForm({
     () => clientes.find((cliente) => cliente.id === selectedClienteId) ?? null,
     [clientes, selectedClienteId],
   );
+  const selectedClienteDocumento = selectedCliente
+    ? formatClienteDocumento(selectedCliente.tipo_documento_text, selectedCliente.numero_documento_text)
+    : null;
   const clienteSearchResults = useMemo(
     () => filterClienteSearchResults(clientes, clienteSearch, 5),
     [clientes, clienteSearch],
@@ -246,6 +250,11 @@ export function CitaForm({
                           {[selectedCliente.telefono, selectedCliente.email].filter(Boolean).join(" / ")}
                         </p>
                       )}
+                      {selectedClienteDocumento && (
+                        <p className="truncate text-[11px] font-medium text-muted-foreground">
+                          {selectedClienteDocumento}
+                        </p>
+                      )}
                     </div>
                     <Button
                       type="button"
@@ -307,6 +316,11 @@ export function CitaForm({
                                   {(cliente.telefono || cliente.email) && (
                                     <p className="truncate text-[11px] text-muted-foreground">
                                       {[cliente.telefono, cliente.email].filter(Boolean).join(" / ")}
+                                    </p>
+                                  )}
+                                  {formatClienteDocumento(cliente.tipo_documento_text, cliente.numero_documento_text) && (
+                                    <p className="truncate text-[11px] font-medium text-muted-foreground">
+                                      {formatClienteDocumento(cliente.tipo_documento_text, cliente.numero_documento_text)}
                                     </p>
                                   )}
                                 </div>

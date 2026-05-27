@@ -26,10 +26,21 @@ function cleanCodigoPaciente(value: string | null | undefined) {
   return trimmed ? trimmed : null;
 }
 
+function cleanOptionalText(value: string | null | undefined) {
+  return value?.trim() || null;
+}
+
 function isMascotaCodigoDuplicado(error: { code?: string; message?: string } | null) {
   return (
     error?.code === "23505" &&
     /mascotas_clinica_codigo_unique|codigo_text|codigo/i.test(error.message ?? "")
+  );
+}
+
+function isClienteDocumentoDuplicado(error: { code?: string; message?: string } | null) {
+  return (
+    error?.code === "23505" &&
+    /clientes_clinica_documento_unique|documento/i.test(error.message ?? "")
   );
 }
 
@@ -48,13 +59,20 @@ export async function createCliente(input: ClienteFormValues): Promise<ClienteAc
       .insert({
         clinica_id: clinicaId,
         nombre: parsed.data.nombre,
-        telefono: parsed.data.telefono || null,
-        email: parsed.data.email || null,
+        telefono: cleanOptionalText(parsed.data.telefono),
+        email: cleanOptionalText(parsed.data.email),
+        tipo_documento_text: cleanOptionalText(parsed.data.tipo_documento_text),
+        numero_documento_text: cleanOptionalText(parsed.data.numero_documento_text),
+        direccion_principal_text: cleanOptionalText(parsed.data.direccion_principal_text),
+        referencia_direccion_text: cleanOptionalText(parsed.data.referencia_direccion_text),
       })
       .select("id")
       .single();
 
     if (error || !data) {
+      if (isClienteDocumentoDuplicado(error)) {
+        return { error: "Ya existe un cliente con ese documento." };
+      }
       return { error: "No se pudo crear el cliente en la clinica activa." };
     }
 
@@ -79,8 +97,12 @@ export async function updateCliente(clienteId: string, input: ClienteFormValues)
       .from("clientes")
       .update({
         nombre: parsed.data.nombre,
-        telefono: parsed.data.telefono || null,
-        email: parsed.data.email || null,
+        telefono: cleanOptionalText(parsed.data.telefono),
+        email: cleanOptionalText(parsed.data.email),
+        tipo_documento_text: cleanOptionalText(parsed.data.tipo_documento_text),
+        numero_documento_text: cleanOptionalText(parsed.data.numero_documento_text),
+        direccion_principal_text: cleanOptionalText(parsed.data.direccion_principal_text),
+        referencia_direccion_text: cleanOptionalText(parsed.data.referencia_direccion_text),
       })
       .eq("id", clienteId)
       .eq("clinica_id", clinicaId)
@@ -88,6 +110,9 @@ export async function updateCliente(clienteId: string, input: ClienteFormValues)
       .maybeSingle();
 
     if (error || !data) {
+      if (isClienteDocumentoDuplicado(error)) {
+        return { error: "Ya existe un cliente con ese documento." };
+      }
       return { error: "No se pudo actualizar el cliente en la clinica activa." };
     }
 

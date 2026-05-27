@@ -513,6 +513,9 @@ export async function getClientesParaAgenda() {
         nombre,
         telefono,
         email,
+        tipo_documento_text,
+        numero_documento_text,
+        direccion_principal_text,
         mascotas (
           id,
           nombre,

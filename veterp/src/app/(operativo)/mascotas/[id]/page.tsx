@@ -16,11 +16,12 @@ import {
   Clock, Calendar, ArrowLeft, NotebookPen, Phone, User,
   Stethoscope, FileText, AlertCircle, Scissors,
   BedDouble, FlaskConical, Syringe, Activity,
-  CheckCircle2,
+  CheckCircle2, IdCard, MapPin,
 } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { formatDateOnly, getAgeFromDateOnly } from "@/lib/date-only";
+import { formatClienteDocumento } from "@/lib/validators/clientes";
 
 const CITA_ESTADO_META: Record<string, { label: string; className: string }> = {
   programada: { label: "Programada", className: "bg-blue-100 text-blue-800" },
@@ -100,6 +101,10 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             : "historia";
 
   const responsable = mascota.clientes as any;
+  const responsableDocumento = formatClienteDocumento(
+    responsable?.tipo_documento_text,
+    responsable?.numero_documento_text,
+  );
 
   // Recordatorios pendientes
   const nowDay = startOfDay(now);
@@ -166,6 +171,11 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                 {responsable?.telefono && (
                   <span className="flex items-center gap-1 ml-2">
                     <Phone className="h-3.5 w-3.5" /> {responsable.telefono}
+                  </span>
+                )}
+                {responsableDocumento && (
+                  <span className="flex items-center gap-1 ml-2">
+                    <IdCard className="h-3.5 w-3.5" /> {responsableDocumento}
                   </span>
                 )}
               </p>
@@ -250,6 +260,22 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             )}
             {responsable?.email && (
               <p className="text-muted-foreground">{responsable.email}</p>
+            )}
+            {responsableDocumento && (
+              <p className="text-muted-foreground flex items-center gap-1">
+                <IdCard className="h-3.5 w-3.5" /> {responsableDocumento}
+              </p>
+            )}
+            {responsable?.direccion_principal_text && (
+              <div className="pt-1 text-muted-foreground">
+                <p className="flex items-start gap-1">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <span>{responsable.direccion_principal_text}</span>
+                </p>
+                {responsable.referencia_direccion_text ? (
+                  <p className="pl-5 text-xs">{responsable.referencia_direccion_text}</p>
+                ) : null}
+              </div>
             )}
           </CardContent>
         </Card>

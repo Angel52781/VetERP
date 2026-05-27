@@ -17,7 +17,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { clienteSchema, type ClienteFormValues } from "@/lib/validators/clientes";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  clienteSchema,
+  tipoDocumentoClienteLabels,
+  tipoDocumentoClienteValues,
+  type ClienteFormValues,
+} from "@/lib/validators/clientes";
 
 type ClienteEditDialogProps = {
   cliente: {
@@ -25,6 +37,10 @@ type ClienteEditDialogProps = {
     nombre: string;
     telefono: string | null;
     email: string | null;
+    tipo_documento_text?: string | null;
+    numero_documento_text?: string | null;
+    direccion_principal_text?: string | null;
+    referencia_direccion_text?: string | null;
   };
 };
 
@@ -40,6 +56,10 @@ export function ClienteEditDialog({ cliente }: ClienteEditDialogProps) {
       nombre: cliente.nombre,
       telefono: cliente.telefono ?? "",
       email: cliente.email ?? "",
+      tipo_documento_text: (cliente.tipo_documento_text as ClienteFormValues["tipo_documento_text"]) ?? undefined,
+      numero_documento_text: cliente.numero_documento_text ?? "",
+      direccion_principal_text: cliente.direccion_principal_text ?? "",
+      referencia_direccion_text: cliente.referencia_direccion_text ?? "",
     },
   });
 
@@ -51,6 +71,10 @@ export function ClienteEditDialog({ cliente }: ClienteEditDialogProps) {
         nombre: cliente.nombre,
         telefono: cliente.telefono ?? "",
         email: cliente.email ?? "",
+        tipo_documento_text: (cliente.tipo_documento_text as ClienteFormValues["tipo_documento_text"]) ?? undefined,
+        numero_documento_text: cliente.numero_documento_text ?? "",
+        direccion_principal_text: cliente.direccion_principal_text ?? "",
+        referencia_direccion_text: cliente.referencia_direccion_text ?? "",
       });
     }
   }
@@ -74,7 +98,7 @@ export function ClienteEditDialog({ cliente }: ClienteEditDialogProps) {
         <Pencil className="mr-2 h-4 w-4" />
         Editar cliente
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar cliente</DialogTitle>
         </DialogHeader>
@@ -97,6 +121,67 @@ export function ClienteEditDialog({ cliente }: ClienteEditDialogProps) {
               <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
             ) : null}
           </div>
+          <section className="space-y-3 rounded-lg border bg-muted/20 p-3">
+            <p className="text-sm font-semibold">Identificacion</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="edit-cliente-tipo-documento">Tipo de documento</Label>
+                <Select
+                  value={form.watch("tipo_documento_text") || "none"}
+                  onValueChange={(value) => {
+                    form.setValue(
+                      "tipo_documento_text",
+                      value === "none" ? undefined : (value as ClienteFormValues["tipo_documento_text"]),
+                      { shouldDirty: true, shouldValidate: true },
+                    );
+                    if (value === "none") {
+                      form.setValue("numero_documento_text", "", { shouldDirty: true, shouldValidate: true });
+                    }
+                  }}
+                >
+                  <SelectTrigger id="edit-cliente-tipo-documento" className="w-full">
+                    <SelectValue placeholder="Sin documento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sin documento</SelectItem>
+                    {tipoDocumentoClienteValues.map((tipo) => (
+                      <SelectItem key={tipo} value={tipo}>
+                        {tipoDocumentoClienteLabels[tipo]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.tipo_documento_text ? (
+                  <p className="text-sm text-destructive">{form.formState.errors.tipo_documento_text.message}</p>
+                ) : null}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-cliente-numero-documento">Numero de documento</Label>
+                <Input id="edit-cliente-numero-documento" {...form.register("numero_documento_text")} />
+                {form.formState.errors.numero_documento_text ? (
+                  <p className="text-sm text-destructive">{form.formState.errors.numero_documento_text.message}</p>
+                ) : null}
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-3 rounded-lg border bg-muted/20 p-3">
+            <p className="text-sm font-semibold">Direccion</p>
+            <div className="space-y-2">
+              <Label htmlFor="edit-cliente-direccion">Direccion principal</Label>
+              <Input id="edit-cliente-direccion" {...form.register("direccion_principal_text")} />
+              {form.formState.errors.direccion_principal_text ? (
+                <p className="text-sm text-destructive">{form.formState.errors.direccion_principal_text.message}</p>
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-cliente-referencia-direccion">Referencia de direccion</Label>
+              <Input id="edit-cliente-referencia-direccion" {...form.register("referencia_direccion_text")} />
+              {form.formState.errors.referencia_direccion_text ? (
+                <p className="text-sm text-destructive">{form.formState.errors.referencia_direccion_text.message}</p>
+              ) : null}
+            </div>
+          </section>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={pending}>

@@ -562,7 +562,16 @@ export async function getMascotaCompleta(mascotaId: string) {
       .from("mascotas")
       .select(`
         *,
-        clientes:cliente_id (id, nombre, telefono, email)
+        clientes:cliente_id (
+          id,
+          nombre,
+          telefono,
+          email,
+          tipo_documento_text,
+          numero_documento_text,
+          direccion_principal_text,
+          referencia_direccion_text
+        )
       `)
       .eq("clinica_id", clinicaId)
       .eq("id", mascotaId)

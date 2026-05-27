@@ -29,13 +29,15 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { SPECIES_OPTIONS } from "@/lib/patient-labels";
-import { mascotaSchema, type MascotaFormValues } from "@/lib/validators/clientes";
+import { formatClienteDocumento, mascotaSchema, type MascotaFormValues } from "@/lib/validators/clientes";
 
 type ClienteOption = {
   id: string;
   nombre: string;
   telefono: string | null;
   email: string | null;
+  tipo_documento_text?: string | null;
+  numero_documento_text?: string | null;
 };
 
 type NuevoPacienteDialogProps = {
@@ -85,6 +87,8 @@ export function NuevoPacienteDialog({ clientes }: NuevoPacienteDialogProps) {
           cliente.nombre,
           cliente.telefono,
           cliente.email,
+          formatClienteDocumento(cliente.tipo_documento_text, cliente.numero_documento_text),
+          cliente.numero_documento_text,
         ]
           .map(normalizeSearch)
           .join(" ");
@@ -185,7 +189,11 @@ export function NuevoPacienteDialog({ clientes }: NuevoPacienteDialogProps) {
               <div className="rounded-md bg-primary/5 px-3 py-2 text-sm">
                 <p className="font-medium">Seleccionado: {selectedCliente.nombre}</p>
                 <p className="text-xs text-muted-foreground">
-                  {[selectedCliente.telefono, selectedCliente.email].filter(Boolean).join(" · ") || "Sin contacto registrado"}
+                  {[
+                    selectedCliente.telefono,
+                    selectedCliente.email,
+                    formatClienteDocumento(selectedCliente.tipo_documento_text, selectedCliente.numero_documento_text),
+                  ].filter(Boolean).join(" - ") || "Sin contacto registrado"}
                 </p>
               </div>
             ) : null}
@@ -212,7 +220,11 @@ export function NuevoPacienteDialog({ clientes }: NuevoPacienteDialogProps) {
                     >
                       <p className="truncate text-sm font-semibold">{cliente.nombre}</p>
                       <p className="text-xs text-muted-foreground">
-                        {[cliente.telefono, cliente.email].filter(Boolean).join(" · ") || "Sin contacto registrado"}
+                        {[
+                          cliente.telefono,
+                          cliente.email,
+                          formatClienteDocumento(cliente.tipo_documento_text, cliente.numero_documento_text),
+                        ].filter(Boolean).join(" - ") || "Sin contacto registrado"}
                       </p>
                     </button>
                   );

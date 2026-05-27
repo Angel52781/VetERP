@@ -55,7 +55,7 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
       .order("nombre"),
     supabase
       .from("clientes")
-      .select("id, nombre, telefono, email")
+      .select("id, nombre, telefono, email, tipo_documento_text, numero_documento_text")
       .eq("clinica_id", clinicaId)
       .order("nombre"),
   ]);

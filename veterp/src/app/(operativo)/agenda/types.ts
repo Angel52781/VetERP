@@ -70,6 +70,9 @@ export type AgendaClienteSearch = {
   nombre: string;
   telefono?: string | null;
   email?: string | null;
+  tipo_documento_text?: string | null;
+  numero_documento_text?: string | null;
+  direccion_principal_text?: string | null;
   documento?: string | null;
   dni?: string | null;
   documento_text?: string | null;

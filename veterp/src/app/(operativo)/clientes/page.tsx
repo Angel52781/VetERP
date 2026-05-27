@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { PawPrint, Phone, Mail, Plus, Users } from "lucide-react";
+import { IdCard, Mail, MapPin, PawPrint, Phone, Plus, Users } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { formatMoneyPEN } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
+import { formatClienteDocumento } from "@/lib/validators/clientes";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export default async function ClientesPage() {
   const { data: clientes } = await supabase
     .from("clientes")
     .select(`
-      id, nombre, telefono, email, created_at,
+      id, nombre, telefono, email, tipo_documento_text, numero_documento_text,
+      direccion_principal_text, referencia_direccion_text, created_at,
       mascotas ( id ),
       ordenes_servicio (
         id, estado_text, started_at, created_at
@@ -64,6 +66,7 @@ export default async function ClientesPage() {
       ) : (
         <div className="divide-y rounded-lg border">
           {clientes.map((c) => {
+            const documento = formatClienteDocumento(c.tipo_documento_text, c.numero_documento_text);
             const mascotasCount = (c.mascotas as any[])?.length ?? 0;
             const ordenes = (c.ordenes_servicio as any[]) ?? [];
             const ultimaOrden = ordenes.sort(
@@ -114,7 +117,12 @@ export default async function ClientesPage() {
                       </Link>
                     ) : null}
                   </div>
-                  <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                  <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    {documento && (
+                      <span className="flex items-center gap-1">
+                        <IdCard className="h-3 w-3" /> {documento}
+                      </span>
+                    )}
                     {c.telefono && (
                       <span className="flex items-center gap-1">
                         <Phone className="h-3 w-3" /> {c.telefono}
@@ -126,6 +134,15 @@ export default async function ClientesPage() {
                       </span>
                     )}
                   </div>
+                  {c.direccion_principal_text && (
+                    <div className="mt-1 flex min-w-0 items-start gap-1 text-xs text-muted-foreground">
+                      <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+                      <span className="truncate">
+                        {c.direccion_principal_text}
+                        {c.referencia_direccion_text ? ` - ${c.referencia_direccion_text}` : ""}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Stats */}

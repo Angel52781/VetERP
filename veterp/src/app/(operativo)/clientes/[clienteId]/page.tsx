@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Phone, Mail, ArrowLeft, PawPrint, CalendarDays, Clock, ExternalLink, Wallet } from "lucide-react";
+import { Phone, Mail, ArrowLeft, PawPrint, CalendarDays, Clock, IdCard, MapPin, Wallet } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import { formatMoneyPEN } from "@/lib/money";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { getAgeFromDateOnly } from "@/lib/date-only";
 import { createClient } from "@/lib/supabase/server";
+import { formatClienteDocumento } from "@/lib/validators/clientes";
 
 import MascotaForm from "./mascota-form";
 import { AccionesContextualesCliente } from "./acciones-contextuales";
@@ -29,12 +30,16 @@ export default async function ClienteDetallePage({
 
   const { data: cliente } = await supabase
     .from("clientes")
-    .select("id, nombre, telefono, email, created_at")
+    .select(`
+      id, nombre, telefono, email, tipo_documento_text, numero_documento_text,
+      direccion_principal_text, referencia_direccion_text, created_at
+    `)
     .eq("id", clienteId)
     .eq("clinica_id", clinicaId)
     .maybeSingle();
 
   if (!cliente) notFound();
+  const documento = formatClienteDocumento(cliente.tipo_documento_text, cliente.numero_documento_text);
 
   const { data: mascotas } = await supabase
     .from("mascotas")
@@ -212,6 +217,11 @@ export default async function ClienteDetallePage({
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{cliente.nombre}</h1>
             <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
+              {documento && (
+                <span className="flex items-center gap-1.5 font-medium">
+                  <IdCard className="h-4 w-4 text-primary/70" /> {documento}
+                </span>
+              )}
               {cliente.telefono && (
                 <span className="flex items-center gap-1.5 font-medium">
                   <Phone className="h-4 w-4 text-primary/70" /> {cliente.telefono}
@@ -227,6 +237,17 @@ export default async function ClienteDetallePage({
                 Alta: {format(new Date(cliente.created_at), "dd MMM yyyy", { locale: es })}
               </span>
             </div>
+            {cliente.direccion_principal_text && (
+              <div className="mt-2 max-w-2xl rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                <p className="flex items-start gap-1.5">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
+                  <span>{cliente.direccion_principal_text}</span>
+                </p>
+                {cliente.referencia_direccion_text ? (
+                  <p className="mt-1 pl-5 text-xs">{cliente.referencia_direccion_text}</p>
+                ) : null}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
