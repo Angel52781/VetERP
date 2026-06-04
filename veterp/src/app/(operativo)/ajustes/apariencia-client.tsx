@@ -365,6 +365,38 @@ export function AparienciaClient({ apariencia, temasGuardados, canEdit, loadErro
                 {normalizedHex ? <Badge variant="outline">Color personalizado activo</Badge> : null}
               </div>
             )}
+
+            <div className="rounded-xl border bg-muted/20 p-3">
+              <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+                <div className="space-y-2">
+                  <Label htmlFor="saved-theme-name">Nombre del tema</Label>
+                  <Input
+                    id="saved-theme-name"
+                    value={themeName}
+                    onChange={(event) => setThemeName(event.target.value)}
+                    placeholder="Ej. Azul recepcion"
+                    maxLength={40}
+                    disabled={inputsDisabled || !canSaveMoreThemes}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Guarda este color como tema para reutilizarlo despues. Se guardara {themeColorToSave} desde{" "}
+                    {normalizedHex ? "el color personalizado actual" : "el color activo del preset"}.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={handleSaveTheme}
+                  disabled={inputsDisabled || !canSaveMoreThemes || hexIsInvalid}
+                >
+                  {isSavingTheme ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                  Guardar como tema
+                </Button>
+              </div>
+
+              {!canSaveMoreThemes ? (
+                <p className="mt-3 text-sm text-muted-foreground">Solo puedes guardar hasta 10 temas.</p>
+              ) : null}
+            </div>
           </CardContent>
         </Card>
 
@@ -457,37 +489,6 @@ export function AparienciaClient({ apariencia, temasGuardados, canEdit, loadErro
               </div>
             )}
 
-            <div className="rounded-xl border bg-muted/20 p-3">
-              <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-                <div className="space-y-2">
-                  <Label htmlFor="saved-theme-name">Nombre del tema</Label>
-                  <Input
-                    id="saved-theme-name"
-                    value={themeName}
-                    onChange={(event) => setThemeName(event.target.value)}
-                    placeholder="Ej. Azul recepcion"
-                    maxLength={40}
-                    disabled={inputsDisabled || !canSaveMoreThemes}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Guarda la combinacion actual para reutilizarla despues. Se guardara {themeColorToSave} desde{" "}
-                    {normalizedHex ? "el color personalizado actual" : "el color activo del preset"}.
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  onClick={handleSaveTheme}
-                  disabled={inputsDisabled || !canSaveMoreThemes || hexIsInvalid}
-                >
-                  {isSavingTheme ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                  Guardar como tema
-                </Button>
-              </div>
-
-              {!canSaveMoreThemes ? (
-                <p className="mt-3 text-sm text-muted-foreground">Solo puedes guardar hasta 10 temas.</p>
-              ) : null}
-            </div>
           </CardContent>
         </Card>
 
