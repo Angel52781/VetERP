@@ -1,7 +1,9 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import { getUserRole } from "@/lib/clinica";
+import { buildClinicThemeStyle } from "@/lib/appearance";
 import { getClinicaBranding } from "./ajustes/actions";
 
 import { OperativoNav } from "./operativo-nav";
@@ -23,13 +25,17 @@ export default async function OperativoLayout({
   const isAdminOrOwner = role === "owner" || role === "admin";
   const hideCaja = role === "veterinario" || role === "asistente";
   const clinica = clinicaRes.data;
+  const clinicThemeStyle = buildClinicThemeStyle({
+    theme_preset_text: clinica?.theme_preset_text,
+    brand_color_text: clinica?.brand_color_text,
+  }) as CSSProperties;
 
   return (
-    <div className="flex flex-1">
-      <aside className="hidden w-72 border-r bg-background px-4 py-6 md:block">
+    <div className="flex flex-1" style={{ ...clinicThemeStyle, backgroundColor: "var(--brand-surface)" }}>
+      <aside className="hidden w-72 border-r px-4 py-6 md:block" style={{ backgroundColor: "var(--brand-sidebar-surface)" }}>
         <div className="mb-8 px-1">
           <Link href="/app" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
               {clinica?.logo_url ? (
                 <img src={clinica.logo_url} alt="Logo" className="w-full h-full object-contain" />
               ) : (
@@ -57,7 +63,7 @@ export default async function OperativoLayout({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b px-4 py-3">
+        <header className="flex items-center justify-between border-b bg-background/95 px-4 py-3 shadow-[inset_0_-2px_0_var(--brand-border)]">
           <div className="flex items-center gap-2">
             <Link href="/app" className="font-bold tracking-tight text-sm md:hidden">
               {clinica?.nombre || "VetERP"}

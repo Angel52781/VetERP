@@ -71,7 +71,10 @@ export function OperativoNav({ mobile = false, isAdminOrOwner, hideCaja }: Opera
                   variant: mobile ? "outline" : "ghost",
                   className: mobile ? "h-8 whitespace-nowrap px-3 text-xs" : "w-full justify-start",
                 }),
-                active && (mobile ? "border-primary text-primary" : "bg-muted text-foreground"),
+                active &&
+                  (mobile
+                    ? "border-primary bg-[var(--brand-soft)] text-primary shadow-sm"
+                    : "border border-[var(--brand-border)] bg-[var(--brand-sidebar-active)] text-primary shadow-sm"),
               )}
             >
               {item.label}

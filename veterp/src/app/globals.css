@@ -59,6 +59,15 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
+  --brand: var(--primary);
+  --brand-foreground: var(--primary-foreground);
+  --brand-hover: color-mix(in srgb, var(--brand) 84%, black);
+  --brand-soft: color-mix(in srgb, var(--brand) 10%, white);
+  --brand-border: color-mix(in srgb, var(--brand) 28%, white);
+  --brand-surface: color-mix(in srgb, var(--brand) 6%, white);
+  --brand-sidebar-surface: color-mix(in srgb, var(--brand) 8%, white);
+  --brand-sidebar-active: color-mix(in srgb, var(--brand) 14%, white);
+  --brand-ring: var(--ring);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);

@@ -1,5 +1,53 @@
 import { z } from "zod";
 
+import { themePresetValues } from "@/lib/appearance";
+
+export const themePresetSchema = z.enum(themePresetValues, {
+  message: "Selecciona un tema valido",
+});
+
+export const brandColorSchema = z.preprocess(
+  (value) => {
+    if (value == null) {
+      return null;
+    }
+
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const color = value.trim();
+    return color ? color.toUpperCase() : null;
+  },
+  z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/, { message: "Usa un color HEX valido en formato #RRGGBB" })
+    .nullable(),
+);
+
+export const aparienciaClinicaSchema = z.object({
+  theme_preset_text: themePresetSchema,
+  brand_color_text: brandColorSchema,
+});
+
+export type AparienciaClinicaInput = z.infer<typeof aparienciaClinicaSchema>;
+
+export const temaGuardadoClinicaSchema = z.object({
+  nombre_text: z
+    .string()
+    .trim()
+    .min(1, { message: "El nombre del tema es obligatorio." })
+    .max(40, { message: "El nombre del tema no puede superar 40 caracteres." }),
+  theme_preset_text: themePresetSchema,
+  brand_color_text: z.preprocess(
+    (value) => (typeof value === "string" ? value.trim().toUpperCase() : value),
+    z.string().regex(/^#[0-9A-F]{6}$/, { message: "El color debe tener formato #RRGGBB." }),
+  ),
+  orden_int: z.coerce.number().int().min(0, { message: "El orden del tema no puede ser negativo." }).optional().default(0),
+});
+
+export type TemaGuardadoClinicaInput = z.infer<typeof temaGuardadoClinicaSchema>;
+
 export const itemCatalogoSchema = z.object({
   nombre: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres" }),
   descripcion: z.string().optional(),
