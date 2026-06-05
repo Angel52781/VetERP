@@ -20,6 +20,7 @@ import {
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { formatDateOnly, getAgeFromDateOnly } from "@/lib/date-only";
+import { getCitaAreaLabel, normalizeCitaArea } from "@/app/(operativo)/agenda/types";
 
 const CITA_ESTADO_META: Record<string, { label: string; className: string }> = {
   programada: { label: "Programada", className: "bg-blue-100 text-blue-800" },
@@ -36,6 +37,11 @@ const ORDEN_ESTADO: Record<string, { label: string; cls: string }> = {
   in_progress: { label: "En atención", cls: "bg-blue-100 text-blue-800" },
   finished: { label: "Finalizada", cls: "bg-green-100 text-green-800" },
   closed: { label: "Cerrada", cls: "bg-muted text-muted-foreground" },
+};
+
+const GROOMING_STATUS_META: Record<string, { label: string; className: string }> = {
+  pendiente: { label: "Pendiente", className: "bg-amber-100 text-amber-800" },
+  completado: { label: "Completado", className: "bg-emerald-100 text-emerald-800" },
 };
 
 interface PageProps {
@@ -97,6 +103,14 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             : "historia";
 
   const responsable = mascota.clientes as any;
+  const groomingCitas = (citas ?? []).filter((cita: any) => {
+    const area = normalizeCitaArea((cita.tipo_citas as any)?.area);
+    return area === "grooming" || area === "banos";
+  });
+  const citasNoGrooming = (citas ?? []).filter((cita: any) => {
+    const area = normalizeCitaArea((cita.tipo_citas as any)?.area);
+    return area !== "grooming" && area !== "banos";
+  });
 
   // Recordatorios pendientes
   const nowDay = startOfDay(now);
@@ -533,6 +547,11 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                               ? format(new Date(orden.started_at), "dd/MM/yyyy HH:mm")
                               : format(new Date(orden.created_at), "dd/MM/yyyy HH:mm")}
                           </p>
+                          {orden.staff_member?.email && (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Atendido por: {orden.staff_member.email}
+                            </p>
+                          )}
                         </div>
                         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                           <span className={`text-xs px-2 py-0.5 rounded-full ${st.cls}`}>{st.label}</span>
@@ -561,9 +580,66 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               <CardTitle className="text-base">Historial de citas</CardTitle>
             </CardHeader>
             <CardContent>
-              {citas && citas.length > 0 ? (
+              {groomingCitas.length > 0 ? (
+                <Card className="mb-4 border-primary/20 bg-primary/5">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Scissors className="h-4 w-4 text-primary" />
+                      Grooming y banos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {groomingCitas.map((cita: any) => {
+                      const grooming = cita.grooming_servicios?.[0] ?? null;
+                      const areaLabel = getCitaAreaLabel((cita.tipo_citas as any)?.area);
+                      const groomingStatus =
+                        grooming?.estado_text && GROOMING_STATUS_META[grooming.estado_text]
+                          ? GROOMING_STATUS_META[grooming.estado_text]
+                          : CITA_ESTADO_META[cita.estado] ?? CITA_ESTADO_META.programada;
+                      const notes = [
+                        grooming?.servicios_realizados_text,
+                        grooming?.observaciones_text,
+                        cita.notas_text,
+                      ].filter((value) => typeof value === "string" && value.trim().length > 0);
+
+                      return (
+                        <div key={cita.id} className="rounded-lg border bg-background p-3">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="font-medium">{(cita.tipo_citas as any)?.nombre ?? "Servicio de grooming"}</p>
+                                <Badge variant="secondary">{areaLabel}</Badge>
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${groomingStatus.className}`}>
+                                  {groomingStatus.label}
+                                </span>
+                              </div>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {format(new Date(cita.start_date), "dd MMM yyyy, HH:mm", { locale: es })}
+                              </p>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                Responsable: {cita.clientes?.nombre ?? responsable?.nombre ?? "No disponible"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {notes.length > 0 ? (
+                            <div className="mt-3 space-y-2">
+                              {notes.map((note, index) => (
+                                <div key={`${cita.id}-note-${index}`} className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900 ring-1 ring-amber-200">
+                                  {note}
+                                </div>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+              ) : null}
+              {citasNoGrooming.length > 0 ? (
                 <div className="divide-y rounded-md border">
-                  {citas.map((cita) => {
+                  {citasNoGrooming.map((cita) => {
                     const est = CITA_ESTADO_META[cita.estado] ?? CITA_ESTADO_META.programada;
                     return (
                       <div key={cita.id} className="flex items-start justify-between gap-3 p-3 hover:bg-muted/40 text-sm">
@@ -598,6 +674,8 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                     );
                   })}
                 </div>
+              ) : groomingCitas.length > 0 ? (
+                <p className="text-sm text-muted-foreground">No hay otras citas registradas.</p>
               ) : (
                 <p className="text-sm text-muted-foreground">Sin citas registradas.</p>
               )}
@@ -611,7 +689,6 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Módulos próximos</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: Scissors, label: "Grooming", desc: "Historial de baños, cortes y observaciones de manejo." },
             { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },
             { icon: Syringe, label: "Procedimientos", desc: "Cirugías, vacunas y procedimientos clínicos." },
             { icon: FolderOpen, label: "Archivos adjuntos", desc: "Radiografías, ecografías y documentos." },

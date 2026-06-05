@@ -123,6 +123,11 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
               </>
             ) : null}
           </div>
+          {orden.staff_member?.email ? (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Atendido por: <span className="font-medium text-foreground">{orden.staff_member.email}</span>
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className={`px-4 py-2 rounded-full font-medium text-sm ${getToneBadgeClass(ordenStatusMeta.tone)}`}>
@@ -224,6 +229,10 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
                       ? format(new Date(orden.started_at), "dd/MM/yyyy HH:mm", { locale: es })
                       : "—"}
                   </p>
+                </div>
+                <div>
+                  <p className="font-medium text-muted-foreground">Atendido por</p>
+                  <p>{orden.staff_member?.email || "No disponible"}</p>
                 </div>
                 {orden.finished_at && (
                   <div>

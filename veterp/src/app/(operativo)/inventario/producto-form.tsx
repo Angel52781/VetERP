@@ -28,6 +28,7 @@ interface Props {
     precio_inc: number;
     costo_referencial: number | null;
     stock_minimo: number;
+    fecha_vencimiento: string | null;
     is_disabled: boolean;
     proveedor_id: string | null;
     categoria_id: string | null;
@@ -53,6 +54,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
       precio_inc: initialData?.precio_inc ?? 0,
       costo_referencial: initialData?.costo_referencial ?? undefined,
       stock_minimo: initialData?.stock_minimo ?? 0,
+      fecha_vencimiento: initialData?.fecha_vencimiento ?? "",
       proveedor_id: initialData?.proveedor_id ?? undefined,
       categoria_id: initialData?.categoria_id ?? undefined,
       is_disabled: initialData?.is_disabled ?? false,
@@ -74,6 +76,7 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
       precio_inc: Number(values.precio_inc),
       costo_referencial: values.costo_referencial ? Number(values.costo_referencial) : null,
       stock_minimo: Number(values.stock_minimo ?? 0),
+      fecha_vencimiento: values.kind === "producto" ? values.fecha_vencimiento || null : null,
       proveedor_id: values.proveedor_id || null,
       categoria_id: values.categoria_id || null,
       is_disabled: values.is_disabled ?? false,
@@ -153,6 +156,14 @@ export function ProductoForm({ initialData, proveedores, categorias, almacenes, 
               <FormItem>
                 <FormLabel>Stock mínimo</FormLabel>
                 <FormControl><Input type="number" min="0" {...field} value={Number(field.value)} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="fecha_vencimiento" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fecha de vencimiento</FormLabel>
+                <FormControl><Input type="date" {...field} value={field.value ?? ""} /></FormControl>
+                <p className="text-xs text-muted-foreground">Opcional. Se usa para mostrar el estado del producto.</p>
                 <FormMessage />
               </FormItem>
             )} />

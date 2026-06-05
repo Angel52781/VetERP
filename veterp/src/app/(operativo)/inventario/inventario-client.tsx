@@ -12,6 +12,7 @@ import { ProductoForm } from "./producto-form";
 import { MovimientoForm } from "./movimiento-form";
 import { KardexModal } from "./kardex-modal";
 import type { ProductoInventario } from "./types";
+import { getExpirationMeta } from "@/lib/inventory-expiration";
 
 interface Props {
   productos: ProductoInventario[];
@@ -49,11 +50,13 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
 
   const sinStock = productosFiltrados.filter((p) => !p.is_disabled && p.stock <= 0).length;
   const stockBajo = productosFiltrados.filter((p) => !p.is_disabled && p.stock > 0 && p.stock <= p.stock_minimo && p.stock_minimo > 0).length;
+  const vencidos = productosFiltrados.filter((p) => !p.is_disabled && getExpirationMeta(p.fecha_vencimiento).status === "expired").length;
+  const proximosAVencer = productosFiltrados.filter((p) => !p.is_disabled && getExpirationMeta(p.fecha_vencimiento).status === "warning").length;
 
   return (
     <div className="space-y-5">
       {/* Alertas globales */}
-      {(sinStock > 0 || stockBajo > 0) && (
+      {(sinStock > 0 || stockBajo > 0 || vencidos > 0 || proximosAVencer > 0) && (
         <div className="flex flex-wrap gap-3">
           {sinStock > 0 && (
             <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -65,6 +68,18 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
             <div className="flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-orange-700">
               <AlertTriangle className="h-4 w-4" />
               <span><strong>{stockBajo}</strong> producto{stockBajo > 1 ? "s" : ""} bajo stock mínimo</span>
+            </div>
+          )}
+          {vencidos > 0 && (
+            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <AlertTriangle className="h-4 w-4" />
+              <span><strong>{vencidos}</strong> producto{vencidos > 1 ? "s" : ""} vencido{vencidos > 1 ? "s" : ""}</span>
+            </div>
+          )}
+          {proximosAVencer > 0 && (
+            <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+              <AlertTriangle className="h-4 w-4" />
+              <span><strong>{proximosAVencer}</strong> producto{proximosAVencer > 1 ? "s" : ""} vence pronto</span>
             </div>
           )}
         </div>
@@ -117,6 +132,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
               <TableHead>Producto</TableHead>
               <TableHead>Categoría</TableHead>
               <TableHead className="text-right">Stock</TableHead>
+              <TableHead>Vencimiento</TableHead>
               <TableHead className="text-right">Precio (S/.)</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead className="w-[160px]">Acciones</TableHead>
@@ -125,7 +141,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
           <TableBody>
             {productosFiltrados.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center">
+                <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center gap-2 text-muted-foreground">
                     <Package className="h-8 w-8 opacity-30" />
                     <p className="text-sm">No hay productos que coincidan con los filtros.</p>
@@ -136,6 +152,7 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
               productosFiltrados.map((p) => {
                 const sinStockItem = !p.is_disabled && p.stock <= 0;
                 const stockBajoItem = !p.is_disabled && p.stock > 0 && p.stock_minimo > 0 && p.stock <= p.stock_minimo;
+                const expiration = getExpirationMeta(p.fecha_vencimiento);
                 return (
                   <TableRow key={p.id} className={p.is_disabled ? "opacity-50" : ""}>
                     <TableCell>
@@ -155,6 +172,16 @@ export function InventarioClient({ productos, almacenes, proveedores, categorias
                       {(sinStockItem || stockBajoItem) && (
                         <AlertTriangle className={`h-3 w-3 inline ml-1 ${sinStockItem ? "text-red-500" : "text-orange-500"}`} />
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <Badge variant="outline" className={`text-[10px] ${expiration.className}`}>
+                          {expiration.label}
+                        </Badge>
+                        <div className="text-xs text-muted-foreground">
+                          {expiration.formattedDate ?? "No registrada"}
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right text-sm font-medium">
                       {Number(p.precio_inc).toFixed(2)}

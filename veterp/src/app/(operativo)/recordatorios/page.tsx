@@ -205,7 +205,7 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
         </Badge>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
         {(["vencidos", "7d", "30d"] as const).map((item) => (
           <Link
             key={item}
@@ -305,11 +305,11 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
                       </div>
                     </div>
 
-                    <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+                    <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
                       {paciente?.id ? (
                         <Link
                           href={`/mascotas/${paciente.id}?returnTo=${encodeURIComponent(`/recordatorios?filtro=${filtro}`)}`}
-                          className={buttonVariants({ variant: "outline", size: "sm" })}
+                          className={buttonVariants({ variant: "outline", size: "sm", className: "w-full sm:w-auto" })}
                         >
                           Ver paciente
                         </Link>
@@ -317,7 +317,7 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
                       {recordatorio.orden_id ? (
                         <Link
                           href={`/orden_y_colas/${recordatorio.orden_id}?returnTo=${encodeURIComponent(`/recordatorios?filtro=${filtro}`)}`}
-                          className={buttonVariants({ variant: "ghost", size: "sm" })}
+                          className={buttonVariants({ variant: "ghost", size: "sm", className: "w-full sm:w-auto" })}
                         >
                           Ver atencion
                         </Link>

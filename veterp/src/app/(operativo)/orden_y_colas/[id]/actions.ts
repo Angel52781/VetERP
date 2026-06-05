@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireClinicaIdFromCookies } from "@/lib/clinica";
 import { entradaClinicaSchema, EntradaClinicaInput, adjuntoSchema, AdjuntoInput } from "@/lib/validators/atencion";
 import { v4 as uuidv4 } from "uuid";
+import { getClinicaStaffDirectory } from "@/lib/staff-directory";
 
 async function ensureOrdenInClinica(supabase: any, clinicaId: string, ordenId: string) {
   const { data: orden } = await supabase
@@ -96,6 +97,18 @@ export async function getOrdenCompleta(id: string) {
           adjunto.archivo_url = signedUrlData.signedUrl;
         }
       }
+    }
+
+    if (data?.staff_user_id) {
+      const staffRes = await getClinicaStaffDirectory([data.staff_user_id]);
+      const staffMember = staffRes.data[0] ?? null;
+      return {
+        error: null,
+        data: {
+          ...data,
+          staff_member: staffMember,
+        },
+      };
     }
 
     return { error: null, data };

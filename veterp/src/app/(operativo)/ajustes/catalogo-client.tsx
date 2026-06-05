@@ -46,6 +46,7 @@ import { z } from "zod";
 
 import { itemCatalogoSchema, ItemCatalogoInput } from "@/lib/validators/ajustes";
 import { createItemCatalogo, updateItemCatalogo } from "./actions";
+import { getExpirationMeta } from "@/lib/inventory-expiration";
 
 interface ItemCatalogo {
   id: string;
@@ -53,6 +54,7 @@ interface ItemCatalogo {
   descripcion: string | null;
   kind: string;
   precio_inc: number;
+  fecha_vencimiento: string | null;
   is_disabled: boolean;
   proveedores: { nombre: string } | null;
   proveedor_id: string | null;
@@ -91,6 +93,7 @@ export function ItemCatalogoForm({
       descripcion: initialData?.descripcion || "",
       kind: (initialData?.kind as any) || "producto",
       precio_inc: initialData?.precio_inc || 0,
+      fecha_vencimiento: initialData?.fecha_vencimiento || "",
       proveedor_id: initialData?.proveedor_id || "",
       categoria_id: initialData?.categoria_id || "",
       is_disabled: initialData?.is_disabled || false,
@@ -105,6 +108,8 @@ export function ItemCatalogoForm({
     // Convert empty string or "none" to null for UUID fields
     const payload = {
       ...data,
+      fecha_vencimiento:
+        data.kind === "producto" ? (data.fecha_vencimiento === "" ? null : data.fecha_vencimiento) : null,
       proveedor_id: data.proveedor_id === "" || data.proveedor_id === "none" ? null : data.proveedor_id,
       categoria_id: data.categoria_id === "" || data.categoria_id === "none" ? null : data.categoria_id,
     };
@@ -201,6 +206,25 @@ export function ItemCatalogoForm({
             )}
           />
         </div>
+
+        {form.watch("kind") === "producto" && (
+          <FormField
+            control={form.control}
+            name="fecha_vencimiento"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fecha de vencimiento</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} value={field.value ?? ""} />
+                </FormControl>
+                <p className="text-xs text-muted-foreground">
+                  Opcional. Permite marcar el producto como vencido, próximo a vencer o vigente.
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
@@ -447,6 +471,7 @@ export function CatalogoList({
             <TableRow>
               <TableHead>Nombre</TableHead>
               <TableHead>Tipo / Categoría</TableHead>
+              <TableHead>Vencimiento</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead className="w-[80px]"></TableHead>
@@ -455,7 +480,7 @@ export function CatalogoList({
           <TableBody>
             {paginatedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                   No se encontraron resultados para los filtros actuales.
                 </TableCell>
               </TableRow>
@@ -481,6 +506,25 @@ export function CatalogoList({
                         </span>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    {item.kind === "producto" ? (
+                      (() => {
+                        const expiration = getExpirationMeta(item.fecha_vencimiento);
+                        return (
+                          <div className="space-y-1">
+                            <Badge variant="outline" className={expiration.className}>
+                              {expiration.label}
+                            </Badge>
+                            <div className="text-xs text-muted-foreground">
+                              {expiration.formattedDate ?? "No registrada"}
+                            </div>
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      <span className="text-xs text-muted-foreground">No aplica</span>
+                    )}
                   </TableCell>
                   <TableCell>${Number(item.precio_inc).toFixed(2)}</TableCell>
                   <TableCell>

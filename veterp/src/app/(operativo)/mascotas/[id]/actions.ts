@@ -10,6 +10,7 @@ import {
   SeguimientoClinicoInput,
 } from "@/lib/validators/seguimiento";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
+import { getClinicaStaffDirectory } from "@/lib/staff-directory";
 
 const SEGUIMIENTOS_TABLE = "seguimientos_clinicos";
 
@@ -255,7 +256,7 @@ export async function getMascotaCompleta(mascotaId: string) {
     supabase
       .from("ordenes_servicio")
       .select(`
-        id, estado_text, created_at, started_at, finished_at,
+        id, estado_text, created_at, started_at, finished_at, staff_user_id,
         entradas_clinicas ( 
           id, orden_id, created_at, tipo_text, texto_text,
           motivo_consulta_text, peso_kg_num, temperatura_c_num,
@@ -271,8 +272,15 @@ export async function getMascotaCompleta(mascotaId: string) {
     supabase
       .from("citas")
       .select(`
-        id, start_date, estado, notas_text,
-        tipo_citas:tipo_cita_id (nombre, color)
+        id, start_date, end_date, estado, notas_text,
+        clientes:cliente_id ( nombre ),
+        tipo_citas:tipo_cita_id (nombre, color, area),
+        grooming_servicios (
+          estado_text,
+          observaciones_text,
+          servicios_realizados_text,
+          completado_at
+        )
       `)
       .eq("clinica_id", clinicaId)
       .eq("mascota_id", mascotaId)
@@ -304,6 +312,18 @@ export async function getMascotaCompleta(mascotaId: string) {
 
   const seguimientos = await loadSeguimientosWithRecovery(supabase, clinicaId, mascotaId);
   const hospitalizaciones = hospitalizacionesRes.data ?? [];
+  const ordenes = ordenesRes.data ?? [];
+  const staffUserIds = Array.from(
+    new Set(
+      ordenes
+        .map((orden: any) => orden.staff_user_id)
+        .filter((staffUserId: string | null | undefined): staffUserId is string => Boolean(staffUserId)),
+    ),
+  );
+  const staffDirectoryRes = staffUserIds.length > 0
+    ? await getClinicaStaffDirectory(staffUserIds)
+    : { error: null, data: [] as Array<{ userId: string; role: string | null; email: string | null }> };
+  const staffById = new Map(staffDirectoryRes.data.map((entry) => [entry.userId, entry]));
   const hospitalizacionIds = hospitalizaciones.map((h: any) => h.id).filter(Boolean);
   const controlesRes = hospitalizacionIds.length
     ? await supabase
@@ -338,7 +358,10 @@ export async function getMascotaCompleta(mascotaId: string) {
 
   return { 
     mascota: mascotaRes.data, 
-    ordenes: ordenesRes.data ?? [],
+    ordenes: ordenes.map((orden: any) => ({
+      ...orden,
+      staff_member: orden.staff_user_id ? staffById.get(orden.staff_user_id) ?? null : null,
+    })),
     citas: citasRes.data ?? [],
     tiposCita: tiposCitaRes.data ?? [],
     seguimientos: seguimientos.data,
