@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { format, addDays, isBefore, isAfter, startOfDay, parseISO } from "date-fns";
+import { useRef, useState, useTransition } from "react";
+import { format, addDays, isBefore, startOfDay, parseISO } from "date-fns";
 import { 
   Plus, 
   Calendar, 
   AlertCircle, 
   Clock, 
   CheckCircle2, 
-  ChevronRight,
   ShieldCheck,
   Stethoscope
 } from "lucide-react";
@@ -47,8 +46,19 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { seguimientoClinicoSchema, type SeguimientoClinicoInput } from "@/lib/validators/seguimiento";
-import { createSeguimientoClinico } from "@/app/(operativo)/mascotas/[id]/actions";
+import {
+  getSeguimientoEstadoLabel,
+  getSeguimientoTipoLabel,
+  getRecurrenciaLabel,
+  formatRecurrencia,
+  recordatorioSchema,
+  type RecordatorioInput,
+} from "@/lib/validators/recordatorios";
+import {
+  cancelarSeguimientoClinico,
+  createSeguimientoClinico,
+  resolverSeguimientoClinico,
+} from "@/app/(operativo)/mascotas/[id]/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -60,6 +70,8 @@ interface Seguimiento {
   fecha_aplicacion_date: string;
   proxima_fecha_date: string | null;
   notas_text: string | null;
+  recurrencia_unidad_text?: string | null;
+  recurrencia_cada_int?: number | null;
   resolucion_notas_text?: string | null;
   created_at: string;
 }
@@ -70,6 +82,7 @@ interface SeguimientosCardProps {
   seguimientos: Seguimiento[];
   featureUnavailable?: boolean;
   featureUnavailableReason?: string;
+  showOperationalActions?: boolean;
 }
 
 export function SeguimientosCard({
@@ -78,15 +91,19 @@ export function SeguimientosCard({
   seguimientos,
   featureUnavailable = false,
   featureUnavailableReason,
+  showOperationalActions = false,
 }: SeguimientosCardProps) {
   const [open, setOpen] = useState(false);
+  const [pendingSeguimientoId, setPendingSeguimientoId] = useState<string | null>(null);
+  const [isActionPending, startActionTransition] = useTransition();
+  const actionInFlightRef = useRef(false);
   const router = useRouter();
   const now = startOfDay(new Date());
 
   const getStatus = (proximaFecha: string | null, estado?: string | null) => {
-    if (estado === "resuelto") return { label: "Resuelto", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle2 };
-    if (estado === "cancelado") return { label: "Cancelado", color: "bg-muted text-muted-foreground", icon: AlertCircle };
-    if (!proximaFecha) return { label: "Al día", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle2 };
+    if (estado === "resuelto") return { label: getSeguimientoEstadoLabel(estado), color: "bg-emerald-100 text-emerald-800", icon: CheckCircle2 };
+    if (estado === "cancelado") return { label: getSeguimientoEstadoLabel(estado), color: "bg-muted text-muted-foreground", icon: AlertCircle };
+    if (!proximaFecha) return { label: getSeguimientoEstadoLabel("pendiente"), color: "bg-amber-100 text-amber-800", icon: Clock };
     
     const date = parseISO(proximaFecha);
     const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -103,9 +120,70 @@ export function SeguimientosCard({
     return { label: "Al día", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle2 };
   };
 
+  const isSeguimientoPending = (seguimiento: Seguimiento) =>
+    !seguimiento.estado_text || seguimiento.estado_text === "pendiente";
+
+  const isSeguimientoRecurrente = (seguimiento: Seguimiento) =>
+    Boolean(
+      seguimiento.recurrencia_unidad_text &&
+        seguimiento.recurrencia_cada_int &&
+        seguimiento.proxima_fecha_date,
+    );
+
+  const runSeguimientoAction = (
+    seguimientoId: string,
+    action: () => Promise<{ error: string | null; data: unknown }>,
+    getSuccessMessage: () => string,
+  ) => {
+    if (actionInFlightRef.current) return;
+    actionInFlightRef.current = true;
+    setPendingSeguimientoId(seguimientoId);
+
+    startActionTransition(async () => {
+      try {
+        const result = await action();
+        if (result.error) {
+          toast.error(result.error);
+          return;
+        }
+
+        toast.success(getSuccessMessage());
+        router.refresh();
+      } finally {
+        actionInFlightRef.current = false;
+        setPendingSeguimientoId(null);
+      }
+    });
+  };
+
+  const handleResolve = (seguimiento: Seguimiento) => {
+    if (!window.confirm("¿Marcar este seguimiento como resuelto?")) return;
+
+    const crearSiguiente = isSeguimientoRecurrente(seguimiento)
+      ? window.confirm("Este seguimiento es recurrente. ¿Programar automáticamente el próximo?")
+      : false;
+
+    runSeguimientoAction(
+      seguimiento.id,
+      () => resolverSeguimientoClinico(seguimiento.id, { crear_siguiente: crearSiguiente }),
+      () => (crearSiguiente ? "Seguimiento resuelto y próximo programado" : "Seguimiento resuelto"),
+    );
+  };
+
+  const handleCancel = (seguimiento: Seguimiento) => {
+    if (!window.confirm("¿Cancelar este seguimiento? Dejará de aparecer como pendiente.")) return;
+
+    runSeguimientoAction(
+      seguimiento.id,
+      () => cancelarSeguimientoClinico(seguimiento.id),
+      () => "Seguimiento cancelado",
+    );
+  };
+
   // Resumen
-  const vencidos = seguimientos.filter(s => s.proxima_fecha_date && isBefore(parseISO(s.proxima_fecha_date), now));
+  const vencidos = seguimientos.filter(s => isSeguimientoPending(s) && s.proxima_fecha_date && isBefore(parseISO(s.proxima_fecha_date), now));
   const proximos7 = seguimientos.filter(s => {
+    if (!isSeguimientoPending(s)) return false;
     if (!s.proxima_fecha_date) return false;
     const date = parseISO(s.proxima_fecha_date);
     return !isBefore(date, now) && isBefore(date, addDays(now, 8));
@@ -192,18 +270,20 @@ export function SeguimientosCard({
               {seguimientos.map((s) => {
                 const status = getStatus(s.proxima_fecha_date, s.estado_text);
                 const StatusIcon = status.icon;
+                const showActions = showOperationalActions && isSeguimientoPending(s);
+                const isCurrentActionPending = pendingSeguimientoId === s.id && isActionPending;
                 
                 return (
-                  <div key={s.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/30 transition-colors group">
-                    <div className="flex items-center gap-4">
+                  <div key={s.id} className="flex flex-col gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-w-0 items-center gap-4">
                       <div className={`p-2 rounded-full ${s.tipo_text === 'vacuna' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
                         {s.tipo_text === 'vacuna' ? <ShieldCheck className="h-5 w-5" /> : <Stethoscope className="h-5 w-5" />}
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <h4 className="font-semibold text-sm">{s.nombre_text}</h4>
                           <Badge variant="secondary" className="text-[10px] uppercase font-bold py-0">
-                            {s.tipo_text}
+                            {getSeguimientoTipoLabel(s.tipo_text)}
                           </Badge>
                         </div>
                         <div className="text-xs text-muted-foreground mt-1 flex items-center gap-3">
@@ -217,15 +297,40 @@ export function SeguimientosCard({
                               Próximo: {format(parseISO(s.proxima_fecha_date), "dd/MM/yyyy")}
                             </span>
                           )}
+                          {s.recurrencia_unidad_text && s.recurrencia_cada_int && (
+                            <span className="flex items-center gap-1">
+                              ↻ {formatRecurrencia(s.recurrencia_cada_int, s.recurrencia_unidad_text)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
                       <Badge className={`${status.color} border-none flex items-center gap-1 px-2`}>
                         <StatusIcon className="h-3 w-3" />
                         {status.label}
                       </Badge>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {showActions && (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => handleResolve(s)}
+                            disabled={isActionPending || isCurrentActionPending}
+                          >
+                            Resolver
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCancel(s)}
+                            disabled={isActionPending || isCurrentActionPending}
+                          >
+                            Cancelar
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
@@ -249,8 +354,8 @@ function SeguimientoForm({
   featureUnavailable: boolean;
   onSuccess: () => void;
 }) {
-  const form = useForm<SeguimientoClinicoInput>({
-    resolver: zodResolver(seguimientoClinicoSchema),
+  const form = useForm<RecordatorioInput>({
+    resolver: zodResolver(recordatorioSchema),
     defaultValues: {
       mascota_id: mascotaId,
       orden_id: ordenId,
@@ -259,10 +364,12 @@ function SeguimientoForm({
       fecha_aplicacion_date: format(new Date(), "yyyy-MM-dd"),
       proxima_fecha_date: "",
       notas_text: "",
+      recurrencia_unidad_text: null,
+      recurrencia_cada_int: null,
     },
   });
 
-  const onSubmit = async (values: SeguimientoClinicoInput) => {
+  const onSubmit = async (values: RecordatorioInput) => {
     if (featureUnavailable) {
       toast.error("Seguimientos clínicos no disponible: aplica la migración 0013.");
       return;
@@ -272,6 +379,8 @@ function SeguimientoForm({
     const payload = {
       ...values,
       proxima_fecha_date: values.proxima_fecha_date || undefined,
+      recurrencia_unidad_text: values.recurrencia_unidad_text ?? null,
+      recurrencia_cada_int: values.recurrencia_cada_int ?? null,
     };
     
     const result = await createSeguimientoClinico(payload);
@@ -296,7 +405,9 @@ function SeguimientoForm({
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccione tipo" />
+                    <SelectValue placeholder="Seleccione tipo">
+                      {getSeguimientoTipoLabel(field.value)}
+                    </SelectValue>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -345,12 +456,82 @@ function SeguimientoForm({
               <FormItem>
                 <FormLabel>Próxima Fecha (Opcional)</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="recurrencia_cada_int"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Repetir cada (Opcional)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    placeholder="Ej. 1, 6"
+                    value={field.value ?? ""}
+                    onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="recurrencia_unidad_text"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unidad</FormLabel>
+                  <Select
+                    onValueChange={(val) => {
+                      if (val === "none") {
+                        field.onChange(null);
+                        form.setValue("recurrencia_cada_int", null, {
+                          shouldDirty: true,
+                          shouldValidate: false,
+                        });
+                        form.clearErrors(["recurrencia_unidad_text", "recurrencia_cada_int"]);
+                        return;
+                      }
+
+                      field.onChange(val);
+                    }}
+                    value={field.value ?? "none"}
+                  >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sin repetición">
+                        {getRecurrenciaLabel(field.value)}
+                      </SelectValue>
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="none">Sin repetición</SelectItem>
+                    <SelectItem value="dias">Días</SelectItem>
+                    <SelectItem value="semanas">Semanas</SelectItem>
+                    <SelectItem value="meses">Meses</SelectItem>
+                    <SelectItem value="anios">Años</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {form.watch("recurrencia_unidad_text") ? (
+            <p>Al resolverlo, podrás crear el siguiente seguimiento automáticamente.</p>
+          ) : (
+            <p>No se generará un próximo seguimiento automáticamente.</p>
+          )}
         </div>
 
         <FormField
@@ -363,7 +544,8 @@ function SeguimientoForm({
                 <Textarea 
                   placeholder="Observaciones adicionales..." 
                   className="resize-none"
-                  {...field} 
+                  {...field}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />

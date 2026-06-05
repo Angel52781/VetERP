@@ -8,6 +8,7 @@ import { ShieldCheck, Stethoscope } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
 
 type FiltroRecordatorios = "vencidos" | "7d" | "30d";
 
@@ -68,18 +69,6 @@ const filtros: Array<{
     countClass: "text-blue-700",
   },
 ];
-
-const tipoLabels: Record<string, string> = {
-  vacuna: "Vacuna",
-  control: "Control",
-  llamar_responsable: "Llamar responsable",
-  aplicar_dosis: "Aplicar dosis",
-  muestra_pendiente: "Muestra pendiente",
-  revision: "Revisión",
-  post_consulta: "Post consulta",
-  administrativo: "Administrativo",
-  laboratorio: "Laboratorio",
-};
 
 function getFiltroItems(
   filtro: FiltroRecordatorios,
@@ -181,7 +170,7 @@ export function RecordatoriosPanel({
                 : { label: "Sin fecha", cls: "bg-secondary text-secondary-foreground" };
               const mascota = seguimiento.mascotas;
               const cliente = mascota?.clientes;
-              const tipo = seguimiento.tipo_text ? tipoLabels[seguimiento.tipo_text] ?? seguimiento.tipo_text : "Recordatorio";
+              const tipo = getSeguimientoTipoLabel(seguimiento.tipo_text);
 
               return (
                 <div

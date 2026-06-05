@@ -23,30 +23,37 @@ import {
 type RecordatorioActionsProps = {
   id: string;
   fechaActual: string;
+  isRecurrent: boolean;
 };
 
-export function RecordatorioActions({ id, fechaActual }: RecordatorioActionsProps) {
+export function RecordatorioActions({ id, fechaActual, isRecurrent }: RecordatorioActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [nuevaFecha, setNuevaFecha] = useState(fechaActual);
 
   const handleResolve = () => {
-    if (!window.confirm("Marcar este recordatorio como resuelto?")) return;
+    let crearSiguiente = false;
+    if (isRecurrent) {
+      if (!window.confirm("¿Marcar este seguimiento como resuelto?")) return;
+      crearSiguiente = window.confirm("Este seguimiento es recurrente. ¿Programar automáticamente el próximo?");
+    } else {
+      if (!window.confirm("¿Marcar este seguimiento como resuelto?")) return;
+    }
 
     startTransition(async () => {
-      const result = await resolverSeguimientoClinico(id);
+      const result = await resolverSeguimientoClinico(id, { crear_siguiente: crearSiguiente });
       if (result.error) {
         toast.error(result.error);
         return;
       }
-      toast.success("Recordatorio resuelto");
+      toast.success(crearSiguiente ? "Seguimiento resuelto y próximo programado" : "Seguimiento resuelto");
       router.refresh();
     });
   };
 
   const handleCancel = () => {
-    if (!window.confirm("Cancelar este recordatorio?")) return;
+    if (!window.confirm("¿Cancelar este seguimiento? Dejará de aparecer como pendiente.")) return;
 
     startTransition(async () => {
       const result = await cancelarSeguimientoClinico(id);
@@ -54,7 +61,7 @@ export function RecordatorioActions({ id, fechaActual }: RecordatorioActionsProp
         toast.error(result.error);
         return;
       }
-      toast.success("Recordatorio cancelado");
+      toast.success("Seguimiento cancelado");
       router.refresh();
     });
   };
@@ -111,7 +118,7 @@ export function RecordatorioActions({ id, fechaActual }: RecordatorioActionsProp
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Button type="button" variant="destructive" size="sm" onClick={handleCancel} disabled={isPending}>
+      <Button type="button" variant="outline" size="sm" onClick={handleCancel} disabled={isPending}>
         Cancelar
       </Button>
     </div>

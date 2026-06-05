@@ -27,6 +27,7 @@ import { getActiveClinicaContext } from "@/lib/clinica";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
+import { formatRecurrencia, getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
 import { RecordatorioActions } from "./recordatorio-actions";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +42,8 @@ type RecordatorioRow = {
   proxima_fecha_date: string;
   notas_text: string | null;
   orden_id: string | null;
+  recurrencia_unidad_text: string | null;
+  recurrencia_cada_int: number | null;
   mascotas: {
     id: string;
     nombre: string;
@@ -111,7 +114,7 @@ function getStatusMeta(fecha: string, todayDate: string) {
 function getTipoMeta(tipo: string) {
   if (tipo === "vacuna") {
     return {
-      label: "Vacuna",
+      label: getSeguimientoTipoLabel(tipo),
       icon: ShieldCheck,
       className: "bg-blue-50 text-blue-700",
     };
@@ -119,14 +122,14 @@ function getTipoMeta(tipo: string) {
 
   if (tipo === "control") {
     return {
-      label: "Control",
+      label: getSeguimientoTipoLabel(tipo),
       icon: Stethoscope,
       className: "bg-purple-50 text-purple-700",
     };
   }
 
   return {
-    label: tipo,
+    label: getSeguimientoTipoLabel(tipo),
     icon: FileText,
     className: "bg-muted text-muted-foreground",
   };
@@ -161,6 +164,8 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
       proxima_fecha_date,
       notas_text,
       orden_id,
+      recurrencia_unidad_text,
+      recurrencia_cada_int,
       mascotas:mascota_id (
         id,
         nombre,
@@ -200,9 +205,14 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
             Seguimientos, controles, vacunas y pendientes programados.
           </p>
         </div>
-        <Badge variant="secondary" className="w-fit">
-          {FILTRO_LABELS[filtro]}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="w-fit">
+            {FILTRO_LABELS[filtro]}
+          </Badge>
+          <Link href="/mascotas" className={buttonVariants({ variant: "default", size: "sm" })}>
+            Nuevo Seguimiento
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -296,6 +306,11 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
                               { locale: es },
                             )}
                           </span>
+                          {recordatorio.recurrencia_unidad_text && recordatorio.recurrencia_cada_int && (
+                            <span className="inline-flex items-center gap-1 text-primary/80">
+                              ↻ {formatRecurrencia(recordatorio.recurrencia_cada_int, recordatorio.recurrencia_unidad_text)}
+                            </span>
+                          )}
                         </div>
                         {recordatorio.notas_text?.trim() ? (
                           <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">
@@ -325,6 +340,7 @@ export default async function RecordatoriosPage({ searchParams }: PageProps) {
                       <RecordatorioActions
                         id={recordatorio.id}
                         fechaActual={recordatorio.proxima_fecha_date}
+                        isRecurrent={!!recordatorio.recurrencia_unidad_text}
                       />
                     </div>
                   </div>

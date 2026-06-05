@@ -10,11 +10,12 @@ import {
   type TipoAdjuntoMascota,
 } from "@/lib/validators/adjuntos";
 import {
-  seguimientoClinicoSchema,
-  seguimientoReprogramacionSchema,
-  seguimientoResolucionSchema,
-  SeguimientoClinicoInput,
-} from "@/lib/validators/seguimiento";
+  calculateNextRecurrenceDate,
+  recordatorioSchema,
+  recordatorioReprogramacionSchema,
+  recordatorioResolucionSchema,
+  type RecordatorioInput,
+} from "@/lib/validators/recordatorios";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
 const SEGUIMIENTOS_TABLE = "seguimientos_clinicos";
@@ -130,11 +131,11 @@ function getOriginalFileName(file: File) {
   return name ? name.slice(0, 240) : "adjunto-clinico";
 }
 
-export async function resolverSeguimientoClinico(id: string, notas?: string) {
+export async function resolverSeguimientoClinico(id: string, options?: { notas?: string, crear_siguiente?: boolean }) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
-    const validated = seguimientoResolucionSchema.parse({ id, notas });
+    const validated = recordatorioResolucionSchema.parse({ id, notas: options?.notas, crear_siguiente: options?.crear_siguiente });
     const userId = await getCurrentUserId(supabase);
 
     const { data, error } = await supabase
@@ -148,11 +149,47 @@ export async function resolverSeguimientoClinico(id: string, notas?: string) {
       .eq("id", validated.id)
       .eq("clinica_id", clinicaId)
       .eq("estado_text", "pendiente")
-      .select("id, mascota_id, orden_id")
+      .select(`
+        id, clinica_id, mascota_id, orden_id, tipo_text, nombre_text,
+        recurrencia_unidad_text, recurrencia_cada_int, proxima_fecha_date
+      `)
       .maybeSingle();
 
     if (error) return { error: error.message, data: null };
     if (!data) return { error: "Solo se pueden resolver recordatorios pendientes de la clinica activa.", data: null };
+
+    // Si tiene recurrencia y el usuario confirmó crear siguiente, o si se manda explícitamente true
+    if (validated.crear_siguiente && data.recurrencia_unidad_text && data.recurrencia_cada_int && data.proxima_fecha_date) {
+      const nextDateStr = calculateNextRecurrenceDate(
+        data.proxima_fecha_date,
+        data.recurrencia_cada_int,
+        data.recurrencia_unidad_text,
+      );
+
+      if (!nextDateStr) {
+        revalidateSeguimientoPaths(data);
+        return { error: "No se pudo calcular el siguiente seguimiento recurrente.", data: null };
+      }
+
+      const { error: insertError } = await supabase.from(SEGUIMIENTOS_TABLE).insert({
+        clinica_id: data.clinica_id,
+        mascota_id: data.mascota_id,
+        orden_id: data.orden_id,
+        tipo_text: data.tipo_text,
+        nombre_text: data.nombre_text,
+        fecha_aplicacion_date: data.proxima_fecha_date,
+        proxima_fecha_date: nextDateStr,
+        estado_text: "pendiente",
+        recurrencia_unidad_text: data.recurrencia_unidad_text,
+        recurrencia_cada_int: data.recurrencia_cada_int,
+        recordatorio_previo_id: data.id,
+      });
+
+      if (insertError) {
+        revalidateSeguimientoPaths(data);
+        return { error: insertError.message, data: null };
+      }
+    }
 
     revalidateSeguimientoPaths(data);
     return { error: null, data };
@@ -165,7 +202,7 @@ export async function cancelarSeguimientoClinico(id: string, notas?: string) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
-    const validated = seguimientoResolucionSchema.parse({ id, notas });
+    const validated = recordatorioResolucionSchema.parse({ id, notas });
     const userId = await getCurrentUserId(supabase);
 
     const { data, error } = await supabase
@@ -196,7 +233,7 @@ export async function reprogramarSeguimientoClinico(id: string, nuevaFecha: stri
   try {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
-    const validated = seguimientoReprogramacionSchema.parse({ id, nuevaFecha });
+    const validated = recordatorioReprogramacionSchema.parse({ id, nuevaFecha });
 
     const { data, error } = await supabase
       .from(SEGUIMIENTOS_TABLE)
@@ -240,6 +277,7 @@ async function querySeguimientos(
     .select(`
       id, orden_id, tipo_text, nombre_text, estado_text,
       fecha_aplicacion_date, proxima_fecha_date, notas_text, resolucion_notas_text,
+      recurrencia_unidad_text, recurrencia_cada_int, recordatorio_previo_id,
       resuelto_at, cancelado_at, created_at
     `)
     .eq("clinica_id", clinicaId)
@@ -711,11 +749,11 @@ export async function getSeguimientosMascota(mascotaId: string) {
   };
 }
 
-export async function createSeguimientoClinico(input: SeguimientoClinicoInput) {
+export async function createSeguimientoClinico(input: RecordatorioInput) {
   try {
     const clinicaId = await requireClinicaIdFromCookies();
     const supabase = await createClient();
-    const validated = seguimientoClinicoSchema.parse(input);
+    const validated = recordatorioSchema.parse(input);
 
     const { data: mascota } = await supabase
       .from("mascotas")
@@ -754,6 +792,8 @@ export async function createSeguimientoClinico(input: SeguimientoClinicoInput) {
       proxima_fecha_date: validated.proxima_fecha_date ?? null,
       notas_text: validated.notas_text?.trim() || null,
       estado_text: validated.estado_text ?? "pendiente",
+      recurrencia_unidad_text: validated.recurrencia_unidad_text ?? null,
+      recurrencia_cada_int: validated.recurrencia_cada_int ?? null,
     };
 
     const firstAttempt = await supabase

@@ -425,6 +425,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             seguimientos={seguimientos || []}
             featureUnavailable={seguimientoFeatureUnavailable}
             featureUnavailableReason={seguimientoFeatureReason ?? undefined}
+            showOperationalActions
           />
         </TabsContent>
 
