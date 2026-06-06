@@ -170,6 +170,9 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                 {activeOrden && (
                   <Badge className="bg-blue-100 text-blue-800 border-none">En atención</Badge>
                 )}
+                {hospitalizacionActiva && (
+                  <Badge className="bg-blue-100 text-blue-800 border-none">Hospitalización activa</Badge>
+                )}
               </div>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {formatBreedLabel(mascota.raza)}
@@ -198,6 +201,14 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
           {/* Action buttons */}
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+            {hospitalizacionActiva && (
+              <Link
+                href={`/hospitalizaciones/${hospitalizacionActiva.id}`}
+                className={buttonVariants({ variant: "default", size: "sm", className: "bg-blue-600 hover:bg-blue-700" })}
+              >
+                Ver hospitalización activa
+              </Link>
+            )}
             <BtnNuevaAtencion clienteId={mascota.cliente_id} mascotaId={mascota.id} compact label="Nueva atención" />
             <AgendarCitaPacienteBtn
               clienteId={mascota.cliente_id}

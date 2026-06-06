@@ -70,7 +70,7 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
 
   const mascotaIds = mascotasFiltradas.map((m: any) => m.id).filter(Boolean);
 
-  const [citasRes, ordenesRes] = mascotaIds.length
+  const [citasRes, ordenesRes, hospRes] = mascotaIds.length
     ? await Promise.all([
         supabase
           .from("citas")
@@ -85,8 +85,14 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
           .eq("clinica_id", clinicaId)
           .in("mascota_id", mascotaIds)
           .order("created_at", { ascending: false }),
+        supabase
+          .from("hospitalizaciones")
+          .select("id, mascota_id")
+          .eq("clinica_id", clinicaId)
+          .in("mascota_id", mascotaIds)
+          .eq("estado_text", "activa"),
       ])
-    : [{ data: [] as any[] }, { data: [] as any[] }];
+    : [{ data: [] as any[] }, { data: [] as any[] }, { data: [] as any[] }];
 
   const proximaCitaByMascota = new Map<string, any>();
   for (const cita of citasRes.data ?? []) {
@@ -100,6 +106,13 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
   for (const orden of ordenesRes.data ?? []) {
     if (!ultimaAtencionByMascota.has(orden.mascota_id)) {
       ultimaAtencionByMascota.set(orden.mascota_id, orden);
+    }
+  }
+
+  const hospitalizacionActivaByMascota = new Map<string, string>();
+  for (const hosp of hospRes.data ?? []) {
+    if (!hospitalizacionActivaByMascota.has(hosp.mascota_id)) {
+      hospitalizacionActivaByMascota.set(hosp.mascota_id, hosp.id);
     }
   }
 
@@ -166,17 +179,22 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
                     <PawPrint className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-sm font-semibold group-hover:text-primary group-hover:underline transition-colors">{mascota.nombre}</p>
-                      {mascota.codigo_text?.trim() ? (
-                        <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-                          #{mascota.codigo_text}
-                        </Badge>
-                      ) : null}
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase">
-                        {formatSpeciesLabel(mascota.especie)}
-                      </span>
-                    </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate text-sm font-semibold group-hover:text-primary group-hover:underline transition-colors">{mascota.nombre}</p>
+                        {mascota.codigo_text?.trim() ? (
+                          <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                            #{mascota.codigo_text}
+                          </Badge>
+                        ) : null}
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase">
+                          {formatSpeciesLabel(mascota.especie)}
+                        </span>
+                        {hospitalizacionActivaByMascota.has(mascota.id) ? (
+                          <Badge className="bg-blue-100 text-blue-800 border-none px-1.5 py-0 text-[10px]">
+                            Hospitalizado
+                          </Badge>
+                        ) : null}
+                      </div>
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       {formatBreedLabel(mascota.raza)} · {edad}
                     </p>
@@ -207,6 +225,14 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center xl:justify-end">
+                  {hospitalizacionActivaByMascota.has(mascota.id) ? (
+                    <Link
+                      href={`/hospitalizaciones/${hospitalizacionActivaByMascota.get(mascota.id)}`}
+                      className={buttonVariants({ variant: "default", size: "sm", className: "h-8 w-full sm:w-auto" })}
+                    >
+                      Ver hospitalización activa
+                    </Link>
+                  ) : null}
                   <Link
                     href={`/mascotas/${mascota.id}?returnTo=${encodeURIComponent("/pacientes")}`}
                     className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 w-full sm:w-auto" })}
