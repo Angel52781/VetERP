@@ -610,9 +610,9 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                               ? format(new Date(orden.started_at), "dd/MM/yyyy HH:mm")
                               : format(new Date(orden.created_at), "dd/MM/yyyy HH:mm")}
                           </p>
-                          {orden.staff_member?.email && (
+                          {orden.staff_member && (
                             <p className="mt-1 text-xs text-muted-foreground">
-                              Atendido por: {orden.staff_member.email}
+                              Atendido por: <span className="font-medium text-foreground">{orden.staff_member.nombreVisible || "Personal autorizado"}</span>
                             </p>
                           )}
                         </div>

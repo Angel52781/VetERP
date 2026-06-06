@@ -43,7 +43,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { z } from "zod";
 import { invitationSchema, type InvitationInput, roles, type StaffMember } from "@/lib/validators/staff";
-import { createInvitation, revokeInvitation, updateStaffRole, removeStaff } from "./staff-actions";
+import { createInvitation, revokeInvitation, updateStaffRole, removeStaff, updateStaffName } from "./staff-actions";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -97,6 +97,57 @@ function StaffRoleSelect({
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
+  );
+}
+
+function StaffNameEdit({
+  userId,
+  initialName,
+  onNameChange,
+}: {
+  userId: string;
+  initialName: string | null;
+  onNameChange: (userId: string, name: string | null) => Promise<void>;
+}) {
+  const [name, setName] = useState(initialName || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onNameChange(userId, name.trim() || null);
+    } finally {
+      setIsSaving(false);
+      setIsOpen(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger render={<Button variant="ghost" size="sm" className="h-8 text-xs px-2 whitespace-nowrap" />}>
+        {initialName ? initialName : "Añadir Nombre"}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Nombre visible del médico</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <Input
+            placeholder="Ej. Dr. Juan Pérez"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Este nombre será el que vean los clientes e interfaz clínica en lugar de tu correo técnico.
+          </p>
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isSaving}>Cancelar</Button>
+          <Button onClick={handleSave} disabled={isSaving}>{isSaving ? "Guardando..." : "Guardar"}</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -183,6 +234,15 @@ export function StaffClient({
     if (res.error) toast.error(res.error);
     else {
       toast.success("Rol actualizado");
+      router.refresh();
+    }
+  };
+
+  const handleNameChange = async (userId: string, newName: string | null) => {
+    const res = await updateStaffName({ userId, nombreVisible: newName });
+    if (res.error) toast.error(res.error);
+    else {
+      toast.success("Nombre visible actualizado");
       router.refresh();
     }
   };
@@ -276,7 +336,8 @@ export function StaffClient({
           <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
-                <TableHead>Email</TableHead>
+                <TableHead>Identificador</TableHead>
+                <TableHead>Nombre Visible</TableHead>
                 <TableHead>Rol</TableHead>
                 <TableHead>Miembro desde</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
@@ -299,6 +360,15 @@ export function StaffClient({
                       <TableCell className="font-medium">
                         {user.email}
                         {isSelf && <span className="ml-2 text-xs text-muted-foreground">(Tú)</span>}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <StaffNameEdit
+                            userId={user.userId}
+                            initialName={user.nombreVisible || null}
+                            onNameChange={handleNameChange}
+                          />
+                        </div>
                       </TableCell>
                       <TableCell>{renderRoleBadge(user.role)}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">

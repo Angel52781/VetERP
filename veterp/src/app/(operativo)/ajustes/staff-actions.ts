@@ -3,10 +3,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireUserRole } from "@/lib/clinica";
 import { revalidatePath } from "next/cache";
-import { invitationSchema, InvitationInput, staffMemberSchema, updateRoleSchema, UpdateRoleInput } from "@/lib/validators/staff";
+import { invitationSchema, InvitationInput, staffMemberSchema, updateRoleSchema, UpdateRoleInput, updateNameSchema, UpdateNameInput } from "@/lib/validators/staff";
 
 function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Error inesperado.";
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error) return String(error.message);
+  return "Error inesperado.";
 }
 
 export async function getStaff() {
@@ -177,6 +179,46 @@ export async function updateStaffRole(input: UpdateRoleInput) {
     const { error } = await supabase
       .from("user_clinicas")
       .update({ role: validated.role })
+      .eq("user_id", validated.userId)
+      .eq("clinica_id", clinicaId);
+
+    if (error) throw error;
+
+    revalidatePath("/(operativo)/ajustes", "layout");
+    return { error: null };
+  } catch (error: unknown) {
+    return { error: getErrorMessage(error) };
+  }
+}
+
+export async function updateStaffName(input: UpdateNameInput) {
+  try {
+    const { clinicaId, role: currentUserRole } = await requireUserRole(["owner", "admin"]);
+    const supabase = await createClient();
+
+    const validated = updateNameSchema.parse({
+      ...input,
+      userId: input.userId.trim(),
+    });
+
+    const { data: targetMembership } = await supabase
+      .from("user_clinicas")
+      .select("role")
+      .eq("user_id", validated.userId)
+      .eq("clinica_id", clinicaId)
+      .single();
+
+    if (!targetMembership) {
+      return { error: "Usuario no encontrado en la clínica." };
+    }
+
+    if (currentUserRole === "admin" && targetMembership.role === "owner") {
+      return { error: "No tienes permiso para editar un Owner." };
+    }
+
+    const { error } = await supabase
+      .from("user_clinicas")
+      .update({ nombre_visible_text: validated.nombreVisible || null })
       .eq("user_id", validated.userId)
       .eq("clinica_id", clinicaId);
 

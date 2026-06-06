@@ -150,9 +150,9 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
               </>
             ) : null}
           </div>
-          {orden.staff_member?.email ? (
+          {orden.staff_member ? (
             <p className="mt-2 text-sm text-muted-foreground">
-              Atendido por: <span className="font-medium text-foreground">{orden.staff_member.email}</span>
+              Atendido por: <span className="font-medium text-foreground">{orden.staff_member.nombreVisible || "Personal autorizado"}</span>
             </p>
           ) : null}
         </div>
@@ -259,8 +259,8 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
                   </p>
                 </div>
                 <div>
-                  <p className="font-medium text-muted-foreground">Atendido por</p>
-                  <p>{orden.staff_member?.email || "No disponible"}</p>
+                  <p className="font-medium text-muted-foreground">Responsable de atención</p>
+                  <p>{orden.staff_member ? (orden.staff_member.nombreVisible || "Personal autorizado") : "No disponible"}</p>
                 </div>
                 {orden.finished_at && (
                   <div>

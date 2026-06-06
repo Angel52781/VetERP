@@ -5,6 +5,7 @@ export type StaffDirectoryEntry = {
   userId: string;
   role: string | null;
   email: string | null;
+  nombreVisible: string | null;
 };
 
 export async function getClinicaStaffDirectory(userIds?: string[]) {
@@ -28,6 +29,7 @@ export async function getClinicaStaffDirectory(userIds?: string[]) {
       userId: String(row.user_id),
       role: typeof row.role === "string" ? row.role : null,
       email: typeof row.email === "string" ? row.email : null,
+      nombreVisible: typeof row.nombre_visible_text === "string" ? row.nombre_visible_text : null,
     })),
   };
 }
