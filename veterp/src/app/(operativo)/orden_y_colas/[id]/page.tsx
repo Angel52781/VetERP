@@ -15,8 +15,9 @@ import { SignosVitalesForm } from "./signos-vitales-form";
 import { FinalizarAtencionButton } from "./finalizar-atencion-button";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
-import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions";
+import { getMascotaCompleta } from "@/app/(operativo)/mascotas/[id]/actions";
 import { SeguimientosCard } from "../../seguimientos-card";
+import { ContextoReciente } from "./contexto-reciente";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { getAgeFromDateOnly } from "@/lib/date-only";
 import { getUserRole } from "@/lib/clinica";
@@ -70,10 +71,12 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
   }
 
   const {
+    ordenes,
+    hospitalizaciones,
     seguimientos,
     seguimientoFeatureUnavailable,
     seguimientoFeatureReason,
-  } = await getSeguimientosMascota(orden.mascota_id);
+  } = await getMascotaCompleta(orden.mascota_id);
   const role = await getUserRole();
   const canEditEntradasClinicas = role === "owner" || role === "admin";
 
@@ -169,6 +172,15 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
 
       {/* Alertas críticas del paciente */}
       <AlertasCriticasBanner alertas={(orden.mascotas as any)?.alertas_criticas} />
+
+      <ContextoReciente
+        currentOrdenId={id}
+        mascotaId={orden.mascota_id}
+        ordenes={ordenes}
+        hospitalizaciones={hospitalizaciones}
+        seguimientos={seguimientos}
+        mascotaReturnTo={mascotaReturnTo}
+      />
 
       <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="flex w-full min-w-0 overflow-x-auto sm:grid sm:grid-cols-5">
