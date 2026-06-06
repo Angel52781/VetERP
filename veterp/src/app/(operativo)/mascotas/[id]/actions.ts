@@ -16,6 +16,12 @@ import {
   recordatorioResolucionSchema,
   type RecordatorioInput,
 } from "@/lib/validators/recordatorios";
+import {
+  createRegistroPrevioSchema,
+  anularRegistroPrevioSchema,
+  type CreateRegistroPrevioInput,
+  type AnularRegistroPrevioInput,
+} from "@/lib/validators/registros-previos";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { getClinicaStaffDirectory } from "@/lib/staff-directory";
 
@@ -196,6 +202,67 @@ export async function resolverSeguimientoClinico(id: string, options?: { notas?:
     return { error: null, data };
   } catch (err: any) {
     return { error: err.message || "Error al resolver recordatorio", data: null };
+  }
+}
+
+export async function crearRegistroPrevio(input: CreateRegistroPrevioInput) {
+  try {
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = createRegistroPrevioSchema.parse(input);
+    const userId = await getCurrentUserId(supabase);
+
+    const mascota = await ensureMascotaInClinica(supabase, clinicaId, validated.mascota_id);
+    if (!mascota) {
+      return { error: "La mascota no pertenece a la clínica activa.", data: null };
+    }
+
+    const { error } = await supabase.from("registros_previos").insert({
+      clinica_id: clinicaId,
+      mascota_id: validated.mascota_id,
+      fecha_historica_date: validated.fecha_historica_date,
+      fecha_aproximada_bool: validated.fecha_aproximada_bool,
+      titulo_text: validated.titulo_text,
+      descripcion_text: validated.descripcion_text,
+      fuente_text: validated.fuente_text || null,
+      creado_por: userId,
+    });
+
+    if (error) {
+      logSupabaseError("[crearRegistroPrevio] error", error);
+      return { error: "No se pudo crear el registro previo.", data: null };
+    }
+
+    revalidatePath(`/mascotas/${validated.mascota_id}`);
+    return { error: null, data: "Registro previo creado." };
+  } catch (err: any) {
+    logSupabaseError("[crearRegistroPrevio] unexpected error", err);
+    return { error: "Error interno al crear el registro previo.", data: null };
+  }
+}
+
+export async function anularRegistroPrevio(input: AnularRegistroPrevioInput) {
+  try {
+    // Se extrae clinicaId como guardia para asegurar que hay una sesión de clínica activa
+    const clinicaId = await requireClinicaIdFromCookies();
+    const supabase = await createClient();
+    const validated = anularRegistroPrevioSchema.parse(input);
+
+    const { error } = await supabase.rpc("anular_registro_previo", {
+      p_registro_id: validated.id,
+      p_motivo_anulacion_text: validated.motivo_anulacion_text,
+    });
+
+    if (error) {
+      logSupabaseError("[anularRegistroPrevio] rpc error", error);
+      return { error: "No se pudo anular el registro previo.", data: null };
+    }
+
+    revalidatePath(`/mascotas/${validated.mascota_id}`);
+    return { error: null, data: "Registro previo anulado." };
+  } catch (err: any) {
+    logSupabaseError("[anularRegistroPrevio] unexpected error", err);
+    return { error: "Error interno al anular el registro previo.", data: null };
   }
 }
 
@@ -596,7 +663,7 @@ export async function getMascotaCompleta(mascotaId: string) {
   const clinicaId = await requireClinicaIdFromCookies();
   const supabase = await createClient();
 
-  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes, hospitalizacionesRes] = await Promise.all([
+  const [mascotaRes, ordenesRes, citasRes, tiposCitaRes, hospitalizacionesRes, registrosPreviosRes] = await Promise.all([
     supabase
       .from("mascotas")
       .select(`
@@ -682,6 +749,18 @@ export async function getMascotaCompleta(mascotaId: string) {
       .eq("clinica_id", clinicaId)
       .eq("mascota_id", mascotaId)
       .order("internado_at", { ascending: false }),
+
+    supabase
+      .from("registros_previos")
+      .select(`
+        id, fecha_historica_date, fecha_aproximada_bool,
+        titulo_text, descripcion_text, fuente_text, tipo_text,
+        creado_por, created_at, updated_at,
+        anulado_at, anulado_por, motivo_anulacion_text
+      `)
+      .eq("clinica_id", clinicaId)
+      .eq("mascota_id", mascotaId)
+      .order("fecha_historica_date", { ascending: false }),
   ]);
 
   const seguimientos = await loadSeguimientosWithRecovery(supabase, clinicaId, mascotaId);
@@ -691,8 +770,12 @@ export async function getMascotaCompleta(mascotaId: string) {
   if (citasRes.error) logSupabaseError("[getMascotaCompleta] citas error", citasRes.error);
   if (tiposCitaRes.error) logSupabaseError("[getMascotaCompleta] tipos cita error", tiposCitaRes.error);
   if (hospitalizacionesRes.error) logSupabaseError("[getMascotaCompleta] hospitalizaciones error", hospitalizacionesRes.error);
+  if (registrosPreviosRes.error && !isTableOrSchemaError(registrosPreviosRes.error, "registros_previos")) {
+    logSupabaseError("[getMascotaCompleta] registros_previos error", registrosPreviosRes.error);
+  }
   const hospitalizaciones = hospitalizacionesRes.data ?? [];
   const ordenes = ordenesRes.data ?? [];
+  const registrosPrevios = registrosPreviosRes.error ? [] : (registrosPreviosRes.data ?? []);
   const staffUserIds = Array.from(
     new Set(
       ordenes
@@ -748,6 +831,7 @@ export async function getMascotaCompleta(mascotaId: string) {
     tiposCita: tiposCitaRes.data ?? [],
     adjuntos: adjuntosResult.data,
     seguimientos: seguimientos.data,
+    registros_previos: registrosPrevios,
     hospitalizaciones: hospitalizaciones.map((hospitalizacion: any) => ({
       ...hospitalizacion,
       ultimo_control: ultimoControlByHospitalizacion.get(hospitalizacion.id) ?? null,
