@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
 import { toast } from "sonner";
@@ -65,11 +65,12 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
+  const resolver = zodResolver(editarEntradaClinicaSchema) as Resolver<EditarEntradaClinicaInput>;
   const form = useForm<EditarEntradaClinicaInput>({
-    resolver: zodResolver(editarEntradaClinicaSchema) as any,
+    resolver,
     defaultValues: {
       id: entrada.id,
-      tipo_text: entrada.tipo_text ?? "Evolucion",
+      tipo_text: entrada.tipo_text ?? "Evolución u observación",
       texto_text: entrada.texto_text ?? "",
       motivo_consulta_text: entrada.motivo_consulta_text ?? "",
       peso_kg_num: toNumberOrUndefined(entrada.peso_kg_num),
@@ -99,7 +100,7 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
         return;
       }
 
-      toast.success("Entrada clinica editada con auditoria");
+      toast.success("Registro actualizado con auditoría");
       setOpen(false);
       form.reset({ ...values, motivo_edicion_text: "" });
       router.refresh();
@@ -110,40 +111,26 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button size="sm" variant="outline" />}>
         <Pencil className="mr-2 h-3.5 w-3.5" />
-        Editar entrada
+        Editar con auditoría
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Pencil className="h-4 w-4" />
-            Editar entrada clinica
+            Editar con auditoría
           </DialogTitle>
           <DialogDescription>
-            Se guardara trazabilidad de los cambios.
+            Corrige un registro guardado dejando historial de cambios.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-              Esta edicion guardara motivo, usuario, fecha, datos anteriores y datos nuevos.
+              Esta corrección guardará motivo, usuario, fecha y cambios realizados.
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="tipo_text"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+            <div className="grid gap-3">
               <FormField
                 control={form.control}
                 name="motivo_consulta_text"
@@ -318,10 +305,10 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
               name="motivo_edicion_text"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Motivo de edicion</FormLabel>
+                  <FormLabel>Motivo del cambio</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Ej. Correccion de signo vital registrado incorrectamente"
+                      placeholder="Ej. Corrección de un signo vital registrado incorrectamente"
                       className="min-h-20 resize-none"
                       {...field}
                     />
@@ -332,7 +319,7 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
             />
 
             <Button type="submit" className="w-full" disabled={pending}>
-              {pending ? "Guardando..." : "Guardar edicion con auditoria"}
+              {pending ? "Guardando..." : "Guardar cambios con auditoría"}
             </Button>
           </form>
         </Form>

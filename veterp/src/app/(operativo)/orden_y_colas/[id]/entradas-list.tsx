@@ -32,8 +32,6 @@ interface EntradaClinicaEdicion {
   id: string;
   editado_por: string | null;
   motivo_text: string;
-  before_data?: unknown;
-  after_data?: unknown;
   created_at: string;
 }
 
@@ -42,129 +40,149 @@ interface EntradasListProps {
   canEdit?: boolean;
 }
 
+const MAIN_NOTE_TYPES = new Set(["Nota Clínica de Evolución", "Signos Vitales y Triaje"]);
+
 function formatDateTime(value: string | null | undefined) {
   if (!value) return null;
   return format(new Date(value), "dd/MM/yyyy HH:mm", { locale: es });
 }
 
-function formatUser(value: string | null | undefined) {
-  if (!value) return "Usuario no registrado";
-  return `Usuario ${value.slice(0, 8)}`;
+function hasText(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
-function SnapshotDetails({ edicion }: { edicion: EntradaClinicaEdicion }) {
-  if (!edicion.before_data && !edicion.after_data) return null;
+function isMainNote(entrada: EntradaClinica) {
+  return MAIN_NOTE_TYPES.has(entrada.tipo_text ?? "");
+}
+
+function formatNumber(value: unknown, suffix: string) {
+  if (value === null || value === undefined || value === "") return null;
+  return `${value} ${suffix}`;
+}
+
+function NoteField({ label, value }: { label: string; value: unknown }) {
+  if (!hasText(value)) return null;
 
   return (
-    <details className="mt-2 rounded-md border bg-background p-2">
-      <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
-        Ver snapshot before/after
-      </summary>
-      <div className="mt-2 grid gap-2 md:grid-cols-2">
-        <pre className="max-h-48 overflow-auto rounded bg-muted p-2 text-[11px]">
-          {JSON.stringify(edicion.before_data ?? {}, null, 2)}
-        </pre>
-        <pre className="max-h-48 overflow-auto rounded bg-muted p-2 text-[11px]">
-          {JSON.stringify(edicion.after_data ?? {}, null, 2)}
-        </pre>
-      </div>
-    </details>
+    <div>
+      <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
+      <p className="mt-1 whitespace-pre-wrap">{String(value)}</p>
+    </div>
+  );
+}
+
+function hasStructuredContent(entrada: EntradaClinica) {
+  return Boolean(
+    entrada.motivo_consulta_text ||
+      entrada.anamnesis_text ||
+      entrada.observaciones_text ||
+      entrada.diagnostico_text ||
+      entrada.plan_tratamiento_text ||
+      entrada.peso_kg_num ||
+      entrada.temperatura_c_num ||
+      entrada.frecuencia_cardiaca_num ||
+      entrada.frecuencia_respiratoria_num,
+  );
+}
+
+function NoteBody({ entrada }: { entrada: EntradaClinica }) {
+  const vitales = [
+    formatNumber(entrada.peso_kg_num, "kg"),
+    formatNumber(entrada.temperatura_c_num, "°C"),
+    formatNumber(entrada.frecuencia_cardiaca_num, "lpm"),
+    formatNumber(entrada.frecuencia_respiratoria_num, "rpm"),
+  ].filter((value): value is string => Boolean(value));
+  const shouldShowFreeText = !isMainNote(entrada) && hasText(entrada.texto_text);
+
+  if (!hasStructuredContent(entrada) && !shouldShowFreeText) {
+    return <p className="text-sm text-muted-foreground">Sin detalle registrado.</p>;
+  }
+
+  return (
+    <>
+      {shouldShowFreeText ? <p className="whitespace-pre-wrap">{entrada.texto_text}</p> : null}
+      <NoteField label="Motivo de consulta" value={entrada.motivo_consulta_text} />
+      <NoteField label="Anamnesis y antecedentes recientes" value={entrada.anamnesis_text} />
+      {vitales.length ? (
+        <div>
+          <p className="text-xs font-semibold uppercase text-muted-foreground">Signos vitales</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {vitales.map((value) => (
+              <span key={value} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">
+                {value}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      <NoteField label="Examen físico y observaciones" value={entrada.observaciones_text} />
+      <NoteField label="Diagnóstico o impresión clínica" value={entrada.diagnostico_text} />
+      <NoteField label="Plan de tratamiento y recomendaciones" value={entrada.plan_tratamiento_text} />
+    </>
   );
 }
 
 export function EntradasList({ entradas, canEdit = false }: EntradasListProps) {
-  const notasEvolucion = entradas.filter(e => e.tipo_text !== "Signos Vitales y Triaje");
-
-  if (!notasEvolucion || notasEvolucion.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        No hay notas clínicas registradas aún.
-      </div>
-    );
+  if (!entradas || entradas.length === 0) {
+    return <div className="py-8 text-center text-muted-foreground">No hay registros ni evolución documentada aún.</div>;
   }
 
-  // Sort by date descending
-  const sortedEntradas = [...notasEvolucion].sort(
-    (a, b) => new Date(b.fecha_date).getTime() - new Date(a.fecha_date).getTime()
+  const sortedEntradas = [...entradas].sort(
+    (a, b) => new Date(b.fecha_date).getTime() - new Date(a.fecha_date).getTime(),
   );
 
   return (
     <div className="space-y-4">
-      {sortedEntradas.map((entrada) => (
-        <Card key={entrada.id}>
-          <CardHeader className="py-3 bg-muted/30">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <CardTitle className="text-sm font-medium">
-                    {entrada.tipo_text}
-                  </CardTitle>
-                  {Number(entrada.ediciones_count ?? 0) > 0 ? (
-                    <Badge className="bg-amber-100 text-amber-900 border-none">Editada</Badge>
-                  ) : null}
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>{format(new Date(entrada.fecha_date), "dd/MM/yyyy HH:mm", { locale: es })}</span>
-                  {entrada.editado_at ? (
-                    <span>Ultima edicion: {formatDateTime(entrada.editado_at)}</span>
-                  ) : null}
-                </div>
-              </div>
-              {canEdit ? <EditarEntradaClinicaDialog entrada={entrada} /> : null}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3 py-4 text-sm">
-            {entrada.texto_text ? (
-              <p className="whitespace-pre-wrap">{entrada.texto_text}</p>
-            ) : null}
-            {entrada.anamnesis_text ? (
-              <div>
-                <p className="text-xs font-semibold uppercase text-muted-foreground">Anamnesis</p>
-                <p className="mt-1 whitespace-pre-wrap">{entrada.anamnesis_text}</p>
-              </div>
-            ) : null}
-            {entrada.observaciones_text ? (
-              <div>
-                <p className="text-xs font-semibold uppercase text-muted-foreground">Examen fisico</p>
-                <p className="mt-1 whitespace-pre-wrap">{entrada.observaciones_text}</p>
-              </div>
-            ) : null}
-            {entrada.diagnostico_text ? (
-              <div>
-                <p className="text-xs font-semibold uppercase text-muted-foreground">Diagnostico</p>
-                <p className="mt-1 whitespace-pre-wrap">{entrada.diagnostico_text}</p>
-              </div>
-            ) : null}
-            {entrada.plan_tratamiento_text ? (
-              <div>
-                <p className="text-xs font-semibold uppercase text-muted-foreground">Plan terapeutico</p>
-                <p className="mt-1 whitespace-pre-wrap">{entrada.plan_tratamiento_text}</p>
-              </div>
-            ) : null}
+      {sortedEntradas.map((entrada) => {
+        const mainNote = isMainNote(entrada);
 
-            {entrada.entradas_clinicas_ediciones?.length ? (
-              <div className="rounded-lg border border-dashed p-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Historial de ediciones
-                </p>
-                <div className="mt-2 space-y-2">
-                  {[...entrada.entradas_clinicas_ediciones]
-                    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                    .map((edicion) => (
-                      <div key={edicion.id} className="rounded-md bg-muted/30 px-3 py-2">
-                        <p className="text-xs text-muted-foreground">
-                          {formatDateTime(edicion.created_at)} - {formatUser(edicion.editado_por)}
-                        </p>
-                        <p className="mt-1 whitespace-pre-wrap">{edicion.motivo_text}</p>
-                        <SnapshotDetails edicion={edicion} />
-                      </div>
-                    ))}
+        return (
+          <Card key={entrada.id}>
+            <CardHeader className="bg-muted/30 py-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CardTitle className="text-sm font-medium">
+                      {mainNote ? "Registro de atención" : "Evolución u observación"}
+                    </CardTitle>
+                    {Number(entrada.ediciones_count ?? 0) > 0 ? (
+                      <Badge className="border-none bg-amber-100 text-amber-900">Con cambios</Badge>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span>{format(new Date(entrada.fecha_date), "dd/MM/yyyy HH:mm", { locale: es })}</span>
+                    {entrada.editado_at ? <span>Último cambio: {formatDateTime(entrada.editado_at)}</span> : null}
+                  </div>
                 </div>
+                {canEdit ? <EditarEntradaClinicaDialog entrada={entrada} /> : null}
               </div>
-            ) : null}
-          </CardContent>
-        </Card>
-      ))}
+            </CardHeader>
+            <CardContent className="space-y-3 py-4 text-sm">
+              <NoteBody entrada={entrada} />
+
+              {entrada.entradas_clinicas_ediciones?.length ? (
+                <div className="rounded-lg border border-dashed p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Historial de cambios
+                  </p>
+                  <div className="mt-2 space-y-2">
+                    {[...entrada.entradas_clinicas_ediciones]
+                      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                      .map((edicion) => (
+                        <div key={edicion.id} className="rounded-md bg-muted/30 px-3 py-2">
+                          <p className="text-xs text-muted-foreground">
+                            {formatDateTime(edicion.created_at)} - Usuario registrado
+                          </p>
+                          <p className="mt-1 whitespace-pre-wrap">{edicion.motivo_text}</p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

@@ -6,46 +6,116 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignosVitalesInput, signosVitalesSchema } from "@/lib/validators/atencion";
 import { createEntradaClinica } from "./actions";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
+import { EditarEntradaClinicaDialog } from "./editar-entrada-clinica-dialog";
 
 interface SignosVitalesFormProps {
   ordenId: string;
-  entradas: any[];
+  entradas: ClinicalNoteEntry[];
   canEditEntradas?: boolean;
+}
+
+type ClinicalNoteEntry = {
+  id: string;
+  tipo_text?: string | null;
+  texto_text?: string | null;
+  motivo_consulta_text?: string | null;
+  peso_kg_num?: number | string | null;
+  temperatura_c_num?: number | string | null;
+  frecuencia_cardiaca_num?: number | null;
+  frecuencia_respiratoria_num?: number | null;
+  observaciones_text?: string | null;
+  diagnostico_text?: string | null;
+  anamnesis_text?: string | null;
+  plan_tratamiento_text?: string | null;
+};
+
+const MAIN_NOTE_TYPES = new Set(["Nota Clínica de Evolución", "Signos Vitales y Triaje"]);
+
+function hasText(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function formatNumber(value: unknown, suffix: string) {
+  if (value === null || value === undefined || value === "") return null;
+  return `${value} ${suffix}`;
+}
+
+function ReadOnlySection({ label, value }: { label: string; value: unknown }) {
+  if (!hasText(value)) return null;
+
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="mt-1 whitespace-pre-wrap rounded-md bg-muted/30 p-3 text-sm">{String(value)}</p>
+    </div>
+  );
+}
+
+function NoteSummary({ notaPrincipal }: { notaPrincipal: ClinicalNoteEntry }) {
+  const vitales = [
+    formatNumber(notaPrincipal.peso_kg_num, "kg"),
+    formatNumber(notaPrincipal.temperatura_c_num, "°C"),
+    formatNumber(notaPrincipal.frecuencia_cardiaca_num, "lpm"),
+    formatNumber(notaPrincipal.frecuencia_respiratoria_num, "rpm"),
+  ].filter((value): value is string => Boolean(value));
+
+  return (
+    <div className="space-y-4">
+      <ReadOnlySection label="Motivo de consulta" value={notaPrincipal.motivo_consulta_text} />
+      <ReadOnlySection label="Anamnesis y antecedentes recientes" value={notaPrincipal.anamnesis_text} />
+
+      {vitales.length ? (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Signos vitales</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {vitales.map((value) => (
+              <span key={value} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">
+                {value}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <ReadOnlySection label="Examen físico y observaciones" value={notaPrincipal.observaciones_text} />
+      <ReadOnlySection label="Diagnóstico o impresión clínica" value={notaPrincipal.diagnostico_text} />
+      <ReadOnlySection label="Plan de tratamiento y recomendaciones" value={notaPrincipal.plan_tratamiento_text} />
+    </div>
+  );
 }
 
 export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }: SignosVitalesFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Buscar si ya hay una nota clínica principal estructurada (SOAP)
-  const notaPrincipal = entradas.find(e => e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje");
+  const notaPrincipal = entradas.find((entrada) => MAIN_NOTE_TYPES.has(entrada.tipo_text ?? ""));
 
   const form = useForm<SignosVitalesInput>({
     resolver: zodResolver(signosVitalesSchema),
     defaultValues: {
       orden_id: ordenId,
-      motivo_consulta_text: (notaPrincipal?.motivo_consulta_text as string) || "",
-      anamnesis_text: (notaPrincipal?.anamnesis_text as string) || "",
-      peso_kg_num: notaPrincipal?.peso_kg_num ? Number(notaPrincipal.peso_kg_num) : undefined,
-      temperatura_c_num: notaPrincipal?.temperatura_c_num ? Number(notaPrincipal.temperatura_c_num) : undefined,
-      frecuencia_cardiaca_num: notaPrincipal?.frecuencia_cardiaca_num ? Number(notaPrincipal.frecuencia_cardiaca_num) : undefined,
-      frecuencia_respiratoria_num: notaPrincipal?.frecuencia_respiratoria_num ? Number(notaPrincipal.frecuencia_respiratoria_num) : undefined,
-      observaciones_text: (notaPrincipal?.observaciones_text as string) || "",
-      diagnostico_text: (notaPrincipal?.diagnostico_text as string) || "",
-      plan_tratamiento_text: (notaPrincipal?.plan_tratamiento_text as string) || "",
+      motivo_consulta_text: "",
+      anamnesis_text: "",
+      peso_kg_num: undefined,
+      temperatura_c_num: undefined,
+      frecuencia_cardiaca_num: undefined,
+      frecuencia_respiratoria_num: undefined,
+      observaciones_text: "",
+      diagnostico_text: "",
+      plan_tratamiento_text: "",
     },
   });
 
   async function onSubmit(data: SignosVitalesInput) {
     if (notaPrincipal) {
-      toast.error("La entrada SOAP ya existe. Las correcciones deben hacerse desde Editar entrada con motivo.");
+      toast.error("Esta atención ya tiene un registro de atención guardado. Para corregirlo, usa Editar con auditoría.");
       return;
     }
 
@@ -53,7 +123,7 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
     const result = await createEntradaClinica({
       orden_id: ordenId,
       tipo_text: "Nota Clínica de Evolución",
-      texto_text: "Registro médico estructurado (SOAP)",
+      texto_text: "Registro médico estructurado",
       motivo_consulta_text: data.motivo_consulta_text,
       anamnesis_text: data.anamnesis_text,
       peso_kg_num: data.peso_kg_num,
@@ -69,44 +139,65 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Expediente registrado");
+      toast.success("Registro de atención guardado");
       router.refresh();
     }
+  }
+
+  if (notaPrincipal) {
+    return (
+      <Card className="border-primary/20 shadow-sm">
+        <CardHeader className="bg-primary/5 pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Stethoscope className="h-5 w-5 text-primary" />
+            Registro de atención
+          </CardTitle>
+          <CardDescription>Registro médico principal de esta atención clínica.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5 pt-6">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+            Esta atención ya tiene un registro de atención guardado. Para corregirlo, usa Editar con auditoría.
+          </div>
+
+          <NoteSummary notaPrincipal={notaPrincipal} />
+
+          <div className="flex flex-col gap-3 rounded-lg border bg-muted/20 p-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              {canEditEntradas
+                ? "Los cambios quedan registrados con motivo, fecha y usuario."
+                : "Solo un administrador puede editar este registro de atención."}
+            </p>
+            {canEditEntradas ? <EditarEntradaClinicaDialog entrada={notaPrincipal} /> : null}
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
     <Card className="border-primary/20 shadow-sm">
       <CardHeader className="bg-primary/5 pb-4">
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-lg">
           <Stethoscope className="h-5 w-5 text-primary" />
-          Expediente Clínico
+          Registro de atención
         </CardTitle>
-        <CardDescription>Registre la historia clínica, signos vitales, examen físico, diagnóstico y plan de tratamiento (Formato SOAP).</CardDescription>
+        <CardDescription>Registra la información médica de esta atención.</CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        {notaPrincipal ? (
-          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-            Esta orden ya tiene expediente SOAP.{" "}
-            {canEditEntradas
-              ? "Usa Editar entrada en la lista inferior para corregirlo con auditoria."
-              : "Las correcciones requieren owner/admin; puedes agregar una nueva nota de evolucion."}
-          </div>
-        ) : null}
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            
-            {/* BLOQUE S (SUBJETIVO) */}
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider border-b pb-2">Motivo y Anamnesis</h3>
+              <h3 className="border-b pb-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                Motivo y anamnesis
+              </h3>
               <FormField
                 control={form.control}
                 name="motivo_consulta_text"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Motivo de Consulta (Principal)</FormLabel>
+                    <FormLabel>Motivo de consulta</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ej: Vómitos desde hace 2 días, decaimiento" {...field} />
+                      <Input placeholder="Ej. Vómitos desde hace 2 días, decaimiento" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,12 +208,12 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                 name="anamnesis_text"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Historia Clínica Actual / Entorno</FormLabel>
+                    <FormLabel>Anamnesis y antecedentes recientes</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Descripcion detallada proporcionada por el responsable: inicio de sintomas, dieta, cambios recientes..." 
-                        className="resize-none h-20"
-                        {...field} 
+                      <Textarea
+                        placeholder="Descripción proporcionada por el responsable: inicio de síntomas, dieta, cambios recientes..."
+                        className="h-20 resize-none"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -131,10 +222,11 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
               />
             </div>
 
-            {/* BLOQUE O (OBJETIVO) */}
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider border-b pb-2">Signos Vitales y Examen Físico</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h3 className="border-b pb-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                Signos vitales y examen físico
+              </h3>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <FormField
                   control={form.control}
                   name="peso_kg_num"
@@ -142,7 +234,15 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                     <FormItem>
                       <FormLabel>Peso (kg)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} value={field.value || ""} onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                        <Input
+                          type="number"
+                          step="0.01"
+                          {...field}
+                          value={field.value || ""}
+                          onChange={(event) =>
+                            field.onChange(event.target.value ? Number(event.target.value) : undefined)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -155,7 +255,15 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                     <FormItem>
                       <FormLabel>Temp (°C)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" {...field} value={field.value || ""} onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value || ""}
+                          onChange={(event) =>
+                            field.onChange(event.target.value ? Number(event.target.value) : undefined)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -168,7 +276,14 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                     <FormItem>
                       <FormLabel>FC (lpm)</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} value={field.value || ""} onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                        <Input
+                          type="number"
+                          {...field}
+                          value={field.value || ""}
+                          onChange={(event) =>
+                            field.onChange(event.target.value ? Number(event.target.value) : undefined)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -181,7 +296,14 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                     <FormItem>
                       <FormLabel>FR (rpm)</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} value={field.value || ""} onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)} />
+                        <Input
+                          type="number"
+                          {...field}
+                          value={field.value || ""}
+                          onChange={(event) =>
+                            field.onChange(event.target.value ? Number(event.target.value) : undefined)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,12 +316,12 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                 name="observaciones_text"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hallazgos del Examen Físico</FormLabel>
+                    <FormLabel>Hallazgos del examen físico</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Mucosas, tiempo de llenado capilar, palpación abdominal, auscultación..." 
-                        className="resize-none h-20"
-                        {...field} 
+                      <Textarea
+                        placeholder="Mucosas, tiempo de llenado capilar, palpación abdominal, auscultación..."
+                        className="h-20 resize-none"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -208,17 +330,18 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
               />
             </div>
 
-            {/* BLOQUE A y P (DIAGNÓSTICO Y PLAN) */}
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider border-b pb-2">Diagnóstico y Plan</h3>
+              <h3 className="border-b pb-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                Diagnóstico y plan
+              </h3>
               <FormField
                 control={form.control}
                 name="diagnostico_text"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Diagnóstico o Impresión Clínica</FormLabel>
+                    <FormLabel>Diagnóstico o impresión clínica</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ej: Gastroenteritis aguda secundaria a indiscreción dietética" {...field} />
+                      <Input placeholder="Ej. Gastroenteritis aguda secundaria a indiscreción dietética" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -230,12 +353,12 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                 name="plan_tratamiento_text"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Plan de Tratamiento y Recomendaciones</FormLabel>
+                    <FormLabel>Plan de tratamiento y recomendaciones</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Medicamentos recetados, indicaciones de dieta, exámenes de laboratorio sugeridos, control en 48 horas..." 
-                        className="resize-none h-24"
-                        {...field} 
+                      <Textarea
+                        placeholder="Medicamentos recetados, indicaciones de dieta, exámenes sugeridos, control en 48 horas..."
+                        className="h-24 resize-none"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -245,9 +368,9 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" disabled={isSubmitting || Boolean(notaPrincipal)} size="lg">
+              <Button type="submit" disabled={isSubmitting} size="lg">
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {notaPrincipal ? "Actualizar Expediente" : "Guardar Expediente Clínico"}
+                Guardar registro de atención
               </Button>
             </div>
           </form>

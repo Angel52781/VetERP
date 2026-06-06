@@ -164,7 +164,7 @@ export async function getOrdenCompleta(id: string) {
 
     let ordenResult = await queryOrden(true);
     if (ordenResult.error && isHceSchemaError(ordenResult.error)) {
-      logSupabaseError("[getOrdenCompleta] orden HCE schema/cache error", ordenResult.error);
+      logSupabaseError("[getOrdenCompleta] orden nota clinica schema/cache error", ordenResult.error);
       const refreshResult = await refreshSchemaCache(supabase);
       if (refreshResult.error) {
         logSupabaseError("[getOrdenCompleta] refresh schema cache error", refreshResult.error);
@@ -194,7 +194,7 @@ export async function getOrdenCompleta(id: string) {
         .in("entrada_clinica_id", entradaIds);
 
       if (edicionesResult.error && isHceSchemaError(edicionesResult.error)) {
-        logSupabaseError("[getOrdenCompleta] ediciones HCE schema/cache error", edicionesResult.error);
+        logSupabaseError("[getOrdenCompleta] historial nota clinica schema/cache error", edicionesResult.error);
         const refreshResult = await refreshSchemaCache(supabase);
         if (refreshResult.error) {
           logSupabaseError("[getOrdenCompleta] refresh ediciones schema cache error", refreshResult.error);
@@ -209,7 +209,7 @@ export async function getOrdenCompleta(id: string) {
       }
 
       if (edicionesResult.error) {
-        logSupabaseError("[getOrdenCompleta] ediciones HCE error", edicionesResult.error);
+        logSupabaseError("[getOrdenCompleta] historial nota clinica error", edicionesResult.error);
       } else {
         const edicionesByEntradaId = new Map<string, any[]>();
         for (const edicion of edicionesResult.data ?? []) {
@@ -281,7 +281,7 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
       if (existing) {
         return {
           error:
-            "La entrada SOAP ya existe. Para corregirla usa Editar entrada y registra el motivo de edicion.",
+            "Esta atención ya tiene un registro de atención guardado. Para corregirlo, usa Editar con auditoría.",
           data: existing,
         };
       }
@@ -310,14 +310,14 @@ export async function createEntradaClinica(input: EntradaClinicaInput) {
       .single();
 
     if (error) {
-      console.error("Error creating entrada clinica:", error);
-      return { error: error.message, data: null };
+      console.error("Error saving attention record:", error);
+      return { error: "Error al guardar el registro de atención", data: null };
     }
 
     return { error: null, data };
   } catch (error: any) {
     console.error("Exception in createEntradaClinica:", error);
-    return { error: error.message || "Error al crear la entrada clínica", data: null };
+    return { error: error.message || "Error al guardar el registro de atención", data: null };
   }
 }
 
@@ -329,7 +329,7 @@ export async function updateEntradaClinicaConAuditoria(input: EditarEntradaClini
     const userId = await getCurrentUserId(supabase);
 
     if (!userId) {
-      return { error: "No se pudo identificar al usuario que edita la entrada.", data: null };
+      return { error: "No se pudo identificar al usuario que realiza el cambio.", data: null };
     }
 
     const { data: entradaActual, error: entradaError } = await supabase
@@ -357,15 +357,15 @@ export async function updateEntradaClinicaConAuditoria(input: EditarEntradaClini
       .maybeSingle();
 
     if (entradaError) {
-      return { error: entradaError.message, data: null };
+      return { error: "No se pudo cargar el registro de atención.", data: null };
     }
     if (!entradaActual) {
-      return { error: "Entrada clinica no encontrada para la clinica activa.", data: null };
+      return { error: "Registro de atención no encontrado para la clínica activa.", data: null };
     }
 
     const orden = await ensureOrdenInClinica(supabase, clinicaId, entradaActual.orden_id);
     if (!orden) {
-      return { error: "La orden de la entrada no pertenece a la clinica activa.", data: null };
+      return { error: "El registro no pertenece a la clínica activa.", data: null };
     }
 
     const beforeData = buildEntradaAuditData(entradaActual as EntradaClinicaAuditRow);
@@ -413,10 +413,10 @@ export async function updateEntradaClinicaConAuditoria(input: EditarEntradaClini
       .maybeSingle();
 
     if (updateError) {
-      return { error: updateError.message, data: null };
+      return { error: "No se pudo actualizar el registro de atención.", data: null };
     }
     if (!entradaActualizada) {
-      return { error: "No se pudo actualizar la entrada clinica.", data: null };
+      return { error: "No se pudo actualizar el registro de atención.", data: null };
     }
 
     const afterData = buildEntradaAuditData(entradaActualizada as EntradaClinicaAuditRow);
@@ -433,7 +433,8 @@ export async function updateEntradaClinicaConAuditoria(input: EditarEntradaClini
       });
 
     if (auditError) {
-      return { error: `La entrada se actualizo, pero fallo la auditoria: ${auditError.message}`, data: null };
+      console.error("Error saving attention record audit trail:", auditError);
+      return { error: "El registro se actualizó, pero no se pudo guardar el historial de cambios.", data: null };
     }
 
     revalidatePath(`/orden_y_colas/${entradaActualizada.orden_id}`);
@@ -443,8 +444,12 @@ export async function updateEntradaClinicaConAuditoria(input: EditarEntradaClini
 
     return { error: null, data: entradaActualizada };
   } catch (error: any) {
+    if (typeof error?.message === "string" && error.message.includes("Acceso denegado")) {
+      return { error: "Solo un administrador puede editar este registro.", data: null };
+    }
+
     return {
-      error: error.message || "Error al editar entrada clinica con auditoria",
+      error: error.message || "Error al editar el registro con auditoría",
       data: null,
     };
   }

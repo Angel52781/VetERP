@@ -12,6 +12,7 @@ import { NuevaEntradaForm } from "./nueva-entrada-form";
 import { AdjuntosPanel } from "./adjuntos-panel";
 import { VentaPanel } from "./venta-panel";
 import { SignosVitalesForm } from "./signos-vitales-form";
+import { FinalizarAtencionButton } from "./finalizar-atencion-button";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { getSeguimientosMascota } from "@/app/(operativo)/mascotas/[id]/actions";
@@ -115,6 +116,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
     ventaEstado: ventaActiva?.estado ?? null,
     saldoPendiente,
   });
+  const canFinalizeAtencion = orden.estado_text === "open" || orden.estado_text === "in_progress";
 
   return (
     <div className="container mx-auto py-8 max-w-5xl space-y-6">
@@ -128,14 +130,12 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Orden de Servicio</h1>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-muted-foreground">Ref: ORD-{orden.id.slice(0, 8).toUpperCase()}</p>
             <span className="text-muted-foreground font-medium text-sm">•</span>
             <Link href={`/mascotas/${orden.mascota_id}?returnTo=${mascotaReturnTo}`} className="text-primary hover:underline font-medium text-sm">
               Paciente: {orden.mascotas?.nombre}
             </Link>
             {(orden.mascotas as any)?.codigo_text?.trim() ? (
               <>
-                <span className="text-muted-foreground font-medium text-sm">â€¢</span>
                 <span className="rounded-full border px-2 py-0.5 text-xs font-medium text-muted-foreground">
                   #{(orden.mascotas as any).codigo_text}
                 </span>
@@ -158,6 +158,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
           <div className={`px-4 py-2 rounded-full font-medium text-sm ${getToneBadgeClass(financialStatusMeta.tone)}`}>
             {financialStatusMeta.label}
           </div>
+          {canFinalizeAtencion ? <FinalizarAtencionButton ordenId={id} /> : null}
         </div>
       </div>
 
@@ -167,7 +168,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
       <Tabs defaultValue={initialTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="resumen">Resumen</TabsTrigger>
-          <TabsTrigger value="notas">Atención Clínica</TabsTrigger>
+          <TabsTrigger value="notas">Atención clínica</TabsTrigger>
           <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
           <TabsTrigger value="adjuntos">Adjuntos</TabsTrigger>
           <TabsTrigger value="venta">Cobro</TabsTrigger>
@@ -272,7 +273,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
           
           <div className="grid md:grid-cols-3 gap-6 pt-6 border-t">
             <div className="md:col-span-2">
-              <h2 className="text-xl font-semibold mb-4">Evolución y Notas</h2>
+              <h2 className="text-xl font-semibold mb-4">Registro y evolución de esta atención</h2>
               <EntradasList
                 entradas={orden.entradas_clinicas || []}
                 canEdit={canEditEntradasClinicas}
