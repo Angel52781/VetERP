@@ -189,7 +189,7 @@ export function GroomingCard({ cita }: GroomingCardProps) {
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+        <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs ${getToneBadgeClass(groomingMeta.tone)}`}>
             {isCompletado ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
             {groomingMeta.label}
@@ -199,12 +199,12 @@ export function GroomingCard({ cita }: GroomingCardProps) {
           </span>
 
           {mascota?.id && (
-            <Link href={`/mascotas/${mascota.id}`} className={buttonVariants({ size: "sm", variant: "outline" })}>
+            <Link href={`/mascotas/${mascota.id}`} className={buttonVariants({ size: "sm", variant: "outline", className: "w-full sm:w-auto" })}>
               Ver ficha
             </Link>
           )}
 
-          <Button size="sm" variant="secondary" onClick={() => setIsOpen((value) => !value)}>
+          <Button size="sm" variant="secondary" onClick={() => setIsOpen((value) => !value)} className="w-full sm:w-auto">
             {isOpen ? <ChevronUp className="mr-2 h-3.5 w-3.5" /> : <ChevronDown className="mr-2 h-3.5 w-3.5" />}
             {isOpen ? "Cerrar" : "Ver detalles"}
           </Button>
@@ -274,13 +274,13 @@ export function GroomingCard({ cita }: GroomingCardProps) {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={handleGuardar} disabled={pending}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Button size="sm" variant="outline" onClick={handleGuardar} disabled={pending} className="w-full sm:w-auto">
               {pending ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : null}
               Guardar
             </Button>
             {!isCompletado ? (
-              <Button size="sm" onClick={handleCompletar} disabled={pending}>
+              <Button size="sm" onClick={handleCompletar} disabled={pending} className="w-full sm:w-auto">
                 {pending ? (
                   <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
                 ) : (
@@ -289,7 +289,7 @@ export function GroomingCard({ cita }: GroomingCardProps) {
                 Marcar completado
               </Button>
             ) : (
-              <Button size="sm" variant="secondary" onClick={handlePendiente} disabled={pending}>
+              <Button size="sm" variant="secondary" onClick={handlePendiente} disabled={pending} className="w-full sm:w-auto">
                 Reabrir / pendiente
               </Button>
             )}

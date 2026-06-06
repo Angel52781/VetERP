@@ -93,7 +93,7 @@ export function NuevoControlDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+      <DialogTrigger render={<Button size="sm" variant="outline" className="w-full sm:w-auto" />}>
         Registrar control
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
@@ -243,7 +243,7 @@ export function NuevoControlDialog({
               />
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3 rounded-lg border p-3">
+            <div className="grid gap-3 rounded-lg border p-3 sm:grid-cols-3">
               <FormField
                 control={form.control}
                 name="comio_bool"

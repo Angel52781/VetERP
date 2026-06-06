@@ -33,7 +33,7 @@ export default async function CajaPage() {
 
   if (ventasRes.error) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="mx-auto w-full py-8">
         <p className="text-red-500">Error cargando caja: {ventasRes.error}</p>
       </div>
     );
@@ -71,7 +71,7 @@ export default async function CajaPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-8 max-w-7xl">
+    <div className="mx-auto w-full max-w-7xl space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Caja y Ventas</h1>
         <p className="text-muted-foreground mt-1">Gestión de ingresos, cuentas por cobrar y flujo de caja.</p>
@@ -113,7 +113,7 @@ export default async function CajaPage() {
       </div>
 
       <Tabs defaultValue="corte" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+        <TabsList className="grid w-full grid-cols-2 sm:max-w-[400px]">
           <TabsTrigger value="corte" className="flex items-center gap-2">
             <Receipt className="w-4 h-4" />
             Corte de Caja

@@ -46,6 +46,7 @@ import { z } from "zod";
 
 import { itemCatalogoSchema, ItemCatalogoInput } from "@/lib/validators/ajustes";
 import { createItemCatalogo, updateItemCatalogo } from "./actions";
+import { getExpirationMeta } from "@/lib/inventory-expiration";
 
 interface ItemCatalogo {
   id: string;
@@ -53,6 +54,7 @@ interface ItemCatalogo {
   descripcion: string | null;
   kind: string;
   precio_inc: number;
+  fecha_vencimiento: string | null;
   is_disabled: boolean;
   proveedores: { nombre: string } | null;
   proveedor_id: string | null;
@@ -91,6 +93,7 @@ export function ItemCatalogoForm({
       descripcion: initialData?.descripcion || "",
       kind: (initialData?.kind as any) || "producto",
       precio_inc: initialData?.precio_inc || 0,
+      fecha_vencimiento: initialData?.fecha_vencimiento || "",
       proveedor_id: initialData?.proveedor_id || "",
       categoria_id: initialData?.categoria_id || "",
       is_disabled: initialData?.is_disabled || false,
@@ -105,6 +108,8 @@ export function ItemCatalogoForm({
     // Convert empty string or "none" to null for UUID fields
     const payload = {
       ...data,
+      fecha_vencimiento:
+        data.kind === "producto" ? (data.fecha_vencimiento === "" ? null : data.fecha_vencimiento) : null,
       proveedor_id: data.proveedor_id === "" || data.proveedor_id === "none" ? null : data.proveedor_id,
       categoria_id: data.categoria_id === "" || data.categoria_id === "none" ? null : data.categoria_id,
     };
@@ -161,7 +166,7 @@ export function ItemCatalogoForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="kind"
@@ -202,7 +207,26 @@ export function ItemCatalogoForm({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        {form.watch("kind") === "producto" && (
+          <FormField
+            control={form.control}
+            name="fecha_vencimiento"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fecha de vencimiento</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} value={field.value ?? ""} />
+                </FormControl>
+                <p className="text-xs text-muted-foreground">
+                  Opcional. Permite marcar el producto como vencido, próximo a vencer o vigente.
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="categoria_id"
@@ -294,7 +318,7 @@ export function ItemCatalogoForm({
         />
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
         </div>
@@ -374,10 +398,10 @@ export function CatalogoList({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-medium">Servicios y Productos</h2>
         <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
-          <DialogTrigger render={<Button size="sm" />}>
+          <DialogTrigger render={<Button size="sm" className="w-full sm:w-auto" />}>
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Ítem
           </DialogTrigger>
@@ -397,7 +421,7 @@ export function CatalogoList({
         </Dialog>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 bg-muted/20 p-3 rounded-lg border border-dashed">
+      <div className="flex flex-col gap-2 rounded-lg border border-dashed bg-muted/20 p-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -408,7 +432,7 @@ export function CatalogoList({
           />
         </div>
         <Select value={categoriaFilter} onValueChange={(v) => { setCategoriaFilter(v as string); setPage(1); }}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Categoría" />
           </SelectTrigger>
           <SelectContent>
@@ -417,7 +441,7 @@ export function CatalogoList({
           </SelectContent>
         </Select>
         <Select value={tipoFilter} onValueChange={(v) => { setTipoFilter(v as string); setPage(1); }}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-full sm:w-[140px]">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -427,7 +451,7 @@ export function CatalogoList({
           </SelectContent>
         </Select>
         <Select value={estadoFilter} onValueChange={(v) => { setEstadoFilter(v as string); setPage(1); }}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-full sm:w-[140px]">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
           <SelectContent>
@@ -436,17 +460,18 @@ export function CatalogoList({
             <SelectItem value="inactivos">Solo inactivos</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="ghost" size="icon" onClick={clearFilters} title="Limpiar filtros">
+        <Button variant="ghost" size="icon" onClick={clearFilters} title="Limpiar filtros" className="w-full sm:w-8">
           <FilterX className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table className="min-w-[720px]">
           <TableHeader>
             <TableRow>
               <TableHead>Nombre</TableHead>
               <TableHead>Tipo / Categoría</TableHead>
+              <TableHead>Vencimiento</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead className="w-[80px]"></TableHead>
@@ -455,7 +480,7 @@ export function CatalogoList({
           <TableBody>
             {paginatedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                   No se encontraron resultados para los filtros actuales.
                 </TableCell>
               </TableRow>
@@ -481,6 +506,25 @@ export function CatalogoList({
                         </span>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    {item.kind === "producto" ? (
+                      (() => {
+                        const expiration = getExpirationMeta(item.fecha_vencimiento);
+                        return (
+                          <div className="space-y-1">
+                            <Badge variant="outline" className={expiration.className}>
+                              {expiration.label}
+                            </Badge>
+                            <div className="text-xs text-muted-foreground">
+                              {expiration.formattedDate ?? "No registrada"}
+                            </div>
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      <span className="text-xs text-muted-foreground">No aplica</span>
+                    )}
                   </TableCell>
                   <TableCell>${Number(item.precio_inc).toFixed(2)}</TableCell>
                   <TableCell>
@@ -509,7 +553,7 @@ export function CatalogoList({
       </div>
 
       {filteredItems.length > 0 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground px-2">
+        <div className="flex flex-col gap-3 px-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <div>
             Mostrando {((page - 1) * itemsPerPage) + 1} a {Math.min(page * itemsPerPage, filteredItems.length)} de {filteredItems.length} ítems
           </div>

@@ -81,8 +81,8 @@ export default async function RecepcionPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">Recepción</h1>
           <p className="text-sm text-muted-foreground">
             Ingreso de pacientes, walk-ins y accesos rápidos del día —{" "}
@@ -179,7 +179,7 @@ export default async function RecepcionPage() {
 
       {/* Programados hoy */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-base font-semibold tracking-tight">Programados hoy</h2>
           <Link href="/agenda" className={buttonVariants({ variant: "outline", size: "sm" })}>
             Ver agenda completa
@@ -195,9 +195,9 @@ export default async function RecepcionPage() {
             {(citasHoy ?? []).map((cita: any) => (
               <div
                 key={cita.id}
-                className="flex items-center justify-between px-4 py-3 gap-4"
+                className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex min-w-0 items-center gap-3">
                   {cita.tipo_citas?.color && (
                     <div
                       className="h-3 w-3 rounded-full shrink-0"
@@ -222,8 +222,8 @@ export default async function RecepcionPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-xs text-muted-foreground hidden sm:inline">
+                <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                  <span className="text-xs text-muted-foreground">
                     {format(new Date(cita.start_date), "HH:mm")}
                   </span>
                   <Badge variant="secondary">
@@ -254,7 +254,7 @@ export default async function RecepcionPage() {
       {/* Atenciones abiertas */}
       {ordenesActivas.length > 0 && (
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-base font-semibold tracking-tight">
               Atenciones abiertas ({ordenesActivas.length})
             </h2>
@@ -269,9 +269,9 @@ export default async function RecepcionPage() {
             {ordenesActivas.slice(0, 8).map((orden: any) => (
               <div
                 key={orden.id}
-                className="flex items-center justify-between px-4 py-3 gap-4"
+                className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex min-w-0 items-center gap-3">
                   <span
                     className={`h-2 w-2 rounded-full shrink-0 ${
                       orden.estado_text === "in_progress"
@@ -289,7 +289,7 @@ export default async function RecepcionPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                   <Badge variant={orden.estado_text === "in_progress" ? "default" : "secondary"}>
                     {getOrdenStatusMeta(orden.estado_text).label}
                   </Badge>

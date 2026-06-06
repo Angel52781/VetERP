@@ -23,7 +23,7 @@ export default async function AgendaPage() {
   ]);
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
+    <div className="mx-auto w-full max-w-6xl">
       <AgendaClient
         citas={citasRes.data || []}
         tiposCita={tiposRes.data || []}

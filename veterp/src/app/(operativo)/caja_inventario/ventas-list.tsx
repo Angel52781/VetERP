@@ -27,7 +27,7 @@ export function VentasList({ ventas }: { ventas: any[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 max-w-sm relative">
+      <div className="relative max-w-sm">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Buscar por cliente, ID o estado..."
@@ -37,8 +37,8 @@ export function VentasList({ ventas }: { ventas: any[] }) {
         />
       </div>
 
-      <div className="rounded-md border overflow-hidden">
-        <Table>
+      <div className="overflow-hidden rounded-md border">
+        <Table className="min-w-[760px]">
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead>Fecha</TableHead>

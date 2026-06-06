@@ -25,7 +25,7 @@ export async function getProductosInventario(): Promise<{
       supabase
         .from("items_catalogo")
         .select(
-          `id, nombre, descripcion, kind, sku, unidad, precio_inc, costo_referencial, stock_minimo, is_disabled, proveedor_id, categoria_id,
+          `id, nombre, descripcion, kind, sku, unidad, precio_inc, costo_referencial, stock_minimo, fecha_vencimiento, is_disabled, proveedor_id, categoria_id,
            proveedores ( nombre ),
            categorias_catalogo ( nombre )`
         )
@@ -57,6 +57,7 @@ export async function getProductosInventario(): Promise<{
       precio_inc: Number(p.precio_inc ?? 0),
       costo_referencial: p.costo_referencial != null ? Number(p.costo_referencial) : null,
       stock_minimo: Number(p.stock_minimo ?? 0),
+      fecha_vencimiento: (p.fecha_vencimiento as string | null) ?? null,
       is_disabled: Boolean(p.is_disabled),
       proveedor_id: p.proveedor_id ?? null,
       categoria_id: p.categoria_id ?? null,
@@ -93,6 +94,7 @@ export async function crearProducto(input: ItemInventarioInput): Promise<{
         precio_inc: validated.precio_inc,
         costo_referencial: validated.costo_referencial ?? null,
         stock_minimo: validated.stock_minimo,
+        fecha_vencimiento: validated.kind === "producto" ? validated.fecha_vencimiento ?? null : null,
         proveedor_id: validated.proveedor_id ?? null,
         categoria_id: validated.categoria_id ?? null,
         is_disabled: validated.is_disabled ?? false,
@@ -150,6 +152,7 @@ export async function actualizarProducto(
         precio_inc: validated.precio_inc,
         costo_referencial: validated.costo_referencial ?? null,
         stock_minimo: validated.stock_minimo,
+        fecha_vencimiento: validated.kind === "producto" ? validated.fecha_vencimiento ?? null : null,
         proveedor_id: validated.proveedor_id ?? null,
         categoria_id: validated.categoria_id ?? null,
         is_disabled: validated.is_disabled ?? false,

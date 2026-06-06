@@ -180,7 +180,7 @@ export default async function HospitalizacionesPage({ searchParams }: Hospitaliz
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <BedDouble className="h-6 w-6 text-primary" />
             Hospitalizaciones
           </h1>
@@ -241,7 +241,7 @@ export default async function HospitalizacionesPage({ searchParams }: Hospitaliz
             </Link>
           </div>
 
-          <form className="flex w-full gap-2 lg:max-w-lg" method="get">
+          <form className="flex w-full flex-col gap-2 sm:flex-row lg:max-w-lg" method="get">
             <input type="hidden" name="vista" value={vista} />
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -252,9 +252,9 @@ export default async function HospitalizacionesPage({ searchParams }: Hospitaliz
                 className="pl-9"
               />
             </div>
-            <Button type="submit" variant="outline">Buscar</Button>
+            <Button type="submit" variant="outline" className="w-full sm:w-auto">Buscar</Button>
             {query ? (
-              <Link href={`/hospitalizaciones?vista=${vista}`} className={buttonVariants({ variant: "ghost" })}>
+              <Link href={`/hospitalizaciones?vista=${vista}`} className={buttonVariants({ variant: "ghost", className: "w-full sm:w-auto" })}>
                 Limpiar
               </Link>
             ) : null}
@@ -316,16 +316,16 @@ export default async function HospitalizacionesPage({ searchParams }: Hospitaliz
                           {cliente?.telefono ? ` · ${cliente.telefono}` : ""}
                         </CardDescription>
                       </div>
-                      <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                         <Link
                           href={`/hospitalizaciones/${hospitalizacion.id}`}
-                          className={buttonVariants({ variant: "default", size: "sm" })}
+                          className={buttonVariants({ variant: "default", size: "sm", className: "w-full sm:w-auto" })}
                         >
                           Ver detalle
                         </Link>
                         <Link
                           href={`/mascotas/${hospitalizacion.mascota_id}?tab=hospitalizaciones&returnTo=${encodeURIComponent("/hospitalizaciones")}`}
-                          className={buttonVariants({ variant: "outline", size: "sm" })}
+                          className={buttonVariants({ variant: "outline", size: "sm", className: "w-full sm:w-auto" })}
                         >
                           Ver paciente
                         </Link>

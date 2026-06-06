@@ -109,8 +109,8 @@ export function MovimientoForm({ tipoMovimiento, itemId, itemNombre, stockActual
       </DialogHeader>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-2">
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 space-y-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-2">
               <FormLabel>Tipo</FormLabel>
               <div className="flex h-10 items-center rounded-md border bg-muted/30 px-3">
@@ -207,7 +207,7 @@ export function MovimientoForm({ tipoMovimiento, itemId, itemNombre, stockActual
           </div>
 
           <div className="flex justify-end pt-1">
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
               {loading ? "Registrando..." : "Registrar movimiento"}
             </Button>
           </div>

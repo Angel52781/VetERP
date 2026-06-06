@@ -29,9 +29,9 @@ export default async function GroomingPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <Scissors className="h-6 w-6 text-primary" />
             Grooming
           </h1>
@@ -39,7 +39,7 @@ export default async function GroomingPage() {
             Baños, cortes, grooming y servicios relacionados - {format(hoy, "EEEE d 'de' MMMM", { locale: es })}
           </p>
         </div>
-        <Link href="/agenda" className={buttonVariants({ variant: "default" })}>
+        <Link href="/agenda" className={buttonVariants({ variant: "default", className: "w-full sm:w-auto" })}>
           <CalendarDays className="mr-2 h-4 w-4" />
           Programar en Agenda
         </Link>
@@ -51,7 +51,7 @@ export default async function GroomingPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-lg border p-3 text-center">
           <p className="text-2xl font-bold">{citas.length}</p>
           <p className="text-xs text-muted-foreground mt-0.5">Total hoy</p>

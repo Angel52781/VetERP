@@ -80,32 +80,18 @@ export default async function AjustesPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
 
       <Tabs defaultValue={isAdminOrOwner ? "catalogo" : "apariencia"} className="w-full">
-        <TabsList className="group-data-horizontal/tabs:h-auto grid h-auto w-full grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-2 overflow-x-auto rounded-2xl border bg-muted/40 p-2 sm:overflow-visible">
+        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:flex-wrap sm:justify-start">
           {isAdminOrOwner ? (
-            <TabsTrigger value="general" className={tabTriggerClassName}>
-              General
-            </TabsTrigger>
+            <TabsTrigger value="general">General</TabsTrigger>
           ) : null}
-          <TabsTrigger value="apariencia" className={tabTriggerClassName}>
-            Apariencia
-          </TabsTrigger>
+          <TabsTrigger value="apariencia">Apariencia</TabsTrigger>
           {isAdminOrOwner ? (
             <>
-              <TabsTrigger value="staff" className={tabTriggerClassName}>
-                Staff
-              </TabsTrigger>
-              <TabsTrigger value="catalogo" className={tabTriggerClassName}>
-                Catalogo
-              </TabsTrigger>
-              <TabsTrigger value="categorias" className={tabTriggerClassName}>
-                Categorias
-              </TabsTrigger>
-              <TabsTrigger value="proveedores" className={tabTriggerClassName}>
-                Proveedores
-              </TabsTrigger>
-              <TabsTrigger value="almacenes" className={tabTriggerClassName}>
-                Almacenes
-              </TabsTrigger>
+              <TabsTrigger value="staff">Staff</TabsTrigger>
+              <TabsTrigger value="catalogo">Catálogo</TabsTrigger>
+              <TabsTrigger value="categorias">Categorías</TabsTrigger>
+              <TabsTrigger value="proveedores">Proveedores</TabsTrigger>
+              <TabsTrigger value="almacenes">Almacenes</TabsTrigger>
             </>
           ) : null}
         </TabsList>

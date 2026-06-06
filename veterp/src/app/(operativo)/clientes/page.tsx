@@ -36,14 +36,14 @@ export default async function ClientesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold tracking-tight">Clientes</h1>
           <p className="text-sm text-muted-foreground">
             {clientes?.length ?? 0} cliente{clientes?.length !== 1 ? "s" : ""} registrados
           </p>
         </div>
-        <Link href="/clientes/nuevo" className={buttonVariants({})}>
+        <Link href="/clientes/nuevo" className={buttonVariants({ className: "w-full sm:w-auto" })}>
           <Plus className="mr-1.5 h-4 w-4" />
           Nuevo cliente
         </Link>
@@ -85,7 +85,7 @@ export default async function ClientesPage() {
             return (
               <div
                 key={c.id}
-                className="flex items-center gap-4 px-4 py-4 hover:bg-muted/40 transition-colors"
+                className="flex flex-col gap-4 px-4 py-4 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center"
               >
                 {/* Avatar inicial */}
                 <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm shrink-0 select-none">
@@ -93,8 +93,8 @@ export default async function ClientesPage() {
                 </div>
 
                 {/* Info principal */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Link href={`/clientes/${c.id}`} className="font-medium text-sm truncate hover:underline">
                       {c.nombre}
                     </Link>
@@ -117,7 +117,7 @@ export default async function ClientesPage() {
                       </Link>
                     ) : null}
                   </div>
-                  <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                     {documento && (
                       <span className="flex items-center gap-1">
                         <IdCard className="h-3 w-3" /> {documento}
@@ -143,6 +143,29 @@ export default async function ClientesPage() {
                       </span>
                     </div>
                   )}
+                  <div className="mt-2 grid grid-cols-2 gap-3 text-sm sm:hidden">
+                    <div>
+                      <p className="font-semibold">{mascotasCount}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {mascotasCount === 1 ? "paciente" : "pacientes"}
+                      </p>
+                    </div>
+                    <div>
+                      {ultimaOrden ? (
+                        <>
+                          <p className="font-semibold text-xs">
+                            {format(new Date(ultimaOrden.created_at), "dd MMM yyyy", { locale: es })}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Última atención</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-semibold text-xs text-muted-foreground">—</p>
+                          <p className="text-xs text-muted-foreground">Sin atenciones</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Stats */}
