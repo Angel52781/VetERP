@@ -20,7 +20,9 @@ import {
 } from "lucide-react";
 import { getCitaAreaLabel, normalizeCitaArea } from "@/app/(operativo)/agenda/types";
 
-type EventType = "atencion" | "hospitalizacion" | "seguimiento" | "adjunto" | "estetica";
+import { RegistroPrevioDialog } from "./registro-previo-dialog";
+
+type EventType = "atencion" | "hospitalizacion" | "seguimiento" | "adjunto" | "estetica" | "registro_previo";
 
 interface TimelineEvent {
   id: string;
@@ -32,6 +34,7 @@ interface TimelineEvent {
   iconColorClass: string;
   borderClass: string;
   renderDetails?: () => React.ReactNode;
+  renderPreview?: () => React.ReactNode;
   url?: string;
   urlLabel?: string;
 }
@@ -44,6 +47,7 @@ const FILTER_OPTIONS = [
   { id: "seguimientos", label: "Seguimientos" },
   { id: "adjuntos", label: "Adjuntos" },
   { id: "estetica", label: "Estética" },
+  { id: "antecedentes", label: "Antecedentes" },
 ] as const;
 
 type FilterId = (typeof FILTER_OPTIONS)[number]["id"];
@@ -55,6 +59,7 @@ interface HistoriaTimelineProps {
   citas: any[];
   seguimientos: any[];
   adjuntos: any[];
+  registros_previos: any[];
 }
 
 export function HistoriaTimeline({
@@ -64,6 +69,7 @@ export function HistoriaTimeline({
   citas,
   seguimientos,
   adjuntos,
+  registros_previos,
 }: HistoriaTimelineProps) {
   const [activeFilter, setActiveFilter] = useState<FilterId>("todo");
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
@@ -272,8 +278,51 @@ export function HistoriaTimeline({
       });
     }
 
+    // 6. Registros previos
+    for (const rp of registros_previos || []) {
+      const isAnulado = rp.anulado_at != null;
+      arr.push({
+        id: `rp-${rp.id}`,
+        type: "registro_previo",
+        date: new Date(rp.fecha_historica_date),
+        title: rp.titulo_text,
+        subtitle: isAnulado ? "Anulado" : "Registro previo",
+        icon: FileText,
+        iconColorClass: isAnulado
+          ? "text-muted-foreground bg-muted/50 dark:bg-muted/10 opacity-70"
+          : "text-teal-600 bg-teal-100 dark:bg-teal-900/30",
+        borderClass: isAnulado ? "border-l-muted opacity-70" : "border-l-teal-500",
+        renderPreview: () => (
+          <div className="mt-2 space-y-1">
+            {rp.fecha_aproximada_bool && (
+              <Badge variant="secondary" className="mr-2 text-[10px] h-5">Fecha aproximada</Badge>
+            )}
+            {rp.fuente_text && (
+              <Badge variant="outline" className="text-[10px] h-5 font-normal text-muted-foreground border-dashed">
+                Fuente: {rp.fuente_text}
+              </Badge>
+            )}
+            <p className={`text-xs text-muted-foreground line-clamp-2 mt-1.5 ${isAnulado ? "line-through opacity-70" : ""}`}>
+              {rp.descripcion_text}
+            </p>
+          </div>
+        ),
+        renderDetails: () => (
+          <div className={`text-sm space-y-2 ${isAnulado ? "text-muted-foreground opacity-80" : "text-muted-foreground"}`}>
+            <p className={`whitespace-pre-wrap ${isAnulado ? "line-through" : ""}`}>{rp.descripcion_text}</p>
+            {isAnulado && rp.motivo_anulacion_text && (
+              <div className="mt-3 p-2 bg-red-50 dark:bg-red-950/20 text-red-800 dark:text-red-300 rounded text-xs border border-red-100 dark:border-red-900/30">
+                <span className="font-semibold uppercase tracking-wider block mb-1">Motivo de anulación:</span>
+                {rp.motivo_anulacion_text}
+              </div>
+            )}
+          </div>
+        ),
+      });
+    }
+
     return arr.sort((a, b) => b.date.getTime() - a.date.getTime());
-  }, [ordenes, hospitalizaciones, citas, seguimientos, adjuntos, mascotaId]);
+  }, [ordenes, hospitalizaciones, citas, seguimientos, adjuntos, registros_previos, mascotaId]);
 
   const filteredEvents = useMemo(() => {
     if (activeFilter === "todo") return events;
@@ -286,6 +335,7 @@ export function HistoriaTimeline({
       seguimientos: "seguimiento",
       adjuntos: "adjunto",
       estetica: "estetica",
+      antecedentes: "registro_previo",
     };
 
     const targetType = filterToTypeMap[activeFilter];
@@ -294,18 +344,24 @@ export function HistoriaTimeline({
 
   if (events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground border rounded-lg bg-card">
-        <Activity className="w-10 h-10 mb-3 opacity-20" />
-        <p className="text-sm">Sin historial registrado para este paciente.</p>
+      <div className="space-y-4">
+        <div className="flex justify-end">
+          <RegistroPrevioDialog mascotaId={mascotaId} />
+        </div>
+        <div className="flex flex-col items-center justify-center py-16 text-muted-foreground border rounded-lg bg-card">
+          <Activity className="w-10 h-10 mb-3 opacity-20" />
+          <p className="text-sm">Sin historial registrado para este paciente.</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2 pb-2 border-b">
-        {FILTER_OPTIONS.map((opt) => {
+      {/* Header & Filters */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2 border-b">
+        <div className="flex flex-wrap items-center gap-2">
+          {FILTER_OPTIONS.map((opt) => {
           // Count events for this filter
           const count = opt.id === "todo"
             ? events.length
@@ -317,6 +373,7 @@ export function HistoriaTimeline({
                   seguimientos: "seguimiento",
                   adjuntos: "adjunto",
                   estetica: "estetica",
+                  antecedentes: "registro_previo",
                 }[opt.id] as EventType;
                 return e.type === targetType;
               }).length;
@@ -341,6 +398,8 @@ export function HistoriaTimeline({
             </button>
           );
         })}
+        </div>
+        <RegistroPrevioDialog mascotaId={mascotaId} />
       </div>
 
       {/* Timeline */}
@@ -385,6 +444,7 @@ export function HistoriaTimeline({
                           <p className="text-xs font-medium text-muted-foreground">{format(event.date, "dd MMM yyyy, HH:mm", { locale: es })}</p>
                         </div>
                       </div>
+                      {event.renderPreview && event.renderPreview()}
                     </div>
                     {isExpanded && event.renderDetails && (
                       <div className="px-3 pb-3 sm:px-4 sm:pb-4 border-t pt-3 bg-card">

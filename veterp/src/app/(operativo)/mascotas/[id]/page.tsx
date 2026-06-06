@@ -56,7 +56,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const { id } = await params;
   const { returnTo, tab } = (await searchParams) ?? {};
   const {
-    mascota, ordenes, citas, tiposCita, adjuntos, seguimientos, hospitalizaciones,
+    mascota, ordenes, citas, tiposCita, adjuntos, seguimientos, hospitalizaciones, registros_previos,
     seguimientoFeatureUnavailable, seguimientoFeatureReason, adjuntosFeatureUnavailable, adjuntosFeatureReason, error,
   } = await getMascotaCompleta(id);
 
@@ -371,6 +371,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             citas={citas ?? []}
             seguimientos={seguimientos ?? []}
             adjuntos={adjuntos ?? []}
+            registros_previos={registros_previos ?? []}
           />
         </TabsContent>
 
