@@ -183,7 +183,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
       />
 
       <Tabs defaultValue={initialTab} className="w-full">
-        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:grid sm:grid-cols-5">
+        <TabsList className="flex w-full min-w-0 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-5">
           <TabsTrigger value="resumen" className="min-w-[8.5rem] sm:min-w-0">Resumen</TabsTrigger>
           <TabsTrigger value="notas" className="min-w-[10rem] sm:min-w-0">Atención clínica</TabsTrigger>
           <TabsTrigger value="seguimientos" className="min-w-[9rem] sm:min-w-0">Seguimientos</TabsTrigger>
@@ -294,7 +294,7 @@ export default async function OrdenDetailsPage({ params, searchParams }: PagePro
           
           <div className="grid gap-6 border-t pt-6 md:grid-cols-3">
             <div className="md:col-span-2">
-              <h2 className="text-xl font-semibold mb-4">Registro y evolución de esta atención</h2>
+              <h2 className="text-xl font-semibold mb-4">Documentación de esta visita</h2>
               <EntradasList
                 entradas={orden.entradas_clinicas || []}
                 canEdit={canEditEntradasClinicas}

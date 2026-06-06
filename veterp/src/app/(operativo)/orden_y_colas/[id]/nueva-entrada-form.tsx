@@ -49,10 +49,9 @@ export function NuevaEntradaForm({ ordenId }: NuevaEntradaFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Agregar evolución u observación</CardTitle>
+        <CardTitle className="text-lg">Agregar nota adicional de la visita</CardTitle>
         <CardDescription>
-          Úsala para registrar evolución u observaciones nuevas dentro de esta atención. No la uses para corregir
-          errores de una nota anterior.
+          Úsala para observaciones nuevas durante esta atención. Para corregir el registro principal, usa Editar con auditoría.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -73,7 +72,7 @@ export function NuevaEntradaForm({ ordenId }: NuevaEntradaFormProps) {
 
           <Button type="submit" disabled={isLoading || !texto.trim()}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Guardar evolución u observación
+            Guardar nota adicional
           </Button>
         </form>
       </CardContent>

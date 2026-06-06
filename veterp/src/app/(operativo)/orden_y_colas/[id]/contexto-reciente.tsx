@@ -56,7 +56,8 @@ export function ContextoReciente({
       }
 
       // Evitar término legacy SOAP
-      if (summary.trim() === "Registro médico estructurado (SOAP)") {
+      const summaryTrimmed = summary.trim();
+      if (summaryTrimmed === "Registro médico estructurado (SOAP)" || summaryTrimmed === "Registro médico estructurado") {
         summary = "Registro de atención";
       }
 
@@ -118,8 +119,11 @@ export function ContextoReciente({
   return (
     <Card className="shadow-sm border-l-4 border-l-primary/60">
       <CardHeader className="pb-3 bg-muted/20 border-b">
-        <CardTitle className="text-sm font-semibold flex items-center justify-between">
-          <span>Contexto reciente del paciente</span>
+        <CardTitle className="text-sm font-semibold flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex flex-col">
+            <span>Contexto reciente del paciente</span>
+            <span className="text-xs font-normal text-muted-foreground mt-0.5">Historial previo del paciente. Solo lectura.</span>
+          </div>
           <Link 
             href={`/mascotas/${mascotaId}?returnTo=${mascotaReturnTo}`}
             className="text-xs font-normal text-primary hover:underline flex items-center gap-1"

@@ -124,7 +124,12 @@ function NoteBody({ entrada }: { entrada: EntradaClinica }) {
 
 export function EntradasList({ entradas, canEdit = false }: EntradasListProps) {
   if (!entradas || entradas.length === 0) {
-    return <div className="py-8 text-center text-muted-foreground">No hay registros ni evolución documentada aún.</div>;
+    return (
+      <div className="py-8 text-center text-muted-foreground">
+        <p className="text-sm font-medium text-foreground">Aún no hay notas adicionales en esta visita.</p>
+        <p className="text-sm mt-1">El registro principal se guarda arriba. Usa esta sección solo si ocurre algo adicional durante la misma atención.</p>
+      </div>
+    );
   }
 
   const sortedEntradas = [...entradas].sort(
@@ -143,7 +148,7 @@ export function EntradasList({ entradas, canEdit = false }: EntradasListProps) {
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <CardTitle className="text-sm font-medium">
-                      {mainNote ? "Registro de atención" : "Evolución u observación"}
+                      {mainNote ? "Registro de atención" : "Nota adicional de la visita"}
                     </CardTitle>
                     {Number(entrada.ediciones_count ?? 0) > 0 ? (
                       <Badge className="border-none bg-amber-100 text-amber-900">Con cambios</Badge>

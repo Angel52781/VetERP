@@ -129,7 +129,7 @@ export function HistoriaTimeline({
                 const normalizeLegacyText = (str: string | null | undefined) => {
                   if (!str) return str;
                   let cleaned = str.trim();
-                  if (cleaned === "Registro médico estructurado (SOAP)") return "Registro de atención";
+                  if (cleaned === "Registro médico estructurado (SOAP)" || cleaned === "Registro médico estructurado") return "Registro de atención";
                   cleaned = cleaned.replace(/,\s*$/, '');
                   return cleaned;
                 };
@@ -137,7 +137,7 @@ export function HistoriaTimeline({
                 return (
                   <div key={e.id} className="rounded-md bg-muted/40 p-3 text-sm">
                     <p className="mb-2 font-medium">
-                      {isMain ? "Registro de atención" : "Evolución u observación"}
+                      {isMain ? "Registro de atención" : "Nota adicional de la visita"}
                       <span className="ml-2 font-normal text-muted-foreground text-xs">
                         {format(new Date(e.created_at), "HH:mm")}
                       </span>
