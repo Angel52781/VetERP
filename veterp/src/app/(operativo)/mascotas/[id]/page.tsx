@@ -7,6 +7,7 @@ import { getMascotaCompleta } from "./actions";
 import { SeguimientosCard } from "./seguimientos-card";
 import { MascotaEditDialog } from "./mascota-edit-dialog";
 import { MascotaAdjuntosCard } from "./mascota-adjuntos-card";
+import { HistoriaTimeline } from "./historia-timeline";
 import { AgendarCitaPacienteBtn } from "@/app/(operativo)/pacientes/agendar-cita-paciente-btn";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -79,8 +80,8 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
   const soapSeen = new Set<string>();
   const allEntradas = rawEntradas.filter((e: any) => {
-    const isSOAP = e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje";
-    if (isSOAP) {
+    const isMain = e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje";
+    if (isMain) {
       if (soapSeen.has(e.orden_id)) return false;
       soapSeen.add(e.orden_id);
     }
@@ -362,85 +363,15 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
         </TabsList>
 
         {/* Historia clínica */}
-        <TabsContent value="historia" className="mt-4 space-y-4">
-          {allEntradas.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground border rounded-lg bg-card">
-              <FileText className="w-10 h-10 mb-3 opacity-20" />
-              <p className="text-sm">Sin registros clínicos para este paciente.</p>
-              <BtnNuevaAtencion clienteId={mascota.cliente_id} mascotaId={mascota.id} compact label="Iniciar atención" />
-            </div>
-          ) : (
-            allEntradas.map((e: any) => {
-              const isSOAP = e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje";
-              return (
-                <Card key={e.id} className="overflow-hidden">
-                  <div className="bg-muted/40 px-4 py-2.5 border-b flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Stethoscope className="w-4 h-4 text-primary" />
-                      <span className="font-semibold text-sm">
-                        {e.motivo_consulta_text ? `Consulta: ${e.motivo_consulta_text}` : e.tipo_text}
-                      </span>
-                      {Number(e.ediciones_count ?? 0) > 0 && (
-                        <Badge className="bg-amber-100 text-amber-900 border-none">
-                          Editada {Number(e.ediciones_count ?? 0)}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <span>{format(new Date(e.created_at), "dd MMM yyyy, HH:mm", { locale: es })}</span>
-                      {e.editado_at && <span>Ultima edicion: {format(new Date(e.editado_at), "dd/MM/yyyy HH:mm")}</span>}
-                      <Link
-                        href={`/orden_y_colas/${e.orden_id}?returnTo=${ordenReturnTo}`}
-                        className={buttonVariants({ variant: "outline", size: "sm" })}
-                      >
-                        Ver atencion
-                      </Link>
-                    </div>
-                  </div>
-                  <CardContent className="p-4 space-y-3">
-                    {(e.peso_kg_num || e.temperatura_c_num || e.frecuencia_cardiaca_num || e.frecuencia_respiratoria_num) && (
-                      <div className="flex flex-wrap gap-2 border-b border-dashed pb-3 text-xs">
-                        {e.peso_kg_num && <span className="bg-secondary/30 rounded px-2 py-0.5">⚖️ {e.peso_kg_num} kg</span>}
-                        {e.temperatura_c_num && <span className="bg-secondary/30 rounded px-2 py-0.5">🌡️ {e.temperatura_c_num} °C</span>}
-                        {e.frecuencia_cardiaca_num && <span className="bg-secondary/30 rounded px-2 py-0.5">❤️ {e.frecuencia_cardiaca_num} lpm</span>}
-                        {e.frecuencia_respiratoria_num && <span className="bg-secondary/30 rounded px-2 py-0.5">🫁 {e.frecuencia_respiratoria_num} rpm</span>}
-                      </div>
-                    )}
-                    {isSOAP ? (
-                      <div className="space-y-3">
-                        {e.anamnesis_text && <div><p className="text-xs font-bold uppercase text-muted-foreground mb-1">Anamnesis</p><p className="text-sm bg-muted/20 p-2 rounded">{e.anamnesis_text}</p></div>}
-                        {e.observaciones_text && <div><p className="text-xs font-bold uppercase text-muted-foreground mb-1">Examen físico</p><p className="text-sm bg-muted/20 p-2 rounded">{e.observaciones_text}</p></div>}
-                        {e.diagnostico_text && <div><p className="text-xs font-bold uppercase text-muted-foreground mb-1">Diagnóstico</p><p className="text-sm font-medium text-primary bg-primary/5 p-2 rounded">{e.diagnostico_text}</p></div>}
-                        {e.plan_tratamiento_text && <div><p className="text-xs font-bold uppercase text-muted-foreground mb-1">Plan terapéutico</p><p className="text-sm bg-emerald-50/50 p-2 rounded border border-emerald-200">{e.plan_tratamiento_text}</p></div>}
-                      </div>
-                    ) : (
-                      e.texto_text && <p className="text-sm whitespace-pre-wrap">{e.texto_text}</p>
-                    )}
-                    {e.entradas_clinicas_ediciones?.length ? (
-                      <div className="rounded-lg border border-dashed p-3">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Historial de ediciones
-                        </p>
-                        <div className="mt-2 space-y-2">
-                          {[...e.entradas_clinicas_ediciones]
-                            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                            .map((edicion: any) => (
-                              <div key={edicion.id} className="rounded-md bg-muted/30 px-3 py-2 text-sm">
-                                <p className="text-xs text-muted-foreground">
-                                  {format(new Date(edicion.created_at), "dd/MM/yyyy HH:mm")} - Usuario{" "}
-                                  {edicion.editado_por ? "Personal autorizado" : "no registrado"}
-                                </p>
-                                <p className="mt-1 whitespace-pre-wrap">{edicion.motivo_text}</p>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    ) : null}
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
+        <TabsContent value="historia" className="mt-4">
+          <HistoriaTimeline
+            mascotaId={id}
+            ordenes={ordenes ?? []}
+            hospitalizaciones={hospitalizaciones ?? []}
+            citas={citas ?? []}
+            seguimientos={seguimientos ?? []}
+            adjuntos={adjuntos ?? []}
+          />
         </TabsContent>
 
         {/* Seguimientos */}
