@@ -119,6 +119,12 @@ export function HistoriaTimeline({
                   e.frecuencia_respiratoria_num ? `${e.frecuencia_respiratoria_num} rpm` : null,
                 ].filter(Boolean);
 
+                const normalizeLegacyText = (str: string | null | undefined) => {
+                  if (!str) return str;
+                  if (str.trim() === "Registro médico estructurado (SOAP)") return "Registro de atención";
+                  return str;
+                };
+
                 return (
                   <div key={e.id} className="rounded-md bg-muted/40 p-3 text-sm">
                     <p className="mb-2 font-medium">
@@ -133,17 +139,17 @@ export function HistoriaTimeline({
                     {e.diagnostico_text && (
                       <div className="mb-2">
                         <span className="font-semibold text-xs text-muted-foreground uppercase">Diagnóstico: </span>
-                        <span>{e.diagnostico_text}</span>
+                        <span>{normalizeLegacyText(e.diagnostico_text)}</span>
                       </div>
                     )}
                     {e.plan_tratamiento_text && (
                       <div className="mb-2">
                         <span className="font-semibold text-xs text-muted-foreground uppercase">Plan terapéutico: </span>
-                        <span>{e.plan_tratamiento_text}</span>
+                        <span>{normalizeLegacyText(e.plan_tratamiento_text)}</span>
                       </div>
                     )}
-                    {e.texto_text && <p className="whitespace-pre-wrap mt-1">{e.texto_text}</p>}
-                    {e.observaciones_text && <p className="whitespace-pre-wrap mt-1">{e.observaciones_text}</p>}
+                    {e.texto_text && <p className="whitespace-pre-wrap mt-1">{normalizeLegacyText(e.texto_text)}</p>}
+                    {e.observaciones_text && <p className="whitespace-pre-wrap mt-1">{normalizeLegacyText(e.observaciones_text)}</p>}
                   </div>
                 );
               })}
@@ -299,19 +305,42 @@ export function HistoriaTimeline({
     <div className="space-y-6">
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 pb-2 border-b">
-        {FILTER_OPTIONS.map((opt) => (
-          <button
-            key={opt.id}
-            onClick={() => setActiveFilter(opt.id)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
-              activeFilter === opt.id
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
+        {FILTER_OPTIONS.map((opt) => {
+          // Count events for this filter
+          const count = opt.id === "todo"
+            ? events.length
+            : events.filter((e) => {
+                if (opt.id === "clinico") return e.type !== "estetica";
+                const targetType = {
+                  atenciones: "atencion",
+                  hospitalizaciones: "hospitalizacion",
+                  seguimientos: "seguimiento",
+                  adjuntos: "adjunto",
+                  estetica: "estetica",
+                }[opt.id] as EventType;
+                return e.type === targetType;
+              }).length;
+
+          return (
+            <button
+              key={opt.id}
+              onClick={() => setActiveFilter(opt.id)}
+              disabled={count === 0}
+              className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors flex items-center gap-1.5 ${
+                activeFilter === opt.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              }`}
+            >
+              <span>{opt.label}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                activeFilter === opt.id ? "bg-primary-foreground/20" : "bg-background/50"
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Timeline */}
