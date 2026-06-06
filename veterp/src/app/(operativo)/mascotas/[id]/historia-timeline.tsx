@@ -19,6 +19,7 @@ import {
   NotebookPen,
 } from "lucide-react";
 import { getCitaAreaLabel, normalizeCitaArea } from "@/app/(operativo)/agenda/types";
+import { getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
 
 import { RegistroPrevioDialog } from "./registro-previo-dialog";
 
@@ -127,8 +128,10 @@ export function HistoriaTimeline({
 
                 const normalizeLegacyText = (str: string | null | undefined) => {
                   if (!str) return str;
-                  if (str.trim() === "Registro médico estructurado (SOAP)") return "Registro de atención";
-                  return str;
+                  let cleaned = str.trim();
+                  if (cleaned === "Registro médico estructurado (SOAP)") return "Registro de atención";
+                  cleaned = cleaned.replace(/,\s*$/, '');
+                  return cleaned;
                 };
 
                 return (
@@ -241,18 +244,21 @@ export function HistoriaTimeline({
         id: `seg-${seg.id}`,
         type: "seguimiento",
         date: new Date(dateStr),
-        title: seg.nombre_text || seg.tipo_text,
+        title: getSeguimientoTipoLabel(seg.nombre_text || seg.tipo_text),
         subtitle: seg.estado_text === "resuelto" ? "Resuelto" : "Pendiente",
         icon: Syringe,
         iconColorClass: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30",
         borderClass: "border-l-emerald-500",
-        renderDetails: () => (
-          <div className="text-sm text-muted-foreground space-y-2">
-            <p>Tipo: {seg.tipo_text}</p>
-            {seg.notas_text && <p className="whitespace-pre-wrap">Notas: {seg.notas_text}</p>}
-            {seg.resolucion_notas_text && <p className="whitespace-pre-wrap">Resolución: {seg.resolucion_notas_text}</p>}
-          </div>
-        ),
+        renderDetails: () => {
+          const displayTipo = getSeguimientoTipoLabel(seg.tipo_text);
+          return (
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>Tipo: {displayTipo}</p>
+              {seg.notas_text && <p className="whitespace-pre-wrap">Notas: {seg.notas_text}</p>}
+              {seg.resolucion_notas_text && <p className="whitespace-pre-wrap">Resolución: {seg.resolucion_notas_text}</p>}
+            </div>
+          );
+        },
       });
     }
 

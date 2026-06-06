@@ -157,6 +157,8 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
                       <Input
                         type="number"
                         step="0.01"
+                        min={0}
+                        max={999}
                         value={numberValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
@@ -178,6 +180,8 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
                       <Input
                         type="number"
                         step="0.1"
+                        min={0}
+                        max={60}
                         value={numberValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
@@ -198,6 +202,8 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
                     <FormControl>
                       <Input
                         type="number"
+                        min={1}
+                        max={500}
                         value={numberValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
@@ -218,6 +224,8 @@ export function EditarEntradaClinicaDialog({ entrada }: EditarEntradaClinicaDial
                     <FormControl>
                       <Input
                         type="number"
+                        min={1}
+                        max={200}
                         value={numberValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))

@@ -237,6 +237,8 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                         <Input
                           type="number"
                           step="0.01"
+                          min={0}
+                          max={999}
                           {...field}
                           value={field.value || ""}
                           onChange={(event) =>
@@ -258,6 +260,8 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                         <Input
                           type="number"
                           step="0.1"
+                          min={0}
+                          max={60}
                           {...field}
                           value={field.value || ""}
                           onChange={(event) =>
@@ -278,6 +282,8 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                       <FormControl>
                         <Input
                           type="number"
+                          min={1}
+                          max={500}
                           {...field}
                           value={field.value || ""}
                           onChange={(event) =>
@@ -298,6 +304,8 @@ export function SignosVitalesForm({ ordenId, entradas, canEditEntradas = false }
                       <FormControl>
                         <Input
                           type="number"
+                          min={1}
+                          max={200}
                           {...field}
                           value={field.value || ""}
                           onChange={(event) =>

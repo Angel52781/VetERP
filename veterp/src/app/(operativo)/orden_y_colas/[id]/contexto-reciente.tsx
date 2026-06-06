@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Stethoscope, BedDouble, Syringe, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
 
 interface ContextoRecienteProps {
   currentOrdenId: string;
@@ -49,7 +50,7 @@ export function ContextoReciente({
       
       let summary = "Sin detalle clínico registrado.";
       if (mainNote?.diagnostico_text) {
-        summary = mainNote.diagnostico_text;
+        summary = mainNote.diagnostico_text.replace(/,\s*$/, '');
       } else if (mainNote?.motivo_consulta_text) {
         summary = mainNote.motivo_consulta_text;
       }
@@ -88,6 +89,7 @@ export function ContextoReciente({
     for (const seg of seguimientos || []) {
       const dateStr = seg.resuelto_at || seg.fecha_aplicacion_date || seg.created_at;
       if (!dateStr) continue;
+      const rawNombre = seg.nombre_text || seg.tipo_text;
       arr.push({
         id: `seg-${seg.id}`,
         type: "seguimiento",
@@ -95,7 +97,7 @@ export function ContextoReciente({
         title: `Seguimiento: ${seg.estado_text === "resuelto" ? "Resuelto" : "Pendiente"}`,
         icon: Syringe,
         iconColorClass: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30",
-        summary: seg.nombre_text || seg.tipo_text || "Control clínico",
+        summary: getSeguimientoTipoLabel(rawNombre),
       });
     }
 

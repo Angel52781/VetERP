@@ -77,10 +77,13 @@ export const recordatorioSchema = z
     }
   });
 
-// No renderizar valores internos directamente en UI.
 export function getSeguimientoTipoLabel(value: string | null | undefined): string {
   if (!value) return "Seguimiento";
-  return seguimientoTipoLabels[value] ?? "Seguimiento";
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "tto" || normalized === "tto.") return "Tratamiento";
+  if (normalized === "recordatorio") return "Recordatorio";
+  if (normalized === "seguimiento") return "Seguimiento";
+  return seguimientoTipoLabels[normalized] ?? "Seguimiento";
 }
 
 export function getSeguimientoEstadoLabel(value: string | null | undefined): string {

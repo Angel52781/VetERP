@@ -20,10 +20,13 @@ import {
   CheckCircle2, IdCard, MapPin,
 } from "lucide-react";
 import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
+import { getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { formatDateOnly, getAgeFromDateOnly } from "@/lib/date-only";
 import { formatClienteDocumento } from "@/lib/validators/clientes";
 import { getCitaAreaLabel, normalizeCitaArea } from "@/app/(operativo)/agenda/types";
+
+const SHOW_UPCOMING_MODULES = false;
 
 const CITA_ESTADO_META: Record<string, { label: string; className: string }> = {
   programada: { label: "Programada", className: "bg-blue-100 text-blue-800" },
@@ -326,10 +329,11 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               <div className="space-y-2">
                 {recordatoriosPendientes.slice(0, 4).map((s: any) => {
                   const st = getSegStatus(s.proxima_fecha_date, s.estado_text);
+                  const displayNombre = getSeguimientoTipoLabel(s.nombre_text || s.tipo_text);
                   return (
                     <div key={s.id} className="flex items-center justify-between text-sm">
                       <div className="min-w-0">
-                        <p className="font-medium truncate">{s.nombre_text}</p>
+                        <p className="font-medium truncate">{displayNombre}</p>
                         <p className="text-xs text-muted-foreground">
                           {s.proxima_fecha_date
                             ? format(parseISO(s.proxima_fecha_date), "dd/MM/yyyy")
@@ -725,25 +729,27 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
       </Tabs>
 
       {/* ── SECCIONES 360 FUTURAS ── */}
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Módulos próximos</p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },
-            { icon: Syringe, label: "Procedimientos", desc: "Cirugías, vacunas y procedimientos clínicos." },
-            { icon: Activity, label: "Actividad", desc: "Registro de cambios y auditoría del expediente." },
-          ].map(({ icon: Icon, label, desc }) => (
-            <div key={label} className="rounded-lg border border-dashed p-4 flex items-start gap-3 opacity-60">
-              <Icon className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-semibold">{label}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
-                <p className="text-xs text-muted-foreground/70 mt-1 italic">Próxima fase</p>
+      {SHOW_UPCOMING_MODULES && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Módulos próximos</p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },
+              { icon: Syringe, label: "Procedimientos", desc: "Cirugías, vacunas y procedimientos clínicos." },
+              { icon: Activity, label: "Actividad", desc: "Registro de cambios y auditoría del expediente." },
+            ].map(({ icon: Icon, label, desc }) => (
+              <div key={label} className="rounded-lg border border-dashed p-4 flex items-start gap-3 opacity-60">
+                <Icon className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold">{label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1 italic">Próxima fase</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
