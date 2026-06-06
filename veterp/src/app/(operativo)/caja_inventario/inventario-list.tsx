@@ -128,7 +128,7 @@ export function MovimientoStockForm({
           )}
         />
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="qty"
@@ -186,7 +186,7 @@ export function MovimientoStockForm({
         />
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? "Registrando..." : "Registrar"}
           </Button>
         </div>
@@ -207,7 +207,7 @@ export function InventarioList({
   return (
     <div className="space-y-4">
       <div className="rounded-md border">
-        <Table>
+        <Table className="min-w-[560px]">
           <TableHeader>
             <TableRow>
               <TableHead>Producto</TableHead>
@@ -246,7 +246,7 @@ export function InventarioList({
                       open={selectedItem === item.id} 
                       onOpenChange={(open) => setSelectedItem(open ? item.id : null)}
                     >
-                      <DialogTrigger render={<Button variant="outline" size="sm" />}>
+                      <DialogTrigger render={<Button variant="outline" size="sm" className="w-full sm:w-auto" />}>
                         Ajustar
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[425px]">

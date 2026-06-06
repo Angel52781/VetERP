@@ -9,6 +9,9 @@ export async function createOrdenServicio(input: OrdenServicioInput) {
     const clinicaId = await requireClinicaIdFromCookies();
     const validatedData = ordenServicioSchema.parse(input);
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     const [{ data: cliente }, { data: mascota }] = await Promise.all([
       supabase
@@ -53,6 +56,7 @@ export async function createOrdenServicio(input: OrdenServicioInput) {
         clinica_id: clinicaId,
         cliente_id: validatedData.cliente_id,
         mascota_id: validatedData.mascota_id,
+        staff_user_id: user?.id ?? null,
         estado_text: "open",
         started_at: new Date().toISOString(),
       })

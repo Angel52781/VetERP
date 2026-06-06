@@ -9,6 +9,7 @@ export interface ProductoInventario {
   precio_inc: number;
   costo_referencial: number | null;
   stock_minimo: number;
+  fecha_vencimiento: string | null;
   is_disabled: boolean;
   proveedor_id: string | null;
   categoria_id: string | null;

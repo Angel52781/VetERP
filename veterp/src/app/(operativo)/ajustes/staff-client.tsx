@@ -206,13 +206,13 @@ export function StaffClient({
     <div className="space-y-8">
       {/* SECTION: Miembros Actuales */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-medium">Equipo de la Clínica</h2>
             <p className="text-sm text-muted-foreground">Gestiona los accesos de los usuarios registrados.</p>
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger render={<Button size="sm" />}>
+            <DialogTrigger render={<Button size="sm" className="w-full sm:w-auto" />}>
               <Plus className="mr-2 h-4 w-4" />
               Invitar Miembro
             </DialogTrigger>
@@ -260,9 +260,9 @@ export function StaffClient({
                       </FormItem>
                     )}
                   />
-                  <div className="flex justify-end gap-2 pt-4">
-                    <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                  <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end">
+                    <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="w-full sm:w-auto">Cancelar</Button>
+                    <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
                       {isSubmitting ? "Invitando..." : "Crear Invitación"}
                     </Button>
                   </div>
@@ -273,7 +273,7 @@ export function StaffClient({
         </div>
 
         <div className="rounded-md border">
-          <Table>
+          <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Email</TableHead>
@@ -333,7 +333,7 @@ export function StaffClient({
           </div>
 
           <div className="rounded-md border border-amber-200">
-            <Table>
+            <Table className="min-w-[760px]">
               <TableHeader className="bg-amber-50">
                 <TableRow>
                   <TableHead>Email Invitado</TableHead>

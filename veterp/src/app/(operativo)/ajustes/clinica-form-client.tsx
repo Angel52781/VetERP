@@ -101,7 +101,7 @@ export function ClinicaGeneralForm({ clinica }: { clinica: ClinicaData }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Logo Card */}
         <Card className="md:col-span-1">
           <CardHeader>
@@ -163,7 +163,7 @@ export function ClinicaGeneralForm({ clinica }: { clinica: ClinicaData }) {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="nombre"
@@ -250,7 +250,7 @@ export function ClinicaGeneralForm({ clinica }: { clinica: ClinicaData }) {
                 </div>
 
                 <div className="flex justify-end pt-4">
-                  <Button type="submit" disabled={isSubmitting} className="min-w-[150px]">
+                  <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto sm:min-w-[150px]">
                     {isSubmitting ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (

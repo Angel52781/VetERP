@@ -13,6 +13,7 @@ import {
 } from "@/lib/validators/atencion";
 import { v4 as uuidv4 } from "uuid";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { getClinicaStaffDirectory } from "@/lib/staff-directory";
 
 function logSupabaseError(context: string, error: unknown) {
   console.error(context, JSON.stringify(error, null, 2));
@@ -246,6 +247,18 @@ export async function getOrdenCompleta(id: string) {
           adjunto.archivo_url = signedUrlData.signedUrl;
         }
       }
+    }
+
+    if (data?.staff_user_id) {
+      const staffRes = await getClinicaStaffDirectory([data.staff_user_id]);
+      const staffMember = staffRes.data[0] ?? null;
+      return {
+        error: null,
+        data: {
+          ...data,
+          staff_member: staffMember,
+        },
+      };
     }
 
     return { error: null, data };

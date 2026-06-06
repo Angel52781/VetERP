@@ -72,20 +72,20 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight">Agenda</h1>
           <p className="text-muted-foreground">Gestiona las citas, horarios y tipos de cita de la clínica.</p>
         </div>
-        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+        <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
           <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as "list" | "calendar")}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="list"><List className="w-4 h-4 mr-2" /> Lista</TabsTrigger>
-              <TabsTrigger value="calendar"><CalendarIcon className="w-4 h-4 mr-2" /> Calendario</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 sm:w-auto">
+              <TabsTrigger value="list"><List className="mr-2 h-4 w-4" /> Lista</TabsTrigger>
+              <TabsTrigger value="calendar"><CalendarIcon className="mr-2 h-4 w-4" /> Calendario</TabsTrigger>
             </TabsList>
           </Tabs>
 
           <Dialog open={citaDialogOpen} onOpenChange={setCitaDialogOpen}>
-            <DialogTrigger render={<Button />}>
+            <DialogTrigger render={<Button className="w-full sm:w-auto" />}>
               <Calendar className="mr-2 h-4 w-4" />
               Nueva Cita
             </DialogTrigger>
@@ -104,7 +104,7 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
       </div>
 
       <Tabs defaultValue="agenda" className="space-y-4">
-        <TabsList className="grid w-fit grid-cols-2">
+        <TabsList className="grid w-full grid-cols-2 sm:w-fit">
           <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="tipos">Tipos de cita</TabsTrigger>
         </TabsList>
@@ -136,11 +136,11 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
 
                   return (
                     <div key={dateStr} className="space-y-4">
-                      <h2 className="text-xl font-semibold capitalize flex items-center gap-2">
+                      <h2 className="flex items-center gap-2 text-xl font-semibold capitalize">
                         <Calendar className="h-5 w-5 text-primary" />
                         {format(parsedDate, "EEEE, d 'de' MMMM", { locale: es })}
                       </h2>
-                      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {dateCitas.map((cita) => {
                           const areaPresentation = getCitaAreaPresentation(cita.tipo_citas?.area);
                           const isMovilidad = normalizeCitaArea(cita.tipo_citas?.area) === "movilidad";
@@ -219,7 +219,7 @@ export function AgendaClient({ citas, clientes, tiposCita, tiposCitaGestion }: A
                                   </div>
                                 </div>
                               ) : null}
-                              <div className="pt-2 flex flex-col gap-2">
+                              <div className="flex flex-col gap-2 pt-2">
                                 <CitaEstadoControl citaId={cita.id} estado={cita.estado} startDate={cita.start_date} compact />
                                 <EditarCitaBtn cita={cita} clientes={clientes} tiposCita={tiposCitaGestion} compact />
                                 <IniciarAtencionCitaBtn

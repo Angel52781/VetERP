@@ -22,6 +22,7 @@ import { formatBreedLabel, formatSpeciesLabel } from "@/lib/patient-labels";
 import { AlertasCriticasBanner } from "@/components/alertas-criticas-banner";
 import { formatDateOnly, getAgeFromDateOnly } from "@/lib/date-only";
 import { formatClienteDocumento } from "@/lib/validators/clientes";
+import { getCitaAreaLabel, normalizeCitaArea } from "@/app/(operativo)/agenda/types";
 
 const CITA_ESTADO_META: Record<string, { label: string; className: string }> = {
   programada: { label: "Programada", className: "bg-blue-100 text-blue-800" },
@@ -38,6 +39,11 @@ const ORDEN_ESTADO: Record<string, { label: string; cls: string }> = {
   in_progress: { label: "En atención", cls: "bg-blue-100 text-blue-800" },
   finished: { label: "Finalizada", cls: "bg-green-100 text-green-800" },
   closed: { label: "Cerrada", cls: "bg-muted text-muted-foreground" },
+};
+
+const GROOMING_STATUS_META: Record<string, { label: string; className: string }> = {
+  pendiente: { label: "Pendiente", className: "bg-amber-100 text-amber-800" },
+  completado: { label: "Completado", className: "bg-emerald-100 text-emerald-800" },
 };
 
 interface PageProps {
@@ -105,6 +111,14 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
     responsable?.tipo_documento_text,
     responsable?.numero_documento_text,
   );
+  const groomingCitas = (citas ?? []).filter((cita: any) => {
+    const area = normalizeCitaArea((cita.tipo_citas as any)?.area);
+    return area === "grooming" || area === "banos";
+  });
+  const citasNoGrooming = (citas ?? []).filter((cita: any) => {
+    const area = normalizeCitaArea((cita.tipo_citas as any)?.area);
+    return area !== "grooming" && area !== "banos";
+  });
 
   // Recordatorios pendientes
   const nowDay = startOfDay(now);
@@ -132,23 +146,23 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
   const hospitalizacionActiva = hospitalizacionesOrdenadas.find((h: any) => h.estado_text === "activa");
 
   return (
-    <div className="container mx-auto py-6 max-w-5xl space-y-5">
+    <div className="mx-auto w-full max-w-5xl space-y-5">
       {/* Back */}
       <Link href={safeReturnTo} className={buttonVariants({ variant: "ghost", size: "sm" })}>
         <ArrowLeft className="mr-2 h-4 w-4" /> Volver
       </Link>
 
       {/* ── HEADER ── */}
-      <div className="rounded-xl border bg-card p-5 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div className="space-y-4 rounded-xl border bg-card p-4 sm:p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           {/* Identity */}
-          <div className="flex items-start gap-4">
+          <div className="flex min-w-0 items-start gap-4">
             <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <Stethoscope className="h-7 w-7" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight">{mascota.nombre}</h1>
+                <h1 className="break-words text-2xl font-bold tracking-tight">{mascota.nombre}</h1>
                 {mascota.codigo_text?.trim() && (
                   <Badge variant="outline">#{mascota.codigo_text}</Badge>
                 )}
@@ -162,7 +176,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                 {ageString && ` · ${ageString}`}
                 {mascota.nacimiento && ` · Nac. ${birthDateString}`}
               </p>
-              <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+              <p className="mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-muted-foreground">
                 <User className="h-3.5 w-3.5" />
                 Responsable:{" "}
                 <Link href={`/clientes/${mascota.cliente_id}`} className="hover:underline text-foreground font-medium ml-1">
@@ -183,7 +197,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
             <BtnNuevaAtencion clienteId={mascota.cliente_id} mascotaId={mascota.id} compact label="Nueva atención" />
             <AgendarCitaPacienteBtn
               clienteId={mascota.cliente_id}
@@ -200,7 +214,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
         </div>
 
         {/* KPI strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 border-t">
+        <div className="grid grid-cols-2 gap-3 border-t pt-1 sm:grid-cols-4">
           <div className="text-center">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Atenciones</p>
             <p className="text-xl font-bold">{ordenes?.length ?? 0}</p>
@@ -239,7 +253,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
       )}
 
       {/* ── 2-col quick summary ── */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Responsable card */}
         <Card>
           <CardHeader className="pb-2">
@@ -327,13 +341,13 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
       {/* ── TABS ── */}
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
-          <TabsTrigger value="historia">Historia clínica</TabsTrigger>
-          <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
-          <TabsTrigger value="hospitalizaciones">Hospitalizaciones</TabsTrigger>
-          <TabsTrigger value="ordenes">Atenciones</TabsTrigger>
-          <TabsTrigger value="citas">Citas</TabsTrigger>
-          <TabsTrigger value="adjuntos">Adjuntos</TabsTrigger>
+        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:grid sm:grid-cols-6">
+          <TabsTrigger value="historia" className="min-w-[10rem] sm:min-w-0">Historia clínica</TabsTrigger>
+          <TabsTrigger value="seguimientos" className="min-w-[9rem] sm:min-w-0">Seguimientos</TabsTrigger>
+          <TabsTrigger value="hospitalizaciones" className="min-w-[10rem] sm:min-w-0">Hospitalizaciones</TabsTrigger>
+          <TabsTrigger value="ordenes" className="min-w-[8rem] sm:min-w-0">Atenciones</TabsTrigger>
+          <TabsTrigger value="citas" className="min-w-[7rem] sm:min-w-0">Citas</TabsTrigger>
+          <TabsTrigger value="adjuntos" className="min-w-[7rem] sm:min-w-0">Adjuntos</TabsTrigger>
         </TabsList>
 
         {/* Historia clínica */}
@@ -374,7 +388,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                   </div>
                   <CardContent className="p-4 space-y-3">
                     {(e.peso_kg_num || e.temperatura_c_num || e.frecuencia_cardiaca_num || e.frecuencia_respiratoria_num) && (
-                      <div className="flex flex-wrap gap-2 pb-3 border-b border-dashed text-xs">
+                      <div className="flex flex-wrap gap-2 border-b border-dashed pb-3 text-xs">
                         {e.peso_kg_num && <span className="bg-secondary/30 rounded px-2 py-0.5">⚖️ {e.peso_kg_num} kg</span>}
                         {e.temperatura_c_num && <span className="bg-secondary/30 rounded px-2 py-0.5">🌡️ {e.temperatura_c_num} °C</span>}
                         {e.frecuencia_cardiaca_num && <span className="bg-secondary/30 rounded px-2 py-0.5">❤️ {e.frecuencia_cardiaca_num} lpm</span>}
@@ -403,7 +417,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                               <div key={edicion.id} className="rounded-md bg-muted/30 px-3 py-2 text-sm">
                                 <p className="text-xs text-muted-foreground">
                                   {format(new Date(edicion.created_at), "dd/MM/yyyy HH:mm")} - Usuario{" "}
-                                  {edicion.editado_por ? edicion.editado_por.slice(0, 8) : "no registrado"}
+                                  {edicion.editado_por ? "Personal autorizado" : "no registrado"}
                                 </p>
                                 <p className="mt-1 whitespace-pre-wrap">{edicion.motivo_text}</p>
                               </div>
@@ -587,17 +601,22 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                   {ordenes.map((orden) => {
                     const st = ORDEN_ESTADO[orden.estado_text] ?? ORDEN_ESTADO.closed;
                     return (
-                      <div key={orden.id} className="flex items-center justify-between p-3 hover:bg-muted/40">
-                        <div>
-                          <p className="text-sm font-medium">ORD-{orden.id.slice(0, 8).toUpperCase()}</p>
+                      <div key={orden.id} className="flex flex-col gap-3 p-3 hover:bg-muted/40 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium">Atención registrada</p>
                           <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                             <Clock className="h-3 w-3" />
                             {orden.started_at
                               ? format(new Date(orden.started_at), "dd/MM/yyyy HH:mm")
                               : format(new Date(orden.created_at), "dd/MM/yyyy HH:mm")}
                           </p>
+                          {orden.staff_member?.email && (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Atendido por: {orden.staff_member.email}
+                            </p>
+                          )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                           <span className={`text-xs px-2 py-0.5 rounded-full ${st.cls}`}>{st.label}</span>
                           <Link
                             href={`/orden_y_colas/${orden.id}?returnTo=${ordenReturnTo}`}
@@ -624,9 +643,66 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
               <CardTitle className="text-base">Historial de citas</CardTitle>
             </CardHeader>
             <CardContent>
-              {citas && citas.length > 0 ? (
+              {groomingCitas.length > 0 ? (
+                <Card className="mb-4 border-primary/20 bg-primary/5">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Scissors className="h-4 w-4 text-primary" />
+                      Grooming y banos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {groomingCitas.map((cita: any) => {
+                      const grooming = cita.grooming_servicios?.[0] ?? null;
+                      const areaLabel = getCitaAreaLabel((cita.tipo_citas as any)?.area);
+                      const groomingStatus =
+                        grooming?.estado_text && GROOMING_STATUS_META[grooming.estado_text]
+                          ? GROOMING_STATUS_META[grooming.estado_text]
+                          : CITA_ESTADO_META[cita.estado] ?? CITA_ESTADO_META.programada;
+                      const notes = [
+                        grooming?.servicios_realizados_text,
+                        grooming?.observaciones_text,
+                        cita.notas_text,
+                      ].filter((value) => typeof value === "string" && value.trim().length > 0);
+
+                      return (
+                        <div key={cita.id} className="rounded-lg border bg-background p-3">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="font-medium">{(cita.tipo_citas as any)?.nombre ?? "Servicio de grooming"}</p>
+                                <Badge variant="secondary">{areaLabel}</Badge>
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${groomingStatus.className}`}>
+                                  {groomingStatus.label}
+                                </span>
+                              </div>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {format(new Date(cita.start_date), "dd MMM yyyy, HH:mm", { locale: es })}
+                              </p>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                Responsable: {cita.clientes?.nombre ?? responsable?.nombre ?? "No disponible"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {notes.length > 0 ? (
+                            <div className="mt-3 space-y-2">
+                              {notes.map((note, index) => (
+                                <div key={`${cita.id}-note-${index}`} className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900 ring-1 ring-amber-200">
+                                  {note}
+                                </div>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+              ) : null}
+              {citasNoGrooming.length > 0 ? (
                 <div className="divide-y rounded-md border">
-                  {citas.map((cita) => {
+                  {citasNoGrooming.map((cita) => {
                     const est = CITA_ESTADO_META[cita.estado] ?? CITA_ESTADO_META.programada;
                     const tipoCita = cita.tipo_citas as any;
                     const isMovilidad = tipoCita?.area === "movilidad";
@@ -685,6 +761,8 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
                     );
                   })}
                 </div>
+              ) : groomingCitas.length > 0 ? (
+                <p className="text-sm text-muted-foreground">No hay otras citas registradas.</p>
               ) : (
                 <p className="text-sm text-muted-foreground">Sin citas registradas.</p>
               )}
@@ -706,9 +784,8 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
       {/* ── SECCIONES 360 FUTURAS ── */}
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Módulos próximos</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: Scissors, label: "Grooming", desc: "Historial de baños, cortes y observaciones de manejo." },
             { icon: FlaskConical, label: "Laboratorios", desc: "Resultados de exámenes y análisis clínicos." },
             { icon: Syringe, label: "Procedimientos", desc: "Cirugías, vacunas y procedimientos clínicos." },
             { icon: Activity, label: "Actividad", desc: "Registro de cambios y auditoría del expediente." },

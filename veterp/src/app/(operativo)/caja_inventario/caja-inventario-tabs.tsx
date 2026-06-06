@@ -24,7 +24,7 @@ export function CajaInventarioTabs({
       }}
       className="w-full"
     >
-      <TabsList>
+      <TabsList className="grid w-full grid-cols-2 sm:w-fit">
         {!isVeterinario && <TabsTrigger value="caja">Caja y Ventas</TabsTrigger>}
         <TabsTrigger value="inventario">Inventario / Kardex</TabsTrigger>
       </TabsList>

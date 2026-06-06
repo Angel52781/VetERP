@@ -93,9 +93,9 @@ export function CorteCajaClient({
   if (!cierreActual) {
     return (
       <Card className="border-dashed bg-muted/30">
-        <CardContent className="flex flex-col items-center justify-center py-10 space-y-4">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Lock className="w-6 h-6 text-primary" />
+        <CardContent className="flex flex-col items-center justify-center space-y-4 py-10">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Lock className="h-6 w-6 text-primary" />
           </div>
           <div className="text-center">
             <h3 className="font-semibold text-lg">Caja Cerrada</h3>
@@ -104,7 +104,7 @@ export function CorteCajaClient({
           
           <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger render={
-              <Button size="lg" className="px-8">
+              <Button size="lg" className="w-full px-8 sm:w-auto">
                 <Unlock className="mr-2 h-4 w-4" />
                 Abrir Caja
               </Button>
@@ -114,7 +114,7 @@ export function CorteCajaClient({
                 <DialogTitle>Apertura de Caja</DialogTitle>
                 <DialogDescription>Ingresa el monto inicial con el que empiezas el turno.</DialogDescription>
               </DialogHeader>
-              <div className="py-4 space-y-4">
+              <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Monto Inicial (Fondo de caja)</label>
                   <Input 
@@ -125,9 +125,9 @@ export function CorteCajaClient({
                   />
                 </div>
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancelar</Button>
-                <Button onClick={handleAbrir} disabled={loading}>
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                <Button variant="outline" onClick={() => setOpenDialog(false)} className="w-full sm:w-auto">Cancelar</Button>
+                <Button onClick={handleAbrir} disabled={loading} className="w-full sm:w-auto">
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Iniciar Turno
                 </Button>
@@ -141,7 +141,7 @@ export function CorteCajaClient({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-medium uppercase text-muted-foreground">Efectivo (Sistema)</CardTitle>
@@ -190,7 +190,7 @@ export function CorteCajaClient({
 
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <CardTitle>Corte de Caja</CardTitle>
               <CardDescription>Resumen de la sesión actual iniciada el {format(new Date(cierreActual.fecha_apertura), "PPP p", { locale: es })}</CardDescription>
@@ -201,7 +201,7 @@ export function CorteCajaClient({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
             <div className="p-3 border rounded-lg bg-muted/20">
               <p className="text-muted-foreground">Fondo Inicial</p>
               <p className="font-semibold text-lg">{formatMoneyPEN(cierreActual.monto_apertura)}</p>
@@ -214,8 +214,8 @@ export function CorteCajaClient({
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between border-t bg-muted/5 py-4">
-          <p className="text-xs text-muted-foreground italic">
+        <CardFooter className="flex flex-col gap-3 border-t bg-muted/5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs italic text-muted-foreground">
             * El total esperado incluye el fondo inicial más los cobros en efectivo.
           </p>
           
@@ -231,8 +231,8 @@ export function CorteCajaClient({
                 <DialogTitle>Cierre de Caja</DialogTitle>
                 <DialogDescription>Confirma los montos reales antes de cerrar la sesión.</DialogDescription>
               </DialogHeader>
-              <div className="py-4 space-y-4">
-                <div className="grid grid-cols-2 gap-4 bg-muted/30 p-3 rounded-lg text-sm mb-4">
+              <div className="space-y-4 py-4">
+                <div className="mb-4 grid grid-cols-1 gap-4 rounded-lg bg-muted/30 p-3 text-sm sm:grid-cols-2">
                   <div>
                     <p className="text-muted-foreground">Total Sistema</p>
                     <p className="font-bold text-lg">{formatMoneyPEN(resumenActual.total)}</p>
@@ -268,9 +268,9 @@ export function CorteCajaClient({
                   />
                 </div>
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancelar</Button>
-                <Button variant="destructive" onClick={handleCerrar} disabled={loading}>
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                <Button variant="outline" onClick={() => setOpenDialog(false)} className="w-full sm:w-auto">Cancelar</Button>
+                <Button variant="destructive" onClick={handleCerrar} disabled={loading} className="w-full sm:w-auto">
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Confirmar y Cerrar Caja
                 </Button>
@@ -291,10 +291,10 @@ export function CorteCajaClient({
         <CardContent>
           <div className="space-y-4">
             {historial.length > 0 ? historial.map((h) => (
-              <div key={h.id} className="flex items-center justify-between p-3 border rounded-lg text-sm hover:bg-muted/10 transition-colors">
+              <div key={h.id} className="flex flex-col gap-3 rounded-lg border p-3 text-sm transition-colors hover:bg-muted/10 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded bg-muted">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="font-medium">{format(new Date(h.fecha_cierre), "PPP p", { locale: es })}</p>
