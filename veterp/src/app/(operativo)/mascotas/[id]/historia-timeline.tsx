@@ -22,6 +22,7 @@ import { getCitaAreaLabel, normalizeCitaArea } from "@/app/(operativo)/agenda/ty
 import { getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
 
 import { RegistroPrevioDialog } from "./registro-previo-dialog";
+import { AnularRegistroPrevioDialog } from "./anular-registro-previo-dialog";
 
 type EventType = "atencion" | "hospitalizacion" | "seguimiento" | "adjunto" | "estetica" | "registro_previo";
 
@@ -302,6 +303,9 @@ export function HistoriaTimeline({
         borderClass: isAnulado ? "border-l-muted opacity-70" : "border-l-teal-500",
         renderPreview: () => (
           <div className="mt-2 space-y-1">
+            {isAnulado && (
+              <Badge variant="destructive" className="mr-2 text-[10px] h-5">Anulado</Badge>
+            )}
             {rp.fecha_aproximada_bool && (
               <Badge variant="secondary" className="mr-2 text-[10px] h-5">Fecha aproximada</Badge>
             )}
@@ -322,6 +326,15 @@ export function HistoriaTimeline({
               <div className="mt-3 p-2 bg-red-50 dark:bg-red-950/20 text-red-800 dark:text-red-300 rounded text-xs border border-red-100 dark:border-red-900/30">
                 <span className="font-semibold uppercase tracking-wider block mb-1">Motivo de anulación:</span>
                 {rp.motivo_anulacion_text}
+              </div>
+            )}
+            {!isAnulado && (
+              <div className="mt-4 flex justify-end">
+                <AnularRegistroPrevioDialog
+                  registroId={rp.id}
+                  mascotaId={mascotaId}
+                  titulo={rp.titulo_text}
+                />
               </div>
             )}
           </div>
