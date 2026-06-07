@@ -98,7 +98,7 @@ async function getCurrentUserId(supabase: SupabaseClient) {
 async function ensureMascotaInClinica(supabase: SupabaseClient, clinicaId: string, mascotaId: string) {
   const { data, error } = await supabase
     .from("mascotas")
-    .select("id, cliente_id")
+    .select("id, cliente_id, nacimiento")
     .eq("id", mascotaId)
     .eq("clinica_id", clinicaId)
     .maybeSingle();
@@ -107,7 +107,7 @@ async function ensureMascotaInClinica(supabase: SupabaseClient, clinicaId: strin
     throw new Error(error.message);
   }
 
-  return data as { id: string; cliente_id: string } | null;
+  return data as { id: string; cliente_id: string; nacimiento: string | null } | null;
 }
 
 async function signMascotaAdjunto(supabase: SupabaseClient, adjunto: MascotaAdjuntoRow): Promise<MascotaAdjunto> {
@@ -215,6 +215,10 @@ export async function crearRegistroPrevio(input: CreateRegistroPrevioInput) {
     const mascota = await ensureMascotaInClinica(supabase, clinicaId, validated.mascota_id);
     if (!mascota) {
       return { error: "La mascota no pertenece a la clínica activa.", data: null };
+    }
+
+    if (mascota.nacimiento && validated.fecha_historica_date < mascota.nacimiento) {
+      return { error: "La fecha del antecedente no puede ser anterior al nacimiento del paciente.", data: null };
     }
 
     const { error } = await supabase.from("registros_previos").insert({

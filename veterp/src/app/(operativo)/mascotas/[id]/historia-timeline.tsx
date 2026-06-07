@@ -55,6 +55,7 @@ type FilterId = (typeof FILTER_OPTIONS)[number]["id"];
 
 interface HistoriaTimelineProps {
   mascotaId: string;
+  mascotaNacimiento?: string;
   ordenes: any[];
   hospitalizaciones: any[];
   citas: any[];
@@ -65,6 +66,7 @@ interface HistoriaTimelineProps {
 
 export function HistoriaTimeline({
   mascotaId,
+  mascotaNacimiento,
   ordenes,
   hospitalizaciones,
   citas,
@@ -352,7 +354,7 @@ export function HistoriaTimeline({
     return (
       <div className="space-y-4">
         <div className="flex justify-end">
-          <RegistroPrevioDialog mascotaId={mascotaId} />
+          <RegistroPrevioDialog mascotaId={mascotaId} mascotaNacimiento={mascotaNacimiento} />
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground border rounded-lg bg-card">
           <Activity className="w-10 h-10 mb-3 opacity-20" />
@@ -405,7 +407,7 @@ export function HistoriaTimeline({
           );
         })}
         </div>
-        <RegistroPrevioDialog mascotaId={mascotaId} />
+        <RegistroPrevioDialog mascotaId={mascotaId} mascotaNacimiento={mascotaNacimiento} />
       </div>
 
       {/* Timeline */}

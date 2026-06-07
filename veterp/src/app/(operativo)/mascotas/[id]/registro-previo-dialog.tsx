@@ -28,9 +28,10 @@ import {
 
 interface RegistroPrevioDialogProps {
   mascotaId: string;
+  mascotaNacimiento?: string;
 }
 
-export function RegistroPrevioDialog({ mascotaId }: RegistroPrevioDialogProps) {
+export function RegistroPrevioDialog({ mascotaId, mascotaNacimiento }: RegistroPrevioDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,6 +112,7 @@ export function RegistroPrevioDialog({ mascotaId }: RegistroPrevioDialogProps) {
                   id="fecha_historica_date"
                   type="date"
                   {...register("fecha_historica_date")}
+                  min={mascotaNacimiento}
                   max={format(new Date(), "yyyy-MM-dd")}
                 />
                 {errors.fecha_historica_date && (

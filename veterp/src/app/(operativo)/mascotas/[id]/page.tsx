@@ -91,7 +91,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
     return true;
   });
 
-  const ultimoDiagnostico = allEntradas.find((e: any) => e.diagnostico_text?.trim())?.diagnostico_text;
+  const ultimoDiagnostico = allEntradas.find((e: any) => e.diagnostico_text?.trim())?.diagnostico_text?.replace(/[,;:\s]+$/g, "");
 
   const safeReturnTo = typeof returnTo === "string" && returnTo.startsWith("/")
     ? returnTo
@@ -239,7 +239,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
             <p className="text-xl font-bold">{seguimientos?.length ?? 0}</p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Últ. diagnóstico</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">ÚLT. DIAGNÓSTICO REGISTRADO</p>
             <p className="text-xs font-medium truncate mt-1" title={ultimoDiagnostico ?? undefined}>
               {ultimoDiagnostico ? ultimoDiagnostico.slice(0, 30) + (ultimoDiagnostico.length > 30 ? "…" : "") : "—"}
             </p>
@@ -357,7 +357,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
 
       {/* ── TABS ── */}
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="flex w-full min-w-0 overflow-x-auto sm:grid sm:grid-cols-6">
+        <TabsList className="flex w-full min-w-0 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-6">
           <TabsTrigger value="historia" className="min-w-[10rem] sm:min-w-0">Historia clínica</TabsTrigger>
           <TabsTrigger value="seguimientos" className="min-w-[9rem] sm:min-w-0">Seguimientos</TabsTrigger>
           <TabsTrigger value="hospitalizaciones" className="min-w-[10rem] sm:min-w-0">Hospitalizaciones</TabsTrigger>
@@ -370,6 +370,7 @@ export default async function MascotaProfilePage({ params, searchParams }: PageP
         <TabsContent value="historia" className="mt-4">
           <HistoriaTimeline
             mascotaId={id}
+            mascotaNacimiento={mascota.nacimiento ?? undefined}
             ordenes={ordenes ?? []}
             hospitalizaciones={hospitalizaciones ?? []}
             citas={citas ?? []}
