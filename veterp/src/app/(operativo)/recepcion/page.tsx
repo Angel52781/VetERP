@@ -81,7 +81,7 @@ export default async function RecepcionPage() {
         <div className="min-w-0 space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">Recepción</h1>
           <p className="text-sm text-muted-foreground">
-            Ingreso de pacientes, walk-ins y accesos rápidos del día —{" "}
+            Ingreso de pacientes y seguimiento operativo del día —{" "}
             {format(hoy, "EEEE d 'de' MMMM", { locale: es })}
           </p>
         </div>
