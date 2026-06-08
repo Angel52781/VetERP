@@ -65,7 +65,8 @@ export default async function OperativoLayout({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-background/95 px-3 py-3 sm:px-4 shadow-[inset_0_-2px_0_var(--brand-border)]">
           <div className="flex min-w-0 items-center gap-2">
-            <Link href="/app" className="font-bold tracking-tight text-sm md:hidden">
+            <OperativoNav mobile isAdminOrOwner={isAdminOrOwner} hideCaja={hideCaja} />
+            <Link href="/app" className="min-w-0 truncate font-bold tracking-tight text-sm md:hidden">
               {clinica?.nombre || "VetERP"}
             </Link>
             <span className="hidden truncate text-xs font-medium text-muted-foreground md:inline-block">
@@ -74,12 +75,6 @@ export default async function OperativoLayout({
           </div>
           <AppUserMenu email={user?.email ?? ""} isAdminOrOwner={isAdminOrOwner} />
         </header>
-
-        <nav className="border-b px-3 py-3 sm:px-4 md:hidden">
-          <div className="-mb-1 flex gap-2 overflow-x-auto pb-1">
-            <OperativoNav mobile isAdminOrOwner={isAdminOrOwner} hideCaja={hideCaja} />
-          </div>
-        </nav>
 
         <main className="flex min-w-0 flex-1 flex-col px-3 py-4 sm:px-4 sm:py-6 lg:px-6">
           {children}
