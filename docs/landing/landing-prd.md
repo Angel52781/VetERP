@@ -1,82 +1,97 @@
 # Product Requirements Document (PRD) - VetERP Landing Page
+**VersiÃ³n 1.1**
 
 ## 1. Objetivo de la landing
-Presentar VetERP como una soluciÃ³n de gestiÃ³n veterinaria profesional, moderna y fÃ¡cil de usar. Al estar en **beta privada**, el objetivo NO es la venta inmediata ni el registro abierto (self-service), sino generar interÃ©s, transmitir confianza y captar leads calificados para un programa de beta testers o lista de espera (Early Access).
+Presentar VetERP como una soluciÃ³n de gestiÃ³n veterinaria profesional, moderna y fÃ¡cil de usar. Al estar en **beta privada**, el objetivo NO es la venta inmediata, ni el registro abierto, sino transmitir el valor del producto y dejar claro su estado actual.
 
 ## 2. Audiencia objetivo
-- **DueÃ±os y administradores** de clÃ­nicas veterinarias y consultorios.
-- **Veterinarios independientes** que buscan profesionalizar su gestiÃ³n operativa.
-- ClÃ­nicas que sufren con sistemas anticuados y buscan una experiencia de usuario (UX) moderna, rÃ¡pida y "premium".
+- DueÃ±os y administradores de clÃ­nicas veterinarias.
+- Veterinarios independientes.
+- ClÃ­nicas que buscan una experiencia de usuario clara y moderna.
 
 ## 3. Posicionamiento
-VetERP se posiciona como una herramienta cÃ¡lida, profesional y premium. No es un software "improvisado" ni un MVP genÃ©rico. Es un producto pensado especÃ­ficamente para la dinÃ¡mica de una clÃ­nica veterinaria moderna, priorizando la facilidad de uso frente a la sobrecarga de opciones innecesarias.
+VetERP es una herramienta sobria, profesional y moderna, enfocada en la facilidad de uso para la dinÃ¡mica diaria de una clÃ­nica veterinaria.
 
-## 4. Mensaje principal
-"La gestiÃ³n integral de tu clÃ­nica veterinaria, diseÃ±ada para ser simple, rÃ¡pida y sin fricciones."
-*(Nota: Ajustar segÃºn copywriting final, pero el foco es simplicidad + profesionalismo).*
+## 4. Mensaje principal (Copy Base)
+**Hero:** "Organiza la operaciÃ³n diaria de tu clÃ­nica veterinaria."
+**Subcopy:** "Agenda, atenciÃ³n clÃ­nica, pacientes, cobros e inventario en un espacio claro y fÃ¡cil de usar. VetERP estÃ¡ en beta privada y el acceso se habilitarÃ¡ progresivamente."
 
 ## 5. Propuesta de valor
-- **OperaciÃ³n centralizada:** Desde la agenda hasta la caja y el historial clÃ­nico, todo en un solo lugar.
-- **Experiencia de usuario moderna (UX):** DiseÃ±ado para no requerir meses de entrenamiento; es intuitivo y fluido.
-- **Adaptabilidad:** Soporta consultas clÃ­nicas, grooming y gestiÃ³n de inventario sin cruzar los cables.
+- **OperaciÃ³n centralizada:** Agenda, cobros e historial clÃ­nico organizados.
+- **Experiencia clara:** Interfaz moderna y fÃ¡cil de usar.
+- **Adaptabilidad:** Soporta consultas clÃ­nicas, grooming y gestiÃ³n bÃ¡sica de inventario.
 
-## 6. Estado beta privada
-La landing debe comunicar de forma transparente (pero positiva) el estado actual del producto:
-- **Exclusividad:** Se estÃ¡ trabajando de cerca con un nÃºmero limitado de clÃ­nicas.
-- **AtenciÃ³n personalizada:** Entrar en la beta significa tener influencia directa en el desarrollo y soporte premium.
-- **Sin pricing pÃºblico:** Al no estar en fase comercial abierta, se omiten tablas de precios.
+## 6. Estado y Enrutamiento (Decisiones Cerradas)
+- `/` serÃ¡ la landing pÃºblica.
+- Las rutas internas operativas de la clÃ­nica viven en la raÃ­z (ej. `/recepcion`, `/agenda`) gracias al route group `(operativo)`, siendo todas ellas protegidas.
+- `/login` serÃ¡ accesible como CTA secundario ("Iniciar sesiÃ³n") para usuarios existentes.
+- `/signup` queda completamente fuera de la landing (no se enlaza).
+- **CTA Principal:** "Beta privada â€” prÃ³ximamente disponible" (texto informativo, no botÃ³n de acciÃ³n).
+- **No** habrÃ¡ formulario comercial todavÃ­a (decisiÃ³n a futuro).
+- **No** se muestran precios.
+- **No** hay compra directa.
+- **No** hay registro abierto.
 
-## 7. Secciones recomendadas
-1. **Hero Section:** Propuesta de valor clara, screenshot atractivo de la interfaz principal (Inicio/Agenda) y CTA principal ("Ãšnete a la lista de espera" o "Solicita acceso a la beta").
-2. **Social Proof / Confianza (Opcional):** Si hay testimonios tempranos o logos de clÃ­nicas en beta, incluirlos. Si no, destacar que estÃ¡ construido junto a veterinarios.
-3. **Features Principales (Lo que sÃ­ funciona):**
-   - *Agenda y citas:* Por Ã¡reas (ClÃ­nica, Grooming).
-   - *Historial MÃ©dico:* Orden de atenciÃ³n clÃ­nica estructurada.
-   - *Control Financiero:* Caja y cobro simplificado.
-   - *GestiÃ³n de Inventario:* Entradas, salidas y control de stock bÃ¡sico.
-4. **Enfoque en UX / "Por quÃ© VetERP":** Destacar la diferencia visual y de velocidad respecto a competidores antiguos.
-5. **Call to Action (Footer/Bottom):** RepeticiÃ³n del CTA para aplicar a la beta privada.
+## 7. Matriz de Funcionalidades
+ClasificaciÃ³n realista de mÃ³dulos para la comunicaciÃ³n en la landing:
 
-## 8. Copy base por secciÃ³n
-- **Hero:** "Todo el control de tu clÃ­nica veterinaria en una plataforma rÃ¡pida y moderna. Ãšnete a la beta privada de VetERP."
-- **Agenda:** "Programa citas para consultas, peluquerÃ­a o cirugÃ­as en un calendario diseÃ±ado para tu flujo diario."
-- **Historia ClÃ­nica:** "Toda la informaciÃ³n vital de tus pacientes a un clic de distancia durante la consulta."
-- **Caja e Inventario:** "Cobra servicios y productos sin salir de la plataforma y mantÃ©n tu stock actualizado."
-- **Cierre:** "Cupos limitados. SÃ© de los primeros en experimentar el futuro de la gestiÃ³n veterinaria."
+**Destacable en landing (Protagonistas):**
+- Agenda
+- Pacientes (Ficha del paciente e historia clÃ­nica / Paciente 360)
+- Historia clÃ­nica / LÃ­nea de tiempo
+- AtenciÃ³n clÃ­nica
+- Seguimientos / recordatorios internos
 
-## 9. CTA recomendado
-- Principal: **"Solicitar Acceso a la Beta"** o **"Unirse a la Lista de Espera"**.
-- AcciÃ³n que desencadena: Apertura de un formulario (Typeform/Tally) o modal para dejar Nombre, ClÃ­nica, TelÃ©fono y Correo.
+**Mostrable con cuidado (Simples, sin prometer automatizaciÃ³n compleja):**
+- RecepciÃ³n
+- Caja
+- Inventario
+- Grooming
+- Contexto reciente (como apoyo a la atenciÃ³n clÃ­nica)
+- Antecedentes clÃ­nicos / registros previos (no prometer importaciÃ³n masiva automÃ¡tica)
+- Hospitalizaciones (no exagerar alcance)
 
-## 10. QuÃ© NO decir/prometer (Riesgos)
-- **NO prometer Hospitalizaciones:** El mÃ³dulo no estÃ¡ construido.
-- **NO prometer facturaciÃ³n electrÃ³nica automatizada:** Salvo que estÃ© implementado y no documentado, actualmente es solo caja/cobros.
-- **NO hablar de "Motor de recordatorios automÃ¡ticos por WhatsApp/Email":** AÃºn es manual/bÃ¡sico.
-- **NO mencionar el "Paciente 360" como algo terminado:** La historia longitudinal aÃºn estÃ¡ en desarrollo.
-- **NO ofrecer "Registro instantÃ¡neo" o "PruÃ©balo gratis hoy":** Es beta controlada, requiere onboarding manual.
-- **NO mencionar quirÃ³fano avanzado o consumo automÃ¡tico de inventario:** AÃºn son planes a futuro.
+**Interno / no protagonista:**
+- Staff / ajustes
 
-## 11. Screenshots necesarios
-Para transmitir la estÃ©tica premium, se necesitan capturas reales (o mockups de alta fidelidad) de:
-- Panel principal (Inicio / Dashboard).
-- Vista de Agenda con citas de distintos colores (ClÃ­nica, Grooming).
-- Ficha de AtenciÃ³n ClÃ­nica (Orden de servicio limpia).
-- Vista de Caja o Inventario simple.
-*(Ver detalle completo en `screenshot-shotlist.md`)*
+**Futuro / No prometer (EXCLUIDOS de la comunicaciÃ³n actual):**
+- Automatizaciones por WhatsApp/Email
+- FacturaciÃ³n electrÃ³nica y contabilidad completa
+- ImportaciÃ³n automÃ¡tica masiva
+- IA
 
-## 12. Assets necesarios
-- Logo en alta resoluciÃ³n de VetERP.
-- Paleta de colores oficial y tipografÃ­as (transmitir calidez y profesionalismo).
-- FotografÃ­as de estilo de vida veterinario (opcional, de stock premium).
-- IconografÃ­a consistente y amigable.
+## 8. Secciones de la Landing
+1. **Navbar:** Logo, estado "Beta Privada", enlace "Iniciar sesiÃ³n" (`/login`).
+2. **Hero Section:** Copy base propuesto + Screenshot realista de la interfaz principal.
+3. **Features (Lo que sÃ­ funciona):**
+   - Agenda (ClÃ­nica y Grooming).
+   - AtenciÃ³n ClÃ­nica y Pacientes.
+   - Caja e Inventario.
+4. **Footer:** RepeticiÃ³n del mensaje "PrÃ³ximamente disponible".
 
-## 13. Criterios visuales
-- **Premium pero cÃ¡lido:** No debe parecer un software financiero frÃ­o.
-- **Espacio en blanco (Whitespace):** DiseÃ±os limpios, sin saturaciÃ³n.
-- **Micro-interacciones:** Si se implementa en cÃ³digo, usar transiciones suaves que denoten calidad.
+## 9. Lo que NO decir/prometer
+- No usar claims absolutos ("gestiÃ³n integral", "todo el control", "sin fricciones", "soporte premium").
+- No prometer Hospitalizaciones.
+- No hablar de automatizaciones de WhatsApp/Email para recordatorios.
+- No mencionar "Paciente 360" o importaciÃ³n mÃ¡gica de historiales.
+- No ofrecer "Registro instantÃ¡neo" o pruebas gratis.
 
-## 14. Riesgos y dudas abiertas
-- Â¿Se mostrarÃ¡ algÃºn tipo de pricing introductorio o serÃ¡ totalmente opaco hasta el contacto de ventas?
-- Â¿La marca VetERP es definitiva o es un nombre en clave interno?
-- Â¿El proceso de onboarding requerirÃ¡ calificaciÃ³n manual o se darÃ¡ un entorno de pruebas genÃ©rico a los interesados?
-- Â¿Tenemos datos demo con estÃ©tica premium listos para capturar los screenshots?
+## 10. Criterios de AceptaciÃ³n para Implementar Landing
+- Desktop 1440px y Mobile responsive.
+- Navbar clara (logo + Iniciar sesiÃ³n).
+- Hero con screenshot real que cumpla el protocolo seguro.
+- CTA coherente: "Beta privada â€” prÃ³ximamente disponible".
+- BotÃ³n "Iniciar sesiÃ³n" apuntando a `/login`.
+- SEO bÃ¡sico: title, description, OG image.
+- Accesibilidad bÃ¡sica.
+- Cero fugas de rutas protegidas operativas (ej. `/recepcion`, `/agenda`, `/app`).
+- Cero promesas comerciales no soportadas.
+
+## 11. Assets Oficiales de Marca
+Se han confirmado los siguientes assets en `public/brand/` para el uso en la landing y mockups:
+- **Logo principal de navbar:** `public/brand/veterp-logo-horizontal-transparent.png`
+- **Isotipo/favicon base:** `public/brand/veterp-mark-transparent.png`
+- **Logo vertical para hero/mockups:** `public/brand/veterp-logo-vertical-primary-transparent.png`
+- **Versiones de fondo oscuro:** `public/brand/veterp-logo-vertical-light-dark.png` y/o `public/brand/veterp-logo-vertical-light-teal.png`
+
+*(Existen mÃ¡s variaciones cream/teal/graphite disponibles en la misma carpeta para uso especÃ­fico si el diseÃ±o lo requiere).*
