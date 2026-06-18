@@ -118,6 +118,8 @@ export function NuevoControlDialog({
                       <Input
                         type="number"
                         step="0.1"
+                        min={30}
+                        max={45}
                         value={numberFieldValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
@@ -138,6 +140,8 @@ export function NuevoControlDialog({
                     <FormControl>
                       <Input
                         type="number"
+                        min={30}
+                        max={300}
                         value={numberFieldValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
@@ -158,6 +162,8 @@ export function NuevoControlDialog({
                     <FormControl>
                       <Input
                         type="number"
+                        min={5}
+                        max={120}
                         value={numberFieldValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
@@ -179,6 +185,8 @@ export function NuevoControlDialog({
                       <Input
                         type="number"
                         step="0.01"
+                        min={0.1}
+                        max={150}
                         value={numberFieldValue(field.value)}
                         onChange={(event) =>
                           field.onChange(event.target.value === "" ? undefined : Number(event.target.value))

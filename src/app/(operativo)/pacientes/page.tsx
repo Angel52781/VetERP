@@ -173,14 +173,14 @@ export default async function PacientesPage({ searchParams }: PacientesPageProps
               <div key={mascota.id} className="flex flex-col gap-4 px-4 py-4 xl:flex-row xl:items-center">
                 <Link 
                   href={`/mascotas/${mascota.id}?returnTo=${encodeURIComponent("/pacientes")}`}
-                  className="flex min-w-0 flex-1 items-start gap-3 group cursor-pointer"
+                  className="flex min-w-[200px] flex-1 items-start gap-3 group cursor-pointer"
                 >
                   <div className="mt-0.5 h-10 w-10 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <PawPrint className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="truncate text-sm font-semibold group-hover:text-primary group-hover:underline transition-colors">{mascota.nombre}</p>
+                        <p className="truncate text-sm font-semibold group-hover:text-primary group-hover:underline transition-colors">{mascota.nombre?.trim() || "Paciente sin nombre"}</p>
                         {mascota.codigo_text?.trim() ? (
                           <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
                             #{mascota.codigo_text}
