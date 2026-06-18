@@ -5,10 +5,13 @@ import { assertSupabaseEnv, clinicaCookieName, supabaseAnonKey, supabaseUrl } fr
 import { updateSession } from "@/lib/supabase/middleware";
 
 const publicPaths = new Set<string>([
+  "/",
   "/login",
   "/reset-password",
   "/update-password",
   "/auth/callback",
+  "/privacidad",
+  "/terminos",
 ]);
 
 async function getUserClinicas(request: NextRequest, response: NextResponse, userId: string) {

@@ -52,7 +52,7 @@ Los archivos existen y son aptos como fuentes maestras, pero deben optimizarse p
 | `feature-atencion-clinica.png` | **Excluido** | Contiene PII real (teléfono y correo del desarrollador). Ocultarlo dejaría un vacío muy notorio en la UI principal. |
 | `feature-inventario-stock.png` | **Excluido** | Contiene datos absurdos ("Vacuna CuraTodo" S/ 6000). No es presentable sin recapturar tras modificar BD. |
 
-*Nota: Los archivos sanitizados y aprobados se encuentran listos en `public/landing/screenshots/sanitized/`.*
+*Nota: Los archivos sanitizados y aprobados se encuentran listos en `public/landing/screenshots/`.*
 
 ## Datos demo recomendados
 
