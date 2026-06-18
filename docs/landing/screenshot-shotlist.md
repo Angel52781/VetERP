@@ -23,7 +23,7 @@ Para la landing page se requieren capturas de pantalla de la interfaz que demues
 - **QuÃ© NO debe aparecer:** UUIDs, textos `null`, o exceso de ruido visual.
 
 ## 2. Paciente 360 e Historia ClÃ­nica
-- **Ruta exacta:** `/pacientes/[id]`
+- **Ruta exacta:** `/mascotas/[id]`
 - **Pantalla:** Ficha del paciente y lÃ­nea de tiempo clÃ­nica.
 - **Estado esperado:** Historial claro mostrando la vida del paciente en la clÃ­nica.
 - **Datos demo requeridos:** Entradas de historial coherentes y limpias.
@@ -33,7 +33,7 @@ Para la landing page se requieren capturas de pantalla de la interfaz que demues
 - **QuÃ© NO debe aparecer:** Datos tÃ©cnicos expuestos como `HCE`.
 
 ## 3. AtenciÃ³n ClÃ­nica y Contexto Reciente
-- **Ruta exacta:** `/atenciones/[id]`
+- **Ruta exacta:** `/orden_y_colas/[id]`
 - **Pantalla:** Interfaz de atenciÃ³n mÃ©dica.
 - **Estado esperado:** Registro mÃ©dico profesional en curso, apoyado por contexto reciente.
 - **Datos demo requeridos:** Motivo de consulta descriptivo, constantes vitales realistas.
