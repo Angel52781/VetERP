@@ -179,7 +179,7 @@ export default function LandingPage() {
       </section>
 
       {/* Recorrido del producto */}
-      <section id="flujo" className="py-32 max-w-[1200px] mx-auto px-6">
+      <section id="flujo" className="pt-32 pb-20 max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-32 max-w-3xl mx-auto">
           <SectionEyebrow centered className="mb-6">Flujo</SectionEyebrow>
           <h2 className="text-4xl md:text-5xl font-bold text-[#263238] tracking-tight">
@@ -256,7 +256,7 @@ export default function LandingPage() {
       </section>
 
       {/* Nota de privacidad visible */}
-      <section className="py-16 bg-[#FFFEFB]">
+      <section className="py-8 bg-[#FFFEFB]">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="max-w-4xl mx-auto bg-[#F7F4EC] rounded-3xl p-10 border border-[#D7DEDA]/60 text-center shadow-sm">
              <SectionEyebrow centered className="mb-5">Privacidad</SectionEyebrow>
@@ -268,7 +268,7 @@ export default function LandingPage() {
       </section>
 
       {/* Beta privada section */}
-      <section id="beta" className="py-32 bg-[#DDEDEA]/30 border-y border-[#D7DEDA]/40">
+      <section id="beta" className="pt-20 pb-32 bg-[#DDEDEA]/30 border-y border-[#D7DEDA]/40">
         <div className="max-w-[1200px] mx-auto px-6 text-center">
           <SectionEyebrow centered className="mb-6">Beta Privada</SectionEyebrow>
           <h2 className="text-4xl font-bold text-[#263238] mb-20 tracking-tight">Cómo funciona la beta privada</h2>
