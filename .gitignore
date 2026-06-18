@@ -1,17 +1,68 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/.next-build/
+/.next-build-*/
+/out/
+
+# debug / scripts locales
+arreglar_todo.js
+check_almacenes.js
+
+# supabase
+supabase/.temp/
+
+# production
+/build
+
+# misc
+.DS_Store
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# veterinary project specific
+ROADMAP_VETERP.md
+ROADMAP_VETERP_ACTUALIZADO.md
+AUDITORIA_AVANCE_VETERP_VS_ROADMAP.md
+implementation_plan.md
+task.md
+walkthrough.md
+"Pasted text.txt"
 
 *.pem
 backup_*.sql
 IDEAS.txt
-ROADMAP_VETERP.md
 .env.local
 .env.production
-check_almacenes.js
 
 # local veterinary feedback folder
 Fallos/
 fallos/
-
-
-# local ChatGPT/project context
-VetERP_chatgpt.md
-
