@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { assertSupabaseEnv, clinicaCookieName, supabaseAnonKey, supabaseUrl } from "@/lib/supabase/env";
 import { updateSession } from "@/lib/supabase/middleware";
+import { buildRedirectUrl } from "@/lib/http/public-url";
 
 const publicPaths = new Set<string>([
   "/",
@@ -38,28 +39,34 @@ async function getUserClinicas(request: NextRequest, response: NextResponse, use
   return data ?? [];
 }
 
+function safeRedirect(request: NextRequest, path: string): NextResponse {
+  return NextResponse.redirect(buildRedirectUrl(request, path));
+}
+
 export async function proxy(request: NextRequest) {
   const { response, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
+  // Server Actions must never receive a browser-level redirect; pass through.
   const isServerAction = request.headers.has("next-action");
 
   if (pathname === "/signup") {
     if (user) {
       if (isServerAction) return response;
-      return NextResponse.redirect(new URL("/select-clinica", request.url));
+      return safeRedirect(request, "/select-clinica");
     }
     if (isServerAction) return response;
-    return NextResponse.redirect(new URL("/login", request.url));
+    return safeRedirect(request, "/login");
   }
 
   if (!user) {
     if (!publicPaths.has(pathname)) {
       if (isServerAction) return response;
-      return NextResponse.redirect(new URL("/login", request.url));
+      return safeRedirect(request, "/login");
     }
     return response;
   }
 
+  // Auth utility routes — let them handle their own redirects.
   if (pathname === "/auth/callback" || pathname === "/auth/logout") {
     return response;
   }
@@ -78,7 +85,7 @@ export async function proxy(request: NextRequest) {
   if (!hasMemberships) {
     if (pathname !== "/select-clinica") {
       if (isServerAction) return response;
-      return NextResponse.redirect(new URL("/select-clinica", request.url));
+      return safeRedirect(request, "/select-clinica");
     }
     return response;
   }
@@ -86,7 +93,7 @@ export async function proxy(request: NextRequest) {
   if (!activeClinicaId) {
     if (pathname !== "/select-clinica") {
       if (isServerAction) return response;
-      return NextResponse.redirect(new URL("/select-clinica", request.url));
+      return safeRedirect(request, "/select-clinica");
     }
     return response;
   }
@@ -98,7 +105,7 @@ export async function proxy(request: NextRequest) {
     pathname === "/update-password"
   ) {
     if (isServerAction) return response;
-    return NextResponse.redirect(new URL("/app", request.url));
+    return safeRedirect(request, "/app");
   }
 
   return response;
