@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { clinicaCookieName } from '@/lib/supabase/env';
@@ -15,5 +15,5 @@ export async function GET(request: Request) {
   const cookieStore = await cookies();
   cookieStore.delete(clinicaCookieName);
 
-  return NextResponse.redirect(`${getPublicBaseUrl(request)}/login`);
+  return NextResponse.redirect(new URL("/login", request.url));
 }

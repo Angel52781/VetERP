@@ -41,22 +41,26 @@ async function getUserClinicas(request: NextRequest, response: NextResponse, use
 export async function proxy(request: NextRequest) {
   const { response, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
+  const isServerAction = request.headers.has("next-action");
 
   if (pathname === "/signup") {
     if (user) {
+      if (isServerAction) return response;
       return NextResponse.redirect(new URL("/select-clinica", request.url));
     }
+    if (isServerAction) return response;
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (!user) {
     if (!publicPaths.has(pathname)) {
+      if (isServerAction) return response;
       return NextResponse.redirect(new URL("/login", request.url));
     }
     return response;
   }
 
-  if (pathname === "/auth/callback") {
+  if (pathname === "/auth/callback" || pathname === "/auth/logout") {
     return response;
   }
 
@@ -73,6 +77,7 @@ export async function proxy(request: NextRequest) {
 
   if (!hasMemberships) {
     if (pathname !== "/select-clinica") {
+      if (isServerAction) return response;
       return NextResponse.redirect(new URL("/select-clinica", request.url));
     }
     return response;
@@ -80,6 +85,7 @@ export async function proxy(request: NextRequest) {
 
   if (!activeClinicaId) {
     if (pathname !== "/select-clinica") {
+      if (isServerAction) return response;
       return NextResponse.redirect(new URL("/select-clinica", request.url));
     }
     return response;
@@ -91,6 +97,7 @@ export async function proxy(request: NextRequest) {
     pathname === "/reset-password" ||
     pathname === "/update-password"
   ) {
+    if (isServerAction) return response;
     return NextResponse.redirect(new URL("/app", request.url));
   }
 

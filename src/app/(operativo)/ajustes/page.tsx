@@ -22,6 +22,7 @@ import { ProveedoresList } from "./proveedores-client";
 import { SeedDemoButton } from "./seed-demo-button";
 import { getInvitations, getStaff } from "./staff-actions";
 import { StaffClient } from "./staff-client";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "Ajustes | VetERP",
@@ -39,6 +40,10 @@ export default async function AjustesPage() {
   const role = context.role ?? "";
   const isAdminOrOwner = role === "owner" || role === "admin";
   const tabTriggerClassName = "h-10 flex-1 basis-[140px] px-4 text-sm";
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const email = user?.email ?? "Usuario";
 
   const [clinicaRes, aparienciaRes, temasGuardadosRes] = await Promise.all([
     getClinicaBranding(),
@@ -79,8 +84,9 @@ export default async function AjustesPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
 
-      <Tabs defaultValue={isAdminOrOwner ? "catalogo" : "apariencia"} className="w-full">
+      <Tabs defaultValue="cuenta" className="w-full">
         <TabsList className="flex w-full min-w-0 overflow-x-auto sm:flex-wrap sm:justify-start">
+          <TabsTrigger value="cuenta">Cuenta</TabsTrigger>
           {isAdminOrOwner ? (
             <TabsTrigger value="general">General</TabsTrigger>
           ) : null}
@@ -95,6 +101,30 @@ export default async function AjustesPage() {
             </>
           ) : null}
         </TabsList>
+
+        <TabsContent value="cuenta" className="mt-6">
+          <Card className="max-w-xl">
+            <CardHeader>
+              <CardTitle>Mi Cuenta</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">Correo electrónico</h3>
+                <p className="text-base font-medium">{email}</p>
+              </div>
+              <div className="pt-4 border-t space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="/auth/clear-clinica" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    Cambiar clínica
+                  </a>
+                  <a href="/auth/logout" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
+                    Cerrar sesión
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {isAdminOrOwner ? (
           <TabsContent value="general" className="mt-6">
