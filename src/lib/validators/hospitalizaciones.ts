@@ -36,13 +36,6 @@ const optionalOrdenTratamiento = z.preprocess(
     .optional(),
 );
 
-const optionalPositiveNumber = (label: string) =>
-  z
-    .number({
-      message: `${label} debe ser un numero valido`,
-    })
-    .positive(`${label} debe ser mayor a 0`)
-    .optional();
 
 const optionalPercent = z
   .number({

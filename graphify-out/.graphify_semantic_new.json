@@ -1,0 +1,805 @@
+{
+  "nodes": [
+    {
+      "id": "agents_agents_veterp",
+      "label": "VetERP",
+      "file_type": "concept",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_agents_nextjs",
+      "label": "Next.js App Router",
+      "file_type": "concept",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_agents_supabase",
+      "label": "Supabase",
+      "file_type": "concept",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase1_2_validation_fase1",
+      "label": "Fase 1: Autenticación",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase1_2_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase1_2_validation_fase2",
+      "label": "Fase 2: Clientes y Mascotas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase1_2_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase3_validation_fase3",
+      "label": "Fase 3: Agenda y Citas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase3_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase4_validation_fase4",
+      "label": "Fase 4: Órdenes y Entradas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase4_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase5_validation_fase5",
+      "label": "Fase 5: Caja y Ventas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase5_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase6_validation_fase6",
+      "label": "Fase 6: Inventario",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase6_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_phase7_validation_fase7",
+      "label": "Fase 7: Hardening y Seguridad",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase7_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documents_veterp_technical_plan_veterp",
+      "label": "VetERP Technical Plan",
+      "file_type": "concept",
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "implement_phase7_hardening_spec_spec",
+      "label": "Implement Phase 7 Hardening Spec",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/spec.md"
+    },
+    {
+      "id": "implement_phase7_hardening_spec_rbac",
+      "label": "RBAC Authorization",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/spec.md"
+    },
+    {
+      "id": "implement_phase7_hardening_tasks_tasks",
+      "label": "Implement Phase 7 Tasks",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/tasks.md"
+    },
+    {
+      "id": "rebuild_veterp_checklist_checklist",
+      "label": "Rebuild VetERP Checklist",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/checklist.md"
+    },
+    {
+      "id": "rebuild_veterp_spec_spec",
+      "label": "Rebuild VetERP Spec",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/spec.md"
+    },
+    {
+      "id": "rebuild_veterp_tasks_tasks",
+      "label": "Rebuild VetERP Tasks",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/tasks.md"
+    },
+    {
+      "id": "agents_agents",
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/AGENTS.md"
+    },
+    {
+      "id": "claude_claude",
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/CLAUDE.md"
+    },
+    {
+      "id": "readme_readme",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/README.md"
+    },
+    {
+      "id": "regla_obligatoria_de_ux_no_mostrar_valores_internos_al_usuario_regla",
+      "label": "Regla UX: No mostrar valores internos",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/Regla obligatoria de UX no mostrar valores internos al usuario.txt"
+    },
+    {
+      "id": "veterp_chatgpt_chatgpt",
+      "label": "VetERP ChatGPT Transcript",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/VetERP_chatgpt.md"
+    },
+    {
+      "id": "docs_app_flow_map_app_flow_map",
+      "label": "App Flow Map",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/app_flow_map.md"
+    },
+    {
+      "id": "docs_data_model_data_model",
+      "label": "Data Model Document",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_user",
+      "label": "User Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_clinica",
+      "label": "Clinica Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_membresiaclinica",
+      "label": "MembresiaClinica Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_cliente",
+      "label": "Cliente Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_mascota",
+      "label": "Mascota Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_ordenservicio",
+      "label": "OrdenServicio Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_entradaclinica",
+      "label": "EntradaClinica Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_itemcola",
+      "label": "ItemCola Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_cita",
+      "label": "Cita Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_tipocita",
+      "label": "TipoCita Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_itemcatalogo",
+      "label": "ItemCatalogo Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_proveedor",
+      "label": "Proveedor Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_almacen",
+      "label": "Almacen Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_movimientostock",
+      "label": "MovimientoStock Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_venta",
+      "label": "Venta Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_itemventa",
+      "label": "ItemVenta Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_data_model_ledger",
+      "label": "Ledger Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "docs_feedback_veterinario_feedback",
+      "label": "Feedback Veterinario",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/feedback_veterinario.md"
+    },
+    {
+      "id": "landing_landing_copy_landing_copy",
+      "label": "Landing Copy",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-copy.md"
+    },
+    {
+      "id": "landing_landing_implementation_notes_landing_implementation_notes",
+      "label": "Landing Implementation Notes",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-implementation-notes.md"
+    },
+    {
+      "id": "landing_landing_prd_landing_prd",
+      "label": "Landing PRD",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md"
+    },
+    {
+      "id": "landing_screenshot_shotlist_screenshot_shotlist",
+      "label": "Landing Screenshot Shotlist",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/screenshot-shotlist.md"
+    },
+    {
+      "id": "docs_migration_risks_migration_risks",
+      "label": "Migration Risks",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/migration_risks.md"
+    },
+    {
+      "id": "docs_product_spec_product_spec",
+      "label": "Product Spec",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/product_spec.md"
+    },
+    {
+      "id": "docs_veterp_beta_smoke_test_smoke_test",
+      "label": "VetERP Beta Smoke Test",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/veterp_beta_smoke_test.md"
+    },
+    {
+      "id": "docs_veterp_roadmap_general_roadmap",
+      "label": "VetERP Roadmap",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/veterp_roadmap_general.md"
+    },
+    {
+      "id": "domain_certificate_veterp_qzz_io_pdf",
+      "label": "Domain Certificate veterp.qzz.io PDF",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf"
+    },
+    {
+      "id": "domain_certificate_veterp_qzz_io_veterp_qzz_io",
+      "label": "veterp.qzz.io Domain",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf"
+    },
+    {
+      "id": "domain_certificate_veterp_qzz_io_angel_reano_vasquez",
+      "label": "Angel Reaño Vásquez",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf"
+    }
+  ],
+  "edges": [
+    {
+      "source": "agents_agents_veterp",
+      "target": "agents_agents_nextjs",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "agents_agents_veterp",
+      "target": "agents_agents_supabase",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase1_2_validation_fase1",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase1_2_validation_fase2",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase3_validation_fase3",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase4_validation_fase4",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase5_validation_fase5",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase6_validation_fase6",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documents_veterp_technical_plan_veterp",
+      "target": "documents_phase7_validation_fase7",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "agents_agents_veterp",
+      "target": "documents_veterp_technical_plan_veterp",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "implement_phase7_hardening_tasks_tasks",
+      "target": "implement_phase7_hardening_spec_spec",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/tasks.md"
+    },
+    {
+      "source": "rebuild_veterp_tasks_tasks",
+      "target": "rebuild_veterp_spec_spec",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/tasks.md"
+    },
+    {
+      "source": "rebuild_veterp_tasks_tasks",
+      "target": "rebuild_veterp_checklist_checklist",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/tasks.md"
+    },
+    {
+      "source": "claude_claude",
+      "target": "agents_agents",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/CLAUDE.md"
+    },
+    {
+      "source": "implement_phase7_hardening_spec_rbac",
+      "target": "docs_data_model_membresiaclinica",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/spec.md"
+    },
+    {
+      "source": "docs_data_model_membresiaclinica",
+      "target": "docs_data_model_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_membresiaclinica",
+      "target": "docs_data_model_clinica",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_cliente",
+      "target": "docs_data_model_clinica",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_mascota",
+      "target": "docs_data_model_cliente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_mascota",
+      "target": "docs_data_model_clinica",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_ordenservicio",
+      "target": "docs_data_model_cliente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_ordenservicio",
+      "target": "docs_data_model_mascota",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_ordenservicio",
+      "target": "docs_data_model_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_entradaclinica",
+      "target": "docs_data_model_ordenservicio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_itemcola",
+      "target": "docs_data_model_ordenservicio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_cita",
+      "target": "docs_data_model_cliente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_cita",
+      "target": "docs_data_model_mascota",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_cita",
+      "target": "docs_data_model_tipocita",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_itemcatalogo",
+      "target": "docs_data_model_proveedor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_movimientostock",
+      "target": "docs_data_model_itemcatalogo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_movimientostock",
+      "target": "docs_data_model_almacen",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_movimientostock",
+      "target": "docs_data_model_venta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_venta",
+      "target": "docs_data_model_cliente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_venta",
+      "target": "docs_data_model_ordenservicio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_itemventa",
+      "target": "docs_data_model_venta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_itemventa",
+      "target": "docs_data_model_itemcatalogo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_ledger",
+      "target": "docs_data_model_cliente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_ledger",
+      "target": "docs_data_model_venta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "docs_data_model_ledger",
+      "target": "docs_data_model_ordenservicio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "source": "domain_certificate_veterp_qzz_io_angel_reano_vasquez",
+      "target": "domain_certificate_veterp_qzz_io_veterp_qzz_io",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf"
+    },
+    {
+      "source": "domain_certificate_veterp_qzz_io_pdf",
+      "target": "domain_certificate_veterp_qzz_io_veterp_qzz_io",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf"
+    },
+    {
+      "source": "landing_landing_prd_landing_prd",
+      "target": "landing_landing_copy_landing_copy",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md"
+    },
+    {
+      "source": "landing_screenshot_shotlist_screenshot_shotlist",
+      "target": "landing_landing_prd_landing_prd",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/screenshot-shotlist.md"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "veterp_project_phases",
+      "label": "VetERP Implementation Phases",
+      "nodes": [
+        "documents_phase1_2_validation_fase1",
+        "documents_phase1_2_validation_fase2",
+        "documents_phase3_validation_fase3",
+        "documents_phase4_validation_fase4",
+        "documents_phase5_validation_fase5",
+        "documents_phase6_validation_fase6",
+        "documents_phase7_validation_fase7"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".trae/documents/veterp_technical_plan.md"
+    },
+    {
+      "id": "veterp_data_model",
+      "label": "VetERP Data Model Entities",
+      "nodes": [
+        "docs_data_model_user",
+        "docs_data_model_clinica",
+        "docs_data_model_membresiaclinica",
+        "docs_data_model_cliente",
+        "docs_data_model_mascota",
+        "docs_data_model_ordenservicio",
+        "docs_data_model_entradaclinica",
+        "docs_data_model_itemcola",
+        "docs_data_model_cita",
+        "docs_data_model_tipocita",
+        "docs_data_model_itemcatalogo",
+        "docs_data_model_proveedor",
+        "docs_data_model_almacen",
+        "docs_data_model_movimientostock",
+        "docs_data_model_venta",
+        "docs_data_model_itemventa",
+        "docs_data_model_ledger"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "veterp_landing_docs",
+      "label": "VetERP Landing Page Documentation",
+      "nodes": [
+        "landing_landing_copy_landing_copy",
+        "landing_landing_implementation_notes_landing_implementation_notes",
+        "landing_landing_prd_landing_prd",
+        "landing_screenshot_shotlist_screenshot_shotlist"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

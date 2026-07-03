@@ -1,0 +1,1437 @@
+{
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\components.json": {
+    "mtime": 1781757684.764706,
+    "ast_hash": "519f93133ded707d8847caceca85dbac",
+    "semantic_hash": "519f93133ded707d8847caceca85dbac"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\eslint.config.mjs": {
+    "mtime": 1781757684.7667058,
+    "ast_hash": "6c4307ffa009658f5c97f5629094c0c2",
+    "semantic_hash": "6c4307ffa009658f5c97f5629094c0c2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\next.config.ts": {
+    "mtime": 1781814369.788359,
+    "ast_hash": "2b2f95f284d949508d267a06ab561bec",
+    "semantic_hash": "2b2f95f284d949508d267a06ab561bec"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\package.json": {
+    "mtime": 1781995673.2011342,
+    "ast_hash": "614fb55f92893d7d44bdd0309d0983bb",
+    "semantic_hash": "614fb55f92893d7d44bdd0309d0983bb"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\postcss.config.mjs": {
+    "mtime": 1781757684.7687056,
+    "ast_hash": "481fac0fdecd70e1821cc30b86030c1a",
+    "semantic_hash": "481fac0fdecd70e1821cc30b86030c1a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\scripts\\bootstrap-demo-user.mjs": {
+    "mtime": 1781757684.7997222,
+    "ast_hash": "55a15f97d9d642ccdceed388b9c80e82",
+    "semantic_hash": "55a15f97d9d642ccdceed388b9c80e82"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\actions.ts": {
+    "mtime": 1781757684.8007216,
+    "ast_hash": "1c545afb217e72ffcdd9bfd463c10ed5",
+    "semantic_hash": "1c545afb217e72ffcdd9bfd463c10ed5"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\agenda-calendar-view.tsx": {
+    "mtime": 1781757684.8007216,
+    "ast_hash": "22363bf3d7cb5a6105ecfd67e0e03f0e",
+    "semantic_hash": "22363bf3d7cb5a6105ecfd67e0e03f0e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\agenda-client.tsx": {
+    "mtime": 1781757684.8017216,
+    "ast_hash": "0934b8113c68d77e80d2e38db7a9e260",
+    "semantic_hash": "0934b8113c68d77e80d2e38db7a9e260"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\area-visual.contract.test.mjs": {
+    "mtime": 1781757684.8017216,
+    "ast_hash": "309f9f6e617c7b9b903e1a52614416ab",
+    "semantic_hash": "309f9f6e617c7b9b903e1a52614416ab"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\cita-estado-control.tsx": {
+    "mtime": 1781757684.8017216,
+    "ast_hash": "e779a7fb084666f1a0f04f486ada9ddc",
+    "semantic_hash": "e779a7fb084666f1a0f04f486ada9ddc"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\cita-form.tsx": {
+    "mtime": 1781757684.8017216,
+    "ast_hash": "44f227a28020697d82d75f5ba125cc88",
+    "semantic_hash": "44f227a28020697d82d75f5ba125cc88"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\cita-notes.contract.test.ts": {
+    "mtime": 1781757684.8027215,
+    "ast_hash": "90ca66a3789f7912493cecd096d5ab19",
+    "semantic_hash": "90ca66a3789f7912493cecd096d5ab19"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\cita-search.contract.test.mjs": {
+    "mtime": 1781757684.8027215,
+    "ast_hash": "25a4caa0bff9bb94dbade254519816a7",
+    "semantic_hash": "25a4caa0bff9bb94dbade254519816a7"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\cita-search.ts": {
+    "mtime": 1781757684.8027215,
+    "ast_hash": "9573e766df2744d58e6d5aeccc71af1d",
+    "semantic_hash": "9573e766df2744d58e6d5aeccc71af1d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\editar-cita-btn.tsx": {
+    "mtime": 1781757684.803223,
+    "ast_hash": "480b108906879c2d001bdd87fdc8d1de",
+    "semantic_hash": "480b108906879c2d001bdd87fdc8d1de"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\iniciar-atencion-cita-btn.tsx": {
+    "mtime": 1781757684.803223,
+    "ast_hash": "35749fbdb68f76b8d0b8b2bbf077c0c1",
+    "semantic_hash": "35749fbdb68f76b8d0b8b2bbf077c0c1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\page.tsx": {
+    "mtime": 1781757684.803223,
+    "ast_hash": "20a06128ae2cabd116ada70384dbf2cd",
+    "semantic_hash": "20a06128ae2cabd116ada70384dbf2cd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\tipo-cita-form.tsx": {
+    "mtime": 1781757684.803223,
+    "ast_hash": "5979594c6060af60c5c70545ec4a062e",
+    "semantic_hash": "5979594c6060af60c5c70545ec4a062e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\tipos-cita-manager.tsx": {
+    "mtime": 1781757684.8042245,
+    "ast_hash": "4672b98db362e3219db2400837463bb2",
+    "semantic_hash": "4672b98db362e3219db2400837463bb2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\agenda\\types.ts": {
+    "mtime": 1781757684.8042245,
+    "ast_hash": "2d8dec398b135ee106831751ad78ad2d",
+    "semantic_hash": "2d8dec398b135ee106831751ad78ad2d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\actions.ts": {
+    "mtime": 1781757684.8042245,
+    "ast_hash": "2fb57790e19a75ba1f1f9eec32bf8586",
+    "semantic_hash": "2fb57790e19a75ba1f1f9eec32bf8586"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\almacenes-client.tsx": {
+    "mtime": 1781757684.8042245,
+    "ast_hash": "172b5ad33506eac4a36bcdfb518e9c67",
+    "semantic_hash": "172b5ad33506eac4a36bcdfb518e9c67"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\apariencia-client.tsx": {
+    "mtime": 1781757684.8052258,
+    "ast_hash": "d0b127ac3d55ae6b0ca09893b6ef2ca9",
+    "semantic_hash": "d0b127ac3d55ae6b0ca09893b6ef2ca9"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\catalogo-client.tsx": {
+    "mtime": 1781757684.8052258,
+    "ast_hash": "8635683bcf7901deec57ffb4d287bc3a",
+    "semantic_hash": "8635683bcf7901deec57ffb4d287bc3a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\categorias-client.tsx": {
+    "mtime": 1781757684.8052258,
+    "ast_hash": "8c4c23d7659f85193f3ea748733093f1",
+    "semantic_hash": "8c4c23d7659f85193f3ea748733093f1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\clinica-form-client.tsx": {
+    "mtime": 1781757684.8052258,
+    "ast_hash": "e2936508c1dcbbd04d79ce6e2dd1a8bd",
+    "semantic_hash": "e2936508c1dcbbd04d79ce6e2dd1a8bd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\page.tsx": {
+    "mtime": 1781837928.002456,
+    "ast_hash": "b4a2233d6c195b569592041336e3eeae",
+    "semantic_hash": "b4a2233d6c195b569592041336e3eeae"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\proveedores-client.tsx": {
+    "mtime": 1781757684.8062258,
+    "ast_hash": "d179b27f7fbec0cab330f18502008ab3",
+    "semantic_hash": "d179b27f7fbec0cab330f18502008ab3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\seed-actions.ts": {
+    "mtime": 1781757684.8062258,
+    "ast_hash": "ceae5964ec28b1921725de4139143e6f",
+    "semantic_hash": "ceae5964ec28b1921725de4139143e6f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\seed-demo-button.tsx": {
+    "mtime": 1781757684.8062258,
+    "ast_hash": "ee0a74312fc48430b584cbab9924bbbf",
+    "semantic_hash": "ee0a74312fc48430b584cbab9924bbbf"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\staff-actions.ts": {
+    "mtime": 1781757684.8062258,
+    "ast_hash": "24973b2acba207d7a84bc51c7a412638",
+    "semantic_hash": "24973b2acba207d7a84bc51c7a412638"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\ajustes\\staff-client.tsx": {
+    "mtime": 1781757684.8072257,
+    "ast_hash": "64696470b7b211f1a0a12015494a21b5",
+    "semantic_hash": "64696470b7b211f1a0a12015494a21b5"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\app\\page.tsx": {
+    "mtime": 1781757684.8072257,
+    "ast_hash": "eb476dcbe322b1f07d3248dd59296b56",
+    "semantic_hash": "eb476dcbe322b1f07d3248dd59296b56"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\app\\recordatorios-panel.tsx": {
+    "mtime": 1781757684.8072257,
+    "ast_hash": "c62ea3a17f63a7eb08ed9455f54bb6cb",
+    "semantic_hash": "c62ea3a17f63a7eb08ed9455f54bb6cb"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\atenciones\\page.tsx": {
+    "mtime": 1781757684.8082259,
+    "ast_hash": "6d7ec440350d785c92850dcd27bdfa78",
+    "semantic_hash": "6d7ec440350d785c92850dcd27bdfa78"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja\\corte-caja-client.tsx": {
+    "mtime": 1781757684.8082259,
+    "ast_hash": "aae1a2127c62a8a30eb1b5e763076d71",
+    "semantic_hash": "aae1a2127c62a8a30eb1b5e763076d71"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja\\page.tsx": {
+    "mtime": 1781757684.8082259,
+    "ast_hash": "b89c3debb0061ccc5441e15beb54b794",
+    "semantic_hash": "b89c3debb0061ccc5441e15beb54b794"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja_inventario\\actions.ts": {
+    "mtime": 1781757684.8082259,
+    "ast_hash": "833b4ae234e4db3a24d502ab7eb59f73",
+    "semantic_hash": "833b4ae234e4db3a24d502ab7eb59f73"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja_inventario\\caja-inventario-tabs.tsx": {
+    "mtime": 1781757684.809226,
+    "ast_hash": "46c21c8fda7a71ea2ed83d68e2afedf3",
+    "semantic_hash": "46c21c8fda7a71ea2ed83d68e2afedf3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja_inventario\\inventario-list.tsx": {
+    "mtime": 1781757684.809226,
+    "ast_hash": "c403634d286c38552dbc291f8ab10146",
+    "semantic_hash": "c403634d286c38552dbc291f8ab10146"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja_inventario\\page.tsx": {
+    "mtime": 1781757684.809226,
+    "ast_hash": "8e44e257cdcf5543967ce2a76109e23d",
+    "semantic_hash": "8e44e257cdcf5543967ce2a76109e23d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\caja_inventario\\ventas-list.tsx": {
+    "mtime": 1781757684.809226,
+    "ast_hash": "eaaedb8aaad7d851abf5ea6e67708a7b",
+    "semantic_hash": "eaaedb8aaad7d851abf5ea6e67708a7b"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\[clienteId]\\acciones-contextuales.tsx": {
+    "mtime": 1781757684.810226,
+    "ast_hash": "330807da42beeab6290bf19b8c692336",
+    "semantic_hash": "330807da42beeab6290bf19b8c692336"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\[clienteId]\\cliente-edit-dialog.tsx": {
+    "mtime": 1781757684.810226,
+    "ast_hash": "0c7d0a3be7e909319e38789414647f5e",
+    "semantic_hash": "0c7d0a3be7e909319e38789414647f5e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\[clienteId]\\mascota-form.tsx": {
+    "mtime": 1781757684.810226,
+    "ast_hash": "d044e003b67c6f60bc279054e1eb6f8c",
+    "semantic_hash": "d044e003b67c6f60bc279054e1eb6f8c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\[clienteId]\\page.tsx": {
+    "mtime": 1781757684.810226,
+    "ast_hash": "5a1a331658a678f7cd6da1835aeb6236",
+    "semantic_hash": "5a1a331658a678f7cd6da1835aeb6236"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\actions.ts": {
+    "mtime": 1781757684.810226,
+    "ast_hash": "55350ce6c21c118a07eaf8b341fa0c4e",
+    "semantic_hash": "55350ce6c21c118a07eaf8b341fa0c4e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\nuevo\\page.tsx": {
+    "mtime": 1781757684.811226,
+    "ast_hash": "ab0fdbd83565f86ba74c7c097fc872c9",
+    "semantic_hash": "ab0fdbd83565f86ba74c7c097fc872c9"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\clientes\\page.tsx": {
+    "mtime": 1781757684.811226,
+    "ast_hash": "393df8fb522b323970bddad1573048a3",
+    "semantic_hash": "393df8fb522b323970bddad1573048a3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\colas\\page.tsx": {
+    "mtime": 1781757684.811226,
+    "ast_hash": "996a6d030431e35d7da84d5cd23d8567",
+    "semantic_hash": "996a6d030431e35d7da84d5cd23d8567"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\grooming\\actions.ts": {
+    "mtime": 1781757684.811226,
+    "ast_hash": "d1b270e7d09defc8baf2cbc43b597058",
+    "semantic_hash": "d1b270e7d09defc8baf2cbc43b597058"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\grooming\\grooming-client.tsx": {
+    "mtime": 1781757684.811226,
+    "ast_hash": "dcae0dc77367df1a3d92c8cf9752474f",
+    "semantic_hash": "dcae0dc77367df1a3d92c8cf9752474f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\grooming\\page.tsx": {
+    "mtime": 1781757684.8127277,
+    "ast_hash": "4d588ce61b0262440106f2da952ccf17",
+    "semantic_hash": "4d588ce61b0262440106f2da952ccf17"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\[id]\\page.tsx": {
+    "mtime": 1781757684.8127277,
+    "ast_hash": "59daaebc6c407f419492d605b73a710e",
+    "semantic_hash": "59daaebc6c407f419492d605b73a710e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\actions.ts": {
+    "mtime": 1781757684.8127277,
+    "ast_hash": "4ceabe5dcd15d4f252d1794bdcaf20d5",
+    "semantic_hash": "4ceabe5dcd15d4f252d1794bdcaf20d5"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\alta-hospitalizacion-dialog.tsx": {
+    "mtime": 1781757684.81373,
+    "ast_hash": "a2555b73336c267e0e0a711ca5ad2ed0",
+    "semantic_hash": "a2555b73336c267e0e0a711ca5ad2ed0"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\editar-tratamiento-dialog.tsx": {
+    "mtime": 1781757684.81373,
+    "ast_hash": "d2ba9e7a664136486ddde9e5119a3988",
+    "semantic_hash": "d2ba9e7a664136486ddde9e5119a3988"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\nueva-hospitalizacion-dialog.tsx": {
+    "mtime": 1781757684.81373,
+    "ast_hash": "5e8db649b3ac71d569652eec1f29a99e",
+    "semantic_hash": "5e8db649b3ac71d569652eec1f29a99e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\nuevo-control-dialog.tsx": {
+    "mtime": 1781801129.831647,
+    "ast_hash": "24babfa1e11ca21f58edd72e04b504e1",
+    "semantic_hash": "24babfa1e11ca21f58edd72e04b504e1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\nuevo-tratamiento-dialog.tsx": {
+    "mtime": 1781757684.8147323,
+    "ast_hash": "28ac01624d7aa3d47db7a6b068d449a2",
+    "semantic_hash": "28ac01624d7aa3d47db7a6b068d449a2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\page.tsx": {
+    "mtime": 1781757684.8147323,
+    "ast_hash": "75b7304f178c5d0d42212e696a925cae",
+    "semantic_hash": "75b7304f178c5d0d42212e696a925cae"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\hospitalizaciones\\tratamientos-hospitalizacion-card.tsx": {
+    "mtime": 1781757684.8147323,
+    "ast_hash": "b12c6f438b215fc1f964f88d52446b1c",
+    "semantic_hash": "b12c6f438b215fc1f964f88d52446b1c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\index\\actions.ts": {
+    "mtime": 1781757684.8157322,
+    "ast_hash": "9fbfb1f5ce15c841c203181872a43cfe",
+    "semantic_hash": "9fbfb1f5ce15c841c203181872a43cfe"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\index\\dashboard-actions.ts": {
+    "mtime": 1781757684.8157322,
+    "ast_hash": "9c4143cd414209d72ef96266dd6bcfb1",
+    "semantic_hash": "9c4143cd414209d72ef96266dd6bcfb1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\index\\nueva-atencion-form.tsx": {
+    "mtime": 1781757684.8157322,
+    "ast_hash": "270816dadd2f4bd9f96cc34811e0bd8a",
+    "semantic_hash": "270816dadd2f4bd9f96cc34811e0bd8a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\index\\orden-list.tsx": {
+    "mtime": 1781757684.8157322,
+    "ast_hash": "908db2db60cf3584433c17fc637b261d",
+    "semantic_hash": "908db2db60cf3584433c17fc637b261d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\index\\page.tsx": {
+    "mtime": 1781757684.8157322,
+    "ast_hash": "16f0d4b492c582d560d1055e9eebb84d",
+    "semantic_hash": "16f0d4b492c582d560d1055e9eebb84d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\actions.ts": {
+    "mtime": 1781757684.8167322,
+    "ast_hash": "5c4e60c1950a02e6a0402b746256e06c",
+    "semantic_hash": "5c4e60c1950a02e6a0402b746256e06c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\inventario-client.tsx": {
+    "mtime": 1781757684.8167322,
+    "ast_hash": "1aca1ab15cebea7fb73155e2ba63739f",
+    "semantic_hash": "1aca1ab15cebea7fb73155e2ba63739f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\kardex-modal.tsx": {
+    "mtime": 1781757684.8167322,
+    "ast_hash": "055d0f56aa722320e79077d1a334a4aa",
+    "semantic_hash": "055d0f56aa722320e79077d1a334a4aa"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\movimiento-form.tsx": {
+    "mtime": 1781757684.8167322,
+    "ast_hash": "d54eccbdcc2d185d450891c62b0e2fa6",
+    "semantic_hash": "d54eccbdcc2d185d450891c62b0e2fa6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\page.tsx": {
+    "mtime": 1781757684.8177323,
+    "ast_hash": "57f6d01fda6cb79a3b2428b90a912760",
+    "semantic_hash": "57f6d01fda6cb79a3b2428b90a912760"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\producto-form.tsx": {
+    "mtime": 1781757684.8177323,
+    "ast_hash": "346701fc2820f1a786acc79f385b2740",
+    "semantic_hash": "346701fc2820f1a786acc79f385b2740"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\inventario\\types.ts": {
+    "mtime": 1781757684.8177323,
+    "ast_hash": "e67f2169d45765808540d3a8b4d5e7ee",
+    "semantic_hash": "e67f2169d45765808540d3a8b4d5e7ee"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\layout.tsx": {
+    "mtime": 1781757684.8177323,
+    "ast_hash": "bb15b08400e9c6128792ae37c0e1279e",
+    "semantic_hash": "bb15b08400e9c6128792ae37c0e1279e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\actions.ts": {
+    "mtime": 1781757684.8187323,
+    "ast_hash": "553b2e531c13f3f4a4e5f5d5aac26c59",
+    "semantic_hash": "553b2e531c13f3f4a4e5f5d5aac26c59"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\anular-registro-previo-dialog.tsx": {
+    "mtime": 1781757684.8187323,
+    "ast_hash": "7c73962cb0f0953381cc7b7568a0ea63",
+    "semantic_hash": "7c73962cb0f0953381cc7b7568a0ea63"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\btn-nueva-atencion.tsx": {
+    "mtime": 1781757684.8187323,
+    "ast_hash": "1903964076cf284e1eb6905a406ea500",
+    "semantic_hash": "1903964076cf284e1eb6905a406ea500"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\historia-timeline.tsx": {
+    "mtime": 1781757684.8197324,
+    "ast_hash": "811d66ca07f373c364a76e32f961b970",
+    "semantic_hash": "811d66ca07f373c364a76e32f961b970"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\mascota-adjuntos-card.tsx": {
+    "mtime": 1781757684.8197324,
+    "ast_hash": "1e31154b7b538af070ad42435b840315",
+    "semantic_hash": "1e31154b7b538af070ad42435b840315"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\mascota-edit-dialog.tsx": {
+    "mtime": 1781757684.8197324,
+    "ast_hash": "4964984c062730aecc8a8b936ff939c1",
+    "semantic_hash": "4964984c062730aecc8a8b936ff939c1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\page.tsx": {
+    "mtime": 1781757684.8207326,
+    "ast_hash": "6179a93396315e7de864607f521cc2f0",
+    "semantic_hash": "6179a93396315e7de864607f521cc2f0"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\registro-previo-dialog.tsx": {
+    "mtime": 1781757684.8207326,
+    "ast_hash": "0bd0bde70917f9a5d99d3d7f324e2b6e",
+    "semantic_hash": "0bd0bde70917f9a5d99d3d7f324e2b6e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\mascotas\\[id]\\seguimientos-card.tsx": {
+    "mtime": 1781757684.8207326,
+    "ast_hash": "6f47d48fadf5b707d5a698e5ff4721d7",
+    "semantic_hash": "6f47d48fadf5b707d5a698e5ff4721d7"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\operativo-nav.tsx": {
+    "mtime": 1781757684.8207326,
+    "ast_hash": "25e71a5fe1e3f086fd11a3cbaeeebc5f",
+    "semantic_hash": "25e71a5fe1e3f086fd11a3cbaeeebc5f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\actions.ts": {
+    "mtime": 1781757684.8217325,
+    "ast_hash": "61474e1b47fdf568933596f566f52426",
+    "semantic_hash": "61474e1b47fdf568933596f566f52426"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\adjuntos-panel.tsx": {
+    "mtime": 1781757684.8217325,
+    "ast_hash": "0a2bef96a7ce60b65783c96bbad8326f",
+    "semantic_hash": "0a2bef96a7ce60b65783c96bbad8326f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\contexto-reciente.tsx": {
+    "mtime": 1781757684.8217325,
+    "ast_hash": "b25276fb0f8028da0d52cf1296992b26",
+    "semantic_hash": "b25276fb0f8028da0d52cf1296992b26"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\editar-entrada-clinica-dialog.tsx": {
+    "mtime": 1781757684.8217325,
+    "ast_hash": "dbf11ce29661063b6491d5448f15e059",
+    "semantic_hash": "dbf11ce29661063b6491d5448f15e059"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\entradas-list.tsx": {
+    "mtime": 1781757684.8227327,
+    "ast_hash": "e1f9fd4165308fc02461ced1ffa782ab",
+    "semantic_hash": "e1f9fd4165308fc02461ced1ffa782ab"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\finalizar-atencion-button.tsx": {
+    "mtime": 1781757684.8227327,
+    "ast_hash": "0f5cdb35bcf249a03caa7f95f7a8c91f",
+    "semantic_hash": "0f5cdb35bcf249a03caa7f95f7a8c91f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\nueva-entrada-form.tsx": {
+    "mtime": 1781757684.8232353,
+    "ast_hash": "cd3dd008174329f269dbcf61f7682f19",
+    "semantic_hash": "cd3dd008174329f269dbcf61f7682f19"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\page.tsx": {
+    "mtime": 1781757684.8232353,
+    "ast_hash": "21550aae3f7dca009b99fb5dcbbca5a8",
+    "semantic_hash": "21550aae3f7dca009b99fb5dcbbca5a8"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\signos-vitales-form.tsx": {
+    "mtime": 1781757684.8232353,
+    "ast_hash": "8f3ec4b86e14b44682c83c37b7751530",
+    "semantic_hash": "8f3ec4b86e14b44682c83c37b7751530"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\orden_y_colas\\[id]\\venta-panel.tsx": {
+    "mtime": 1781757684.8232353,
+    "ast_hash": "391ca039877598f4605c5661653aca15",
+    "semantic_hash": "391ca039877598f4605c5661653aca15"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\pacientes\\agendar-cita-paciente-btn.tsx": {
+    "mtime": 1781757684.8242376,
+    "ast_hash": "4f5ab5935fb3058f4e3cefa984d48af7",
+    "semantic_hash": "4f5ab5935fb3058f4e3cefa984d48af7"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\pacientes\\nuevo-paciente-dialog.tsx": {
+    "mtime": 1781757684.8242376,
+    "ast_hash": "dd7af7eea0f97fced768ddab67095026",
+    "semantic_hash": "dd7af7eea0f97fced768ddab67095026"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\pacientes\\page.tsx": {
+    "mtime": 1781801141.824695,
+    "ast_hash": "57cf23a47e6bb8a74ca7f34883d81370",
+    "semantic_hash": "57cf23a47e6bb8a74ca7f34883d81370"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\recepcion\\page.tsx": {
+    "mtime": 1782083751.1012545,
+    "ast_hash": "e9ebd4da5f6d3bdd4f0537819df20400",
+    "semantic_hash": "e9ebd4da5f6d3bdd4f0537819df20400"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\recordatorios\\page.tsx": {
+    "mtime": 1781757684.8252397,
+    "ast_hash": "c4494c0a4c79de9fae6aed0b02ea12a8",
+    "semantic_hash": "c4494c0a4c79de9fae6aed0b02ea12a8"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\recordatorios\\recordatorio-actions.tsx": {
+    "mtime": 1781757684.8252397,
+    "ast_hash": "35582a761813e9b17b90de553cd680bc",
+    "semantic_hash": "35582a761813e9b17b90de553cd680bc"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\seguimientos-card.tsx": {
+    "mtime": 1781757684.8252397,
+    "ast_hash": "94d1799b00befb082a13f963a6045fde",
+    "semantic_hash": "94d1799b00befb082a13f963a6045fde"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\session-actions.ts": {
+    "mtime": 1781757684.8252397,
+    "ast_hash": "da949cee3fc0d3408a58353ae8e5fd25",
+    "semantic_hash": "da949cee3fc0d3408a58353ae8e5fd25"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\settings\\page.tsx": {
+    "mtime": 1781757684.8262398,
+    "ast_hash": "e670616131993dc5ba6e9a9996b78972",
+    "semantic_hash": "e670616131993dc5ba6e9a9996b78972"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\(operativo)\\user-menu.tsx": {
+    "mtime": 1782083752.1050014,
+    "ast_hash": "805b706caf3870a2212780951046e608",
+    "semantic_hash": "805b706caf3870a2212780951046e608"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\auth\\callback\\route.ts": {
+    "mtime": 1781837892.2337015,
+    "ast_hash": "9b339b6d2161bf88efccc0613e36184a",
+    "semantic_hash": "9b339b6d2161bf88efccc0613e36184a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\auth\\clear-clinica\\route.ts": {
+    "mtime": 1781837884.5997698,
+    "ast_hash": "9d13121ceb43323e996bc2f304479d26",
+    "semantic_hash": "9d13121ceb43323e996bc2f304479d26"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\auth\\logout\\route.ts": {
+    "mtime": 1781837879.3306725,
+    "ast_hash": "b6de04e5392231f8266535be87ec4e1c",
+    "semantic_hash": "b6de04e5392231f8266535be87ec4e1c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\invitacion\\[id]\\client.tsx": {
+    "mtime": 1781757684.82824,
+    "ast_hash": "3a0b04d981f19276e06a4afd5857320a",
+    "semantic_hash": "3a0b04d981f19276e06a4afd5857320a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\invitacion\\[id]\\page.tsx": {
+    "mtime": 1781757684.82824,
+    "ast_hash": "3ea696e6b90114684d7d86507b8248e2",
+    "semantic_hash": "3ea696e6b90114684d7d86507b8248e2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\landing-client.tsx": {
+    "mtime": 1781998397.4651418,
+    "ast_hash": "e8deb0abdbbf11f99cb7ea8e30bfbf69",
+    "semantic_hash": "e8deb0abdbbf11f99cb7ea8e30bfbf69"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\layout.tsx": {
+    "mtime": 1781757684.82824,
+    "ast_hash": "efde06c2a3d66fb6623afa5bfdc01c4b",
+    "semantic_hash": "efde06c2a3d66fb6623afa5bfdc01c4b"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\login\\actions.ts": {
+    "mtime": 1781757684.8292394,
+    "ast_hash": "fccc8af34698160800c39e2bbe262444",
+    "semantic_hash": "fccc8af34698160800c39e2bbe262444"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\login\\page.tsx": {
+    "mtime": 1781757684.8292394,
+    "ast_hash": "c319826d1598bb69a3174dd389c0288c",
+    "semantic_hash": "c319826d1598bb69a3174dd389c0288c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\page.tsx": {
+    "mtime": 1781995747.900627,
+    "ast_hash": "e6ab51bead8934a467366ac15be16049",
+    "semantic_hash": "e6ab51bead8934a467366ac15be16049"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\privacidad\\page.tsx": {
+    "mtime": 1781812118.8594856,
+    "ast_hash": "c4657d0f52ab1802d4bccd8c37a1b3c3",
+    "semantic_hash": "c4657d0f52ab1802d4bccd8c37a1b3c3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\reset-password\\actions.ts": {
+    "mtime": 1781757684.8292394,
+    "ast_hash": "f6de6d4d98de821dd6c48a56d7b3865a",
+    "semantic_hash": "f6de6d4d98de821dd6c48a56d7b3865a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\reset-password\\page.tsx": {
+    "mtime": 1781757684.8302393,
+    "ast_hash": "4a1de9d7fe6154b0035910b13245a93b",
+    "semantic_hash": "4a1de9d7fe6154b0035910b13245a93b"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\select-clinica\\actions.ts": {
+    "mtime": 1781757684.8302393,
+    "ast_hash": "a60dfcba6a10f4dc6a0a51915a9c80f6",
+    "semantic_hash": "a60dfcba6a10f4dc6a0a51915a9c80f6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\select-clinica\\create-clinica-form.tsx": {
+    "mtime": 1781757684.8302393,
+    "ast_hash": "5200f52c0cef29c4bfe555e0891ee183",
+    "semantic_hash": "5200f52c0cef29c4bfe555e0891ee183"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\select-clinica\\page.tsx": {
+    "mtime": 1781757684.8302393,
+    "ast_hash": "839a941c5bdf2c46dd44a34db05c3f3a",
+    "semantic_hash": "839a941c5bdf2c46dd44a34db05c3f3a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\signup\\actions.ts": {
+    "mtime": 1781757684.8312392,
+    "ast_hash": "0e4be5b7e412d8770be2c7ecc3241920",
+    "semantic_hash": "0e4be5b7e412d8770be2c7ecc3241920"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\signup\\page.tsx": {
+    "mtime": 1781757684.8312392,
+    "ast_hash": "2a276e74901a6726fb7d8009807f373e",
+    "semantic_hash": "2a276e74901a6726fb7d8009807f373e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\terminos\\page.tsx": {
+    "mtime": 1782083752.2123022,
+    "ast_hash": "6b64cf6da9386fa17789b7a48e6060dd",
+    "semantic_hash": "6b64cf6da9386fa17789b7a48e6060dd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\update-password\\actions.ts": {
+    "mtime": 1781757684.8312392,
+    "ast_hash": "6317f50c07caa75aab1e11da0e77ec7c",
+    "semantic_hash": "6317f50c07caa75aab1e11da0e77ec7c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\update-password\\page.tsx": {
+    "mtime": 1781757684.8312392,
+    "ast_hash": "45af2b90718b4e486d51c5863f7bc223",
+    "semantic_hash": "45af2b90718b4e486d51c5863f7bc223"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\alertas-criticas-banner.tsx": {
+    "mtime": 1781757684.8312392,
+    "ast_hash": "fb0a9fcb018850e2ca421705c5bccec9",
+    "semantic_hash": "fb0a9fcb018850e2ca421705c5bccec9"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\badge.tsx": {
+    "mtime": 1781757684.8327408,
+    "ast_hash": "1ff3e04a7fd408f9bd7520187dce5d19",
+    "semantic_hash": "1ff3e04a7fd408f9bd7520187dce5d19"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\button.tsx": {
+    "mtime": 1781757684.8327408,
+    "ast_hash": "fa7dc9bec92a2ea0344e2a5c4738514f",
+    "semantic_hash": "fa7dc9bec92a2ea0344e2a5c4738514f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\card.tsx": {
+    "mtime": 1781757684.8327408,
+    "ast_hash": "ee74a83be6bb8fc3473cb6cceffe8813",
+    "semantic_hash": "ee74a83be6bb8fc3473cb6cceffe8813"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\dialog.tsx": {
+    "mtime": 1781757684.8327408,
+    "ast_hash": "89fd7888d5bbc59f2eae651ffc05fc70",
+    "semantic_hash": "89fd7888d5bbc59f2eae651ffc05fc70"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\dropdown-menu.tsx": {
+    "mtime": 1781757684.8327408,
+    "ast_hash": "79c10dbb5988e8bb9c63f4d823a8724a",
+    "semantic_hash": "79c10dbb5988e8bb9c63f4d823a8724a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\form.tsx": {
+    "mtime": 1781757684.833743,
+    "ast_hash": "77d33b298bf4097a331f63ae27a147c3",
+    "semantic_hash": "77d33b298bf4097a331f63ae27a147c3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\input.tsx": {
+    "mtime": 1781757684.833743,
+    "ast_hash": "da33823853390b57ac04230a67657585",
+    "semantic_hash": "da33823853390b57ac04230a67657585"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\label.tsx": {
+    "mtime": 1781757684.833743,
+    "ast_hash": "ed79a93777c1e0f0337c6b3943290998",
+    "semantic_hash": "ed79a93777c1e0f0337c6b3943290998"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\select.tsx": {
+    "mtime": 1781757684.833743,
+    "ast_hash": "fc7d964889fe17cca9fc412266dba5d1",
+    "semantic_hash": "fc7d964889fe17cca9fc412266dba5d1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\separator.tsx": {
+    "mtime": 1781757684.833743,
+    "ast_hash": "bb51ace4279e49d0a4628fafa6ea10b9",
+    "semantic_hash": "bb51ace4279e49d0a4628fafa6ea10b9"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\sonner.tsx": {
+    "mtime": 1781757684.8347447,
+    "ast_hash": "7005ed2984ab498ef51f3ed910e1abf2",
+    "semantic_hash": "7005ed2984ab498ef51f3ed910e1abf2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\table.tsx": {
+    "mtime": 1781757684.8347447,
+    "ast_hash": "7424f42ca135637e99ac19646cbb6625",
+    "semantic_hash": "7424f42ca135637e99ac19646cbb6625"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\tabs.tsx": {
+    "mtime": 1781836050.554811,
+    "ast_hash": "1f40c0a76a17c0ac58e2bcde8f62b72f",
+    "semantic_hash": "1f40c0a76a17c0ac58e2bcde8f62b72f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\components\\ui\\textarea.tsx": {
+    "mtime": 1781757684.8347447,
+    "ast_hash": "378ccca2b6eee051a23c1e6d7bc80952",
+    "semantic_hash": "378ccca2b6eee051a23c1e6d7bc80952"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\appearance.ts": {
+    "mtime": 1781757684.8357446,
+    "ast_hash": "2f25e4c880fec6df22ae93dfe10933cb",
+    "semantic_hash": "2f25e4c880fec6df22ae93dfe10933cb"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\clinica.ts": {
+    "mtime": 1781757684.8357446,
+    "ast_hash": "3bf994dc40a5031a064133822e3132fc",
+    "semantic_hash": "3bf994dc40a5031a064133822e3132fc"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\date-only.ts": {
+    "mtime": 1781757684.8357446,
+    "ast_hash": "9edb9fe8fdf3c1567f8ab66f8f49f8ef",
+    "semantic_hash": "9edb9fe8fdf3c1567f8ab66f8f49f8ef"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\http\\public-url.ts": {
+    "mtime": 1781837871.7796323,
+    "ast_hash": "292ea64db7f68f084c9c9d051b357f80",
+    "semantic_hash": "292ea64db7f68f084c9c9d051b357f80"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\inventory-expiration.ts": {
+    "mtime": 1781757684.8357446,
+    "ast_hash": "c25b8253eda96ec8b25f0cd9eef6cfb8",
+    "semantic_hash": "c25b8253eda96ec8b25f0cd9eef6cfb8"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\money.ts": {
+    "mtime": 1781757684.8367448,
+    "ast_hash": "187e246c037ce22a8e2aeb74e3eceb7f",
+    "semantic_hash": "187e246c037ce22a8e2aeb74e3eceb7f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\operational-status.ts": {
+    "mtime": 1781757684.8367448,
+    "ast_hash": "a83c675b95e789335e8a5144bdf3b612",
+    "semantic_hash": "a83c675b95e789335e8a5144bdf3b612"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\patient-labels.ts": {
+    "mtime": 1781757684.8367448,
+    "ast_hash": "1fcfb769ec2f93b41f2931b9f7ec68cd",
+    "semantic_hash": "1fcfb769ec2f93b41f2931b9f7ec68cd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\staff-directory.ts": {
+    "mtime": 1781757684.8367448,
+    "ast_hash": "c0170f80bb3237e18c5e39f1da0b5358",
+    "semantic_hash": "c0170f80bb3237e18c5e39f1da0b5358"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\supabase\\client.ts": {
+    "mtime": 1781757684.8367448,
+    "ast_hash": "98d373a08d553d79fe0d1713ecaba148",
+    "semantic_hash": "98d373a08d553d79fe0d1713ecaba148"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\supabase\\env.ts": {
+    "mtime": 1781757684.8377447,
+    "ast_hash": "fcff4bd28c5866b4ead0eb985a6808b2",
+    "semantic_hash": "fcff4bd28c5866b4ead0eb985a6808b2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\supabase\\middleware.ts": {
+    "mtime": 1781757684.8377447,
+    "ast_hash": "6e2f3b22bd28eaf19630e79f14d16ffa",
+    "semantic_hash": "6e2f3b22bd28eaf19630e79f14d16ffa"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\supabase\\server.ts": {
+    "mtime": 1781757684.8377447,
+    "ast_hash": "30dc87cabb1a0a141eb23c5007db0684",
+    "semantic_hash": "30dc87cabb1a0a141eb23c5007db0684"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\utils.ts": {
+    "mtime": 1781757684.8377447,
+    "ast_hash": "1d8011eb18769078bf77502b220daa5e",
+    "semantic_hash": "1d8011eb18769078bf77502b220daa5e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\adjuntos.ts": {
+    "mtime": 1781757684.8377447,
+    "ast_hash": "c44f3b64ef1ec9cffc71a430ca9dfdbb",
+    "semantic_hash": "c44f3b64ef1ec9cffc71a430ca9dfdbb"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\agenda-movilidad.contract.test.mjs": {
+    "mtime": 1781757684.8387446,
+    "ast_hash": "21b851628e486625aa2bf2581c4a2400",
+    "semantic_hash": "21b851628e486625aa2bf2581c4a2400"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\agenda.ts": {
+    "mtime": 1781757684.8387446,
+    "ast_hash": "45b337d6dc0630dc452c53bc837418fa",
+    "semantic_hash": "45b337d6dc0630dc452c53bc837418fa"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\ajustes.ts": {
+    "mtime": 1781757684.8387446,
+    "ast_hash": "17da56ed410040ec88ac071a1a79c983",
+    "semantic_hash": "17da56ed410040ec88ac071a1a79c983"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\apariencia.contract.test.mjs": {
+    "mtime": 1781757684.8387446,
+    "ast_hash": "36d602d5a82a27a38b14a24f9e20c8df",
+    "semantic_hash": "36d602d5a82a27a38b14a24f9e20c8df"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\atencion-edicion.contract.test.mjs": {
+    "mtime": 1781757684.8387446,
+    "ast_hash": "f8a75991650f8e738b15599584fb6df3",
+    "semantic_hash": "f8a75991650f8e738b15599584fb6df3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\atencion.ts": {
+    "mtime": 1781757684.8397448,
+    "ast_hash": "7316b36e55c7ac3808edf27475c56405",
+    "semantic_hash": "7316b36e55c7ac3808edf27475c56405"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\clientes-identificacion.contract.test.mjs": {
+    "mtime": 1781757684.8397448,
+    "ast_hash": "ce7a1acc416e3876703e37764ff2cd6c",
+    "semantic_hash": "ce7a1acc416e3876703e37764ff2cd6c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\clientes.ts": {
+    "mtime": 1781757684.8397448,
+    "ast_hash": "5d6105b7d3f9d77866b316917ecf0f26",
+    "semantic_hash": "5d6105b7d3f9d77866b316917ecf0f26"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\grooming.ts": {
+    "mtime": 1781757684.8397448,
+    "ast_hash": "b037149e57f000a154214276a05baee4",
+    "semantic_hash": "b037149e57f000a154214276a05baee4"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\hospitalizaciones-tratamientos.contract.test.mjs": {
+    "mtime": 1781757684.8397448,
+    "ast_hash": "fe7e725d9306b20eaa32e1028e058b7e",
+    "semantic_hash": "fe7e725d9306b20eaa32e1028e058b7e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\hospitalizaciones.ts": {
+    "mtime": 1782083752.1318164,
+    "ast_hash": "100b38162be7eb08c7dae890dc84723c",
+    "semantic_hash": "100b38162be7eb08c7dae890dc84723c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\mascota-adjuntos.contract.test.mjs": {
+    "mtime": 1781757684.8407445,
+    "ast_hash": "20f9fed260404ff1be5516fa32a5bc84",
+    "semantic_hash": "20f9fed260404ff1be5516fa32a5bc84"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\recordatorios.contract.test.mjs": {
+    "mtime": 1781757684.8407445,
+    "ast_hash": "23b8964780961857765b9164cbc1a6bf",
+    "semantic_hash": "23b8964780961857765b9164cbc1a6bf"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\recordatorios.ts": {
+    "mtime": 1781757684.8407445,
+    "ast_hash": "eaf171035d891e59ccabdf682c7b11db",
+    "semantic_hash": "eaf171035d891e59ccabdf682c7b11db"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\registros-previos.ts": {
+    "mtime": 1781757684.8407445,
+    "ast_hash": "4528db6c5ec630223986a1f444e6df38",
+    "semantic_hash": "4528db6c5ec630223986a1f444e6df38"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\seguimiento.ts": {
+    "mtime": 1781757684.8417447,
+    "ast_hash": "7b754216e0fb33e92c2130fca8237789",
+    "semantic_hash": "7b754216e0fb33e92c2130fca8237789"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\staff.ts": {
+    "mtime": 1781757684.8417447,
+    "ast_hash": "6f3b822838a048ac853b3df97eefa7fd",
+    "semantic_hash": "6f3b822838a048ac853b3df97eefa7fd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\lib\\validators\\ventas.ts": {
+    "mtime": 1781757684.8417447,
+    "ast_hash": "24551cf44c98dea60af74fd8faab5776",
+    "semantic_hash": "24551cf44c98dea60af74fd8faab5776"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\proxy.ts": {
+    "mtime": 1781837910.1533844,
+    "ast_hash": "28efb3c452bd253215aab111cfa7cc83",
+    "semantic_hash": "28efb3c452bd253215aab111cfa7cc83"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0001_init.sql": {
+    "mtime": 1781757684.8427453,
+    "ast_hash": "54acca60dc89c425cf99783dcf35de1e",
+    "semantic_hash": "54acca60dc89c425cf99783dcf35de1e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0002_clientes_mascotas.sql": {
+    "mtime": 1781757684.8427453,
+    "ast_hash": "896c5142b9a8409d3e3839ee46892bdc",
+    "semantic_hash": "896c5142b9a8409d3e3839ee46892bdc"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0003_agenda_citas.sql": {
+    "mtime": 1781757684.843248,
+    "ast_hash": "9138b94404373704d5880fd79e902099",
+    "semantic_hash": "9138b94404373704d5880fd79e902099"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0004_ordenes_entradas_adjuntos.sql": {
+    "mtime": 1781757684.843248,
+    "ast_hash": "e984680d830d4c27ee6a4203ca383b6c",
+    "semantic_hash": "e984680d830d4c27ee6a4203ca383b6c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0005_caja_ventas.sql": {
+    "mtime": 1781757684.843248,
+    "ast_hash": "4a46d3bc67c10e00febb3f022921a985",
+    "semantic_hash": "4a46d3bc67c10e00febb3f022921a985"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0006_inventario.sql": {
+    "mtime": 1781757684.843248,
+    "ast_hash": "36af46505f729938ec990947396f7aa3",
+    "semantic_hash": "36af46505f729938ec990947396f7aa3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0007_signos_vitales.sql": {
+    "mtime": 1781757684.843248,
+    "ast_hash": "2c4f5373ffaf58ad6e9b06927dff6389",
+    "semantic_hash": "2c4f5373ffaf58ad6e9b06927dff6389"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0008_clinica_branding.sql": {
+    "mtime": 1781757684.8442495,
+    "ast_hash": "3a62b15e3dc89423f2e924078311fe1c",
+    "semantic_hash": "3a62b15e3dc89423f2e924078311fe1c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0009_corte_caja.sql": {
+    "mtime": 1781757684.8442495,
+    "ast_hash": "94678ae6a03fb4e88eec9224c34ab864",
+    "semantic_hash": "94678ae6a03fb4e88eec9224c34ab864"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0010_categorias_catalogo.sql": {
+    "mtime": 1781757684.8442495,
+    "ast_hash": "1a16ed90099cf7426fc4621481c23ed5",
+    "semantic_hash": "1a16ed90099cf7426fc4621481c23ed5"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0011_staff_invitations.sql": {
+    "mtime": 1781757684.8442495,
+    "ast_hash": "d81a5abdb89b050802225c8a91276375",
+    "semantic_hash": "d81a5abdb89b050802225c8a91276375"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0012_historia_clinica_completa.sql": {
+    "mtime": 1781757684.8442495,
+    "ast_hash": "c2545f4c3be3fef5de8f5095fec1f0e1",
+    "semantic_hash": "c2545f4c3be3fef5de8f5095fec1f0e1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0013_seguimientos_clinicos.sql": {
+    "mtime": 1781757684.8442495,
+    "ast_hash": "21ef1606dcd5119ddd2af51715b8226d",
+    "semantic_hash": "21ef1606dcd5119ddd2af51715b8226d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0014_schema_cache_tools.sql": {
+    "mtime": 1781757684.845252,
+    "ast_hash": "4560fec79cd61aa422558fb1a1d3bd56",
+    "semantic_hash": "4560fec79cd61aa422558fb1a1d3bd56"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0015_security_hardening_rls.sql": {
+    "mtime": 1781757684.845252,
+    "ast_hash": "4775594d19f209ea27b5819ef501a71e",
+    "semantic_hash": "4775594d19f209ea27b5819ef501a71e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0016_staff_listing_role_normalization.sql": {
+    "mtime": 1781757684.845252,
+    "ast_hash": "4a6b2aa8a68633fd3908b23731af9a98",
+    "semantic_hash": "4a6b2aa8a68633fd3908b23731af9a98"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0017_inventario_mvp.sql": {
+    "mtime": 1781757684.845252,
+    "ast_hash": "29c40c9c55ab836fd600bf1e03ea001a",
+    "semantic_hash": "29c40c9c55ab836fd600bf1e03ea001a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0018_inventario_catalogos_base.sql": {
+    "mtime": 1781757684.845252,
+    "ast_hash": "cc7d9b3fd344a6eb6acfc10cb2dde92e",
+    "semantic_hash": "cc7d9b3fd344a6eb6acfc10cb2dde92e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0019_normalize_almacenes.sql": {
+    "mtime": 1781757684.8462522,
+    "ast_hash": "33dff358e235eb17fd35ceab191245e1",
+    "semantic_hash": "33dff358e235eb17fd35ceab191245e1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0020_grooming_tipos_cita_servicios_base.sql": {
+    "mtime": 1781757684.8462522,
+    "ast_hash": "f386ea2250bd3fa62d352933972e6b61",
+    "semantic_hash": "f386ea2250bd3fa62d352933972e6b61"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0021_tipo_citas_area.sql": {
+    "mtime": 1781757684.8462522,
+    "ast_hash": "2c73b6e4d0324f5ec0d924680f25b08e",
+    "semantic_hash": "2c73b6e4d0324f5ec0d924680f25b08e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0022_mascotas_notas_manejo.sql": {
+    "mtime": 1781757684.8462522,
+    "ast_hash": "3484e00a260b41f096db5de3638eb123",
+    "semantic_hash": "3484e00a260b41f096db5de3638eb123"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0023_recordatorios_estado.sql": {
+    "mtime": 1781757684.8462522,
+    "ast_hash": "87c7552c599874b1948600be33550d58",
+    "semantic_hash": "87c7552c599874b1948600be33550d58"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0024_grooming_servicios.sql": {
+    "mtime": 1781757684.8462522,
+    "ast_hash": "4d59e179b71f3457dbf26546db119f58",
+    "semantic_hash": "4d59e179b71f3457dbf26546db119f58"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0026_hospitalizaciones.sql": {
+    "mtime": 1781757684.847252,
+    "ast_hash": "708d6685e77e6ca15edc362320b07253",
+    "semantic_hash": "708d6685e77e6ca15edc362320b07253"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0027_mascotas_codigo.sql": {
+    "mtime": 1781757684.847252,
+    "ast_hash": "a4149c613f94bcfaaab8f1b64c8a946e",
+    "semantic_hash": "a4149c613f94bcfaaab8f1b64c8a946e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0028_citas_notas_text.sql": {
+    "mtime": 1781757684.847252,
+    "ast_hash": "50c7d1f2744facedf8d7d20642a56b61",
+    "semantic_hash": "50c7d1f2744facedf8d7d20642a56b61"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0029_hospitalizacion_tratamientos.sql": {
+    "mtime": 1781757684.847252,
+    "ast_hash": "5e2f161ebf12b9595cee4436cf438d8a",
+    "semantic_hash": "5e2f161ebf12b9595cee4436cf438d8a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0030_hce_entradas_clinicas_ediciones.sql": {
+    "mtime": 1781757684.847252,
+    "ast_hash": "b010734bea2453b3dff917086ad3af84",
+    "semantic_hash": "b010734bea2453b3dff917086ad3af84"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0031_mascota_adjuntos.sql": {
+    "mtime": 1781757684.848252,
+    "ast_hash": "969778ef37f693234e379b4b09e305d2",
+    "semantic_hash": "969778ef37f693234e379b4b09e305d2"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0032_clientes_identificacion_direccion.sql": {
+    "mtime": 1781757684.848252,
+    "ast_hash": "5cb27329fce23db8b789e0d3e8e291db",
+    "semantic_hash": "5cb27329fce23db8b789e0d3e8e291db"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0033_citas_movilidad_estructurada.sql": {
+    "mtime": 1781757684.848252,
+    "ast_hash": "9727bd1f078f1640cad4be8f13c7d625",
+    "semantic_hash": "9727bd1f078f1640cad4be8f13c7d625"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0034_clinicas_apariencia.sql": {
+    "mtime": 1781757684.848252,
+    "ast_hash": "834a2c5b431af93933941e9efb8e186c",
+    "semantic_hash": "834a2c5b431af93933941e9efb8e186c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0035_clinica_temas_guardados.sql": {
+    "mtime": 1781757684.848252,
+    "ast_hash": "5591e7f7f68b38efcbf0ee378ae052c7",
+    "semantic_hash": "5591e7f7f68b38efcbf0ee378ae052c7"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0036_seguimientos_recurrencia.sql": {
+    "mtime": 1781757684.849252,
+    "ast_hash": "f1527f83d8ab026ba6abaa96bacb4bc9",
+    "semantic_hash": "f1527f83d8ab026ba6abaa96bacb4bc9"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0037_items_catalogo_fecha_vencimiento.sql": {
+    "mtime": 1781757684.849252,
+    "ast_hash": "45153eabeb2241a51327a6e551db0b15",
+    "semantic_hash": "45153eabeb2241a51327a6e551db0b15"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0038_clinica_staff_directory.sql": {
+    "mtime": 1781757684.849252,
+    "ast_hash": "e380169dcd0dcc6d4f58c0b0541e5409",
+    "semantic_hash": "e380169dcd0dcc6d4f58c0b0541e5409"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0039_staff_profiles.sql": {
+    "mtime": 1781757684.849252,
+    "ast_hash": "49b77b1d09dcd5f2c7067d73697a45de",
+    "semantic_hash": "49b77b1d09dcd5f2c7067d73697a45de"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0040_registros_previos.sql": {
+    "mtime": 1781757684.849252,
+    "ast_hash": "25a2c1ca05dcf54656ec38cadac9dd70",
+    "semantic_hash": "25a2c1ca05dcf54656ec38cadac9dd70"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\migrations\\0041_registros_previos_anulacion_rpc.sql": {
+    "mtime": 1781757684.849252,
+    "ast_hash": "4e2258d9719460e0f872fc5419083d19",
+    "semantic_hash": "4e2258d9719460e0f872fc5419083d19"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\supabase\\seed.sql": {
+    "mtime": 1781757684.850252,
+    "ast_hash": "f6fab760c7c6a28a454499e0fa34955b",
+    "semantic_hash": "f6fab760c7c6a28a454499e0fa34955b"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\tsconfig.json": {
+    "mtime": 1781757684.850252,
+    "ast_hash": "0a2f4ed9289b65cd3feb4fb4ab3a4fcd",
+    "semantic_hash": "0a2f4ed9289b65cd3feb4fb4ab3a4fcd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.agents\\AGENTS.md": {
+    "mtime": 1782085934.869171,
+    "ast_hash": "1a08dd0d5c583ad7d1d5f4ce4fec75e6",
+    "semantic_hash": "1a08dd0d5c583ad7d1d5f4ce4fec75e6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.agents\\AGENTS.proposed.md": {
+    "mtime": 1782085934.869171,
+    "ast_hash": "1a08dd0d5c583ad7d1d5f4ce4fec75e6",
+    "semantic_hash": "1a08dd0d5c583ad7d1d5f4ce4fec75e6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\branch_consolidation_plan.md": {
+    "mtime": 1776729770.6436484,
+    "ast_hash": "5c78233539e9be2f4c40516198253688",
+    "semantic_hash": "5c78233539e9be2f4c40516198253688"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase1_2_validation.md": {
+    "mtime": 1776729770.6436484,
+    "ast_hash": "cf51d3e368717abf7633d2eeeddea68e",
+    "semantic_hash": "cf51d3e368717abf7633d2eeeddea68e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase1_patch_validation.md": {
+    "mtime": 1776729770.6446486,
+    "ast_hash": "c1cc39cd4f03f88da26049f2ed23275a",
+    "semantic_hash": "c1cc39cd4f03f88da26049f2ed23275a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase1_validation.md": {
+    "mtime": 1776729770.6446486,
+    "ast_hash": "eb8f9a2a3579b8d61c162dafc0143682",
+    "semantic_hash": "eb8f9a2a3579b8d61c162dafc0143682"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase2_validation.md": {
+    "mtime": 1776729770.6446486,
+    "ast_hash": "90163ed41bd449ebdbb9b743b60ce8ac",
+    "semantic_hash": "90163ed41bd449ebdbb9b743b60ce8ac"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase3_validation.md": {
+    "mtime": 1776729770.6446486,
+    "ast_hash": "dfb7d9ff00724790711301bb451ad220",
+    "semantic_hash": "dfb7d9ff00724790711301bb451ad220"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase4_storage_patch_validation.md": {
+    "mtime": 1776729770.6446486,
+    "ast_hash": "0a5088117a9979e7a1941e76a26fc4f6",
+    "semantic_hash": "0a5088117a9979e7a1941e76a26fc4f6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase4_validation.md": {
+    "mtime": 1776729770.645738,
+    "ast_hash": "ded8f05def3c0721dffe3083fe92825d",
+    "semantic_hash": "ded8f05def3c0721dffe3083fe92825d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase5_build_patch_validation.md": {
+    "mtime": 1776729770.645738,
+    "ast_hash": "507ab40ef8fb3c743848641949cc4450",
+    "semantic_hash": "507ab40ef8fb3c743848641949cc4450"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase5_fix_plan.md": {
+    "mtime": 1776729770.645738,
+    "ast_hash": "a4bca8baa85b82881580bf28fa62a105",
+    "semantic_hash": "a4bca8baa85b82881580bf28fa62a105"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase5_validation.md": {
+    "mtime": 1776729770.645738,
+    "ast_hash": "60b21e7d9b3a499cb26ed6e99b45203e",
+    "semantic_hash": "60b21e7d9b3a499cb26ed6e99b45203e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase6_validation.md": {
+    "mtime": 1776729770.645738,
+    "ast_hash": "b3ecf2d565de945218f716baf4afb6d6",
+    "semantic_hash": "b3ecf2d565de945218f716baf4afb6d6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\phase7_validation.md": {
+    "mtime": 1776729770.645738,
+    "ast_hash": "3bc922709fdb82bb74932b617e311b9c",
+    "semantic_hash": "3bc922709fdb82bb74932b617e311b9c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\documents\\veterp_technical_plan.md": {
+    "mtime": 1776729770.6467407,
+    "ast_hash": "37c890bae4f50a26814bc7159f3814dd",
+    "semantic_hash": "37c890bae4f50a26814bc7159f3814dd"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\fix-phase5-build\\checklist.md": {
+    "mtime": 1776729770.6467407,
+    "ast_hash": "9ce2b93575537f75bde3fe0000db3bd8",
+    "semantic_hash": "9ce2b93575537f75bde3fe0000db3bd8"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\fix-phase5-build\\spec.md": {
+    "mtime": 1776729770.6467407,
+    "ast_hash": "508bf7a4721aa0425f97825a3096dca5",
+    "semantic_hash": "508bf7a4721aa0425f97825a3096dca5"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\fix-phase5-build\\tasks.md": {
+    "mtime": 1776729770.6467407,
+    "ast_hash": "47cd678881d805e91b6cee22feed5807",
+    "semantic_hash": "47cd678881d805e91b6cee22feed5807"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\implement-phase6-inventory\\checklist.md": {
+    "mtime": 1776729770.6478422,
+    "ast_hash": "1c7af76889462d770b75ceb84f4fbbc5",
+    "semantic_hash": "1c7af76889462d770b75ceb84f4fbbc5"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\implement-phase6-inventory\\spec.md": {
+    "mtime": 1776729770.6478422,
+    "ast_hash": "4f074fd4495cc481046a892539da0b28",
+    "semantic_hash": "4f074fd4495cc481046a892539da0b28"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\implement-phase6-inventory\\tasks.md": {
+    "mtime": 1776729770.6478422,
+    "ast_hash": "a8d9fe77d84b763f42add8f5de4fd3d8",
+    "semantic_hash": "a8d9fe77d84b763f42add8f5de4fd3d8"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\implement-phase7-hardening\\checklist.md": {
+    "mtime": 1776729770.6478422,
+    "ast_hash": "2cb0ab244db32449126fd188ba6d324f",
+    "semantic_hash": "2cb0ab244db32449126fd188ba6d324f"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\implement-phase7-hardening\\spec.md": {
+    "mtime": 1776729770.6488862,
+    "ast_hash": "2972fd60e15d2f61a897ff980bdb7bd4",
+    "semantic_hash": "2972fd60e15d2f61a897ff980bdb7bd4"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\implement-phase7-hardening\\tasks.md": {
+    "mtime": 1776729770.6488862,
+    "ast_hash": "55884fb16f9bdc59fd8848f09dfab595",
+    "semantic_hash": "55884fb16f9bdc59fd8848f09dfab595"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\rebuild-veterp\\checklist.md": {
+    "mtime": 1776729770.6488862,
+    "ast_hash": "3eca1c6d67e3600e21f0f39d972b7187",
+    "semantic_hash": "3eca1c6d67e3600e21f0f39d972b7187"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\rebuild-veterp\\spec.md": {
+    "mtime": 1776729770.6488862,
+    "ast_hash": "ec2c397a057436d6fc5267fff2c58637",
+    "semantic_hash": "ec2c397a057436d6fc5267fff2c58637"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\.trae\\specs\\rebuild-veterp\\tasks.md": {
+    "mtime": 1776729770.6488862,
+    "ast_hash": "5f930c6761f4663c42828baa5dacd2ec",
+    "semantic_hash": "5f930c6761f4663c42828baa5dacd2ec"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\AGENTS.md": {
+    "mtime": 1781757684.764706,
+    "ast_hash": "9346a4897ff955555ddedb7bebf77adb",
+    "semantic_hash": "9346a4897ff955555ddedb7bebf77adb"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\CLAUDE.md": {
+    "mtime": 1781757684.764706,
+    "ast_hash": "771faa62feb60b7de901a397aebb29b0",
+    "semantic_hash": "771faa62feb60b7de901a397aebb29b0"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\README.md": {
+    "mtime": 1781757684.764706,
+    "ast_hash": "9162add00befbcdb432430f405c4ad8d",
+    "semantic_hash": "9162add00befbcdb432430f405c4ad8d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\Regla obligatoria de UX no mostrar valores internos al usuario.txt": {
+    "mtime": 1780612460.580693,
+    "ast_hash": "853b67b9fb35d0a6c4c160216a60a7e7",
+    "semantic_hash": "853b67b9fb35d0a6c4c160216a60a7e7"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\VetERP_chatgpt.md": {
+    "mtime": 1779827105.8602958,
+    "ast_hash": "63ffae29784c772887bec36ca51af58d",
+    "semantic_hash": "63ffae29784c772887bec36ca51af58d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\app_flow_map.md": {
+    "mtime": 1776729770.6500657,
+    "ast_hash": "cf551df98afbb2bdcbf72e2ab136993e",
+    "semantic_hash": "cf551df98afbb2bdcbf72e2ab136993e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\data_model.md": {
+    "mtime": 1776729770.6500657,
+    "ast_hash": "6e2b3b3051900b9e0002be2ed723ad80",
+    "semantic_hash": "6e2b3b3051900b9e0002be2ed723ad80"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\feedback_veterinario.md": {
+    "mtime": 1781757684.7657056,
+    "ast_hash": "d83d92a6179c175e5f1c427051313c1d",
+    "semantic_hash": "d83d92a6179c175e5f1c427051313c1d"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\landing\\landing-copy.md": {
+    "mtime": 1781802893.506732,
+    "ast_hash": "9c41af48ecdc3267d1ac61ccb086a979",
+    "semantic_hash": "9c41af48ecdc3267d1ac61ccb086a979"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\landing\\landing-implementation-notes.md": {
+    "mtime": 1781809555.0547006,
+    "ast_hash": "77323a57664f9c28f8ea10abcba62eca",
+    "semantic_hash": "77323a57664f9c28f8ea10abcba62eca"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\landing\\landing-prd.md": {
+    "mtime": 1781795249.3192282,
+    "ast_hash": "a2859de524a4a47f27f196cd1cdd549c",
+    "semantic_hash": "a2859de524a4a47f27f196cd1cdd549c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\landing\\landing-wireframe.md": {
+    "mtime": 1781803293.1022918,
+    "ast_hash": "6edf8a4e74021eb34338ae3e0e8cc2e6",
+    "semantic_hash": "6edf8a4e74021eb34338ae3e0e8cc2e6"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\landing\\screenshot-shotlist.md": {
+    "mtime": 1781795702.780872,
+    "ast_hash": "d0c2b6ae15f583c6d1f6002130d0a803",
+    "semantic_hash": "d0c2b6ae15f583c6d1f6002130d0a803"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\migration_risks.md": {
+    "mtime": 1776729770.6500657,
+    "ast_hash": "82b7cae36f81933792e7b9f044c6525c",
+    "semantic_hash": "82b7cae36f81933792e7b9f044c6525c"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\product_spec.md": {
+    "mtime": 1776729770.6500657,
+    "ast_hash": "bd3001db68a0196e4213c410e042d9d1",
+    "semantic_hash": "bd3001db68a0196e4213c410e042d9d1"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\veterp_beta_smoke_test.md": {
+    "mtime": 1781757684.7657056,
+    "ast_hash": "17070c9a8feb331241e21525bbe6a099",
+    "semantic_hash": "17070c9a8feb331241e21525bbe6a099"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\docs\\veterp_roadmap_general.md": {
+    "mtime": 1778095540.3767478,
+    "ast_hash": "eb0e0c4032684f25166b3ef30c84a521",
+    "semantic_hash": "eb0e0c4032684f25166b3ef30c84a521"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\domain-certificate-veterp.qzz.io.pdf": {
+    "mtime": 1780283185.687596,
+    "ast_hash": "3873482d495a1fe482f4c9f0eaeb7f30",
+    "semantic_hash": "3873482d495a1fe482f4c9f0eaeb7f30"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-horizontal-cream.png": {
+    "mtime": 1781757684.7712092,
+    "ast_hash": "8df3bfc490df68bdce4057b79d14b2ab",
+    "semantic_hash": "8df3bfc490df68bdce4057b79d14b2ab"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-horizontal-transparent.png": {
+    "mtime": 1781806501.075137,
+    "ast_hash": "9282606458dc6839eb18233ada8bbdaa",
+    "semantic_hash": "9282606458dc6839eb18233ada8bbdaa"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-vertical-graphite-cream.png": {
+    "mtime": 1781757684.7777143,
+    "ast_hash": "732de1dfd8378755c94c9b5947294dcb",
+    "semantic_hash": "732de1dfd8378755c94c9b5947294dcb"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-vertical-light-dark.png": {
+    "mtime": 1781757684.780715,
+    "ast_hash": "c4003244236d7f08733905b9f893a1ce",
+    "semantic_hash": "c4003244236d7f08733905b9f893a1ce"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-vertical-light-teal.png": {
+    "mtime": 1781757684.7842185,
+    "ast_hash": "424a725c63ce5273974c5901e786602e",
+    "semantic_hash": "424a725c63ce5273974c5901e786602e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-vertical-primary-cream.png": {
+    "mtime": 1781757684.7872179,
+    "ast_hash": "0d10fc80f4eba35305fe3dbf099ae619",
+    "semantic_hash": "0d10fc80f4eba35305fe3dbf099ae619"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-vertical-primary-transparent.png": {
+    "mtime": 1781806616.6390915,
+    "ast_hash": "970c1c5871b73831e4ecc3b438ee351a",
+    "semantic_hash": "970c1c5871b73831e4ecc3b438ee351a"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-logo-vertical-teal-cream.png": {
+    "mtime": 1781757684.7927203,
+    "ast_hash": "110f0bcc9fddfb4efc841bb509eb4864",
+    "semantic_hash": "110f0bcc9fddfb4efc841bb509eb4864"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-mark-cream.png": {
+    "mtime": 1781757684.7957232,
+    "ast_hash": "8a0da8b24c7239e3654e2d5624a36bc9",
+    "semantic_hash": "8a0da8b24c7239e3654e2d5624a36bc9"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\brand\\veterp-mark-transparent.png": {
+    "mtime": 1781807076.9217176,
+    "ast_hash": "e516c54fff259356bd6520f02f7a6b76",
+    "semantic_hash": "e516c54fff259356bd6520f02f7a6b76"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\file.svg": {
+    "mtime": 1781757684.7987218,
+    "ast_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71",
+    "semantic_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\globe.svg": {
+    "mtime": 1781757684.7987218,
+    "ast_hash": "2aaafa6a49b6563925fe440891e32717",
+    "semantic_hash": "2aaafa6a49b6563925fe440891e32717"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\feature-agenda-operativa.png": {
+    "mtime": 1781807163.2691753,
+    "ast_hash": "21e3d912635add8bb70938258d0d0836",
+    "semantic_hash": "21e3d912635add8bb70938258d0d0836"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\feature-atencion-clinica.png": {
+    "mtime": 1781807250.9963293,
+    "ast_hash": "4fe6ef6121ce031d428bfc6b01b821a4",
+    "semantic_hash": "4fe6ef6121ce031d428bfc6b01b821a4"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\feature-finanzas-caja.png": {
+    "mtime": 1781807626.494098,
+    "ast_hash": "a81af4d516d5af1c26fba900c9a404df",
+    "semantic_hash": "a81af4d516d5af1c26fba900c9a404df"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\feature-historia-clinica.png": {
+    "mtime": 1781807615.7511115,
+    "ast_hash": "540a95ab33197cac12a110a9b979e590",
+    "semantic_hash": "540a95ab33197cac12a110a9b979e590"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\feature-hospitalizacion-clinica.png": {
+    "mtime": 1781807749.6442645,
+    "ast_hash": "3ba447cd18037a75bf61adf362dc94da",
+    "semantic_hash": "3ba447cd18037a75bf61adf362dc94da"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\feature-inventario-stock.png": {
+    "mtime": 1781807777.9711165,
+    "ast_hash": "c78697df77b431a3c2572156547de3ba",
+    "semantic_hash": "c78697df77b431a3c2572156547de3ba"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\landing\\screenshots\\hero-recepcion-dashboard.png": {
+    "mtime": 1781807862.979955,
+    "ast_hash": "5136f82cdffd625c5dd69025bb826479",
+    "semantic_hash": "5136f82cdffd625c5dd69025bb826479"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\next.svg": {
+    "mtime": 1781757684.7997222,
+    "ast_hash": "8e061864f388b47f33a1c3780831193e",
+    "semantic_hash": "8e061864f388b47f33a1c3780831193e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\vercel.svg": {
+    "mtime": 1781757684.7997222,
+    "ast_hash": "c0af2f507b369b085b35ef4bbe3bcf1e",
+    "semantic_hash": "c0af2f507b369b085b35ef4bbe3bcf1e"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\public\\window.svg": {
+    "mtime": 1781757684.7997222,
+    "ast_hash": "a2760511c65806022ad20adf74370ff3",
+    "semantic_hash": "a2760511c65806022ad20adf74370ff3"
+  },
+  "C:\\Users\\angel\\OneDrive\\Escritorio\\Empresa\\VetERP\\src\\app\\icon.png": {
+    "mtime": 1781811600.205,
+    "ast_hash": "107c0700b7581f9620c0e5b1b12f77d2",
+    "semantic_hash": "107c0700b7581f9620c0e5b1b12f77d2"
+  }
+}

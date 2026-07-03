@@ -1,0 +1,40 @@
+## Regla obligatoria de UX: no mostrar valores internos al usuario
+
+Nunca mostrar valores internos de base de datos, enums, keys técnicas o slugs directamente en la interfaz visible para el usuario.
+
+Ejemplos prohibidos:
+
+* `anios`
+* `tipo_text`
+* `brand_color_text`
+* `recurrencia_unidad_text`
+* `owner`
+* `pending`
+* UUIDs, IDs técnicos o claves internas cuando exista un nombre legible
+
+Todo valor interno debe pasar por un formatter/helper antes de renderizarse en UI.
+
+Ejemplos correctos:
+
+* `anios` → `Años`
+* `dias` → `Días`
+* `semanas` → `Semanas`
+* `meses` → `Meses`
+* `dni` → `DNI`
+* `ce` → `CE`
+* `pasaporte` → `Pasaporte`
+* `ruc` → `RUC`
+* `pendiente` → `Pendiente`
+* `completado` → `Completado`
+
+Regla práctica:
+Si un valor puede ser visible por el usuario en labels, selects, cards, tablas, badges, placeholders, botones, mensajes, toasts, previews o historial, debe mostrarse con texto humano, consistente y correctamente capitalizado.
+
+Además, cuidar singular/plural:
+
+* `Cada 1 mes`, no `Cada 1 meses`
+* `Cada 1 año`, no `Cada 1 años`
+* `Cada 2 meses`
+* `Cada 2 años`
+
+Antes de cerrar cualquier tarea, revisar visualmente que no se filtren valores internos en la UI.

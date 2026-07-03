@@ -2,7 +2,6 @@
 
 import { LogOut, Settings2, Stethoscope } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";

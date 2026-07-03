@@ -35,7 +35,7 @@ export default function TerminosPage() {
           </p>
           <h2 className="text-2xl font-semibold text-[#263238] mt-10 mb-4">Condiciones de la Beta Privada</h2>
           <p>
-            El producto se ofrece "tal cual" y "según disponibilidad" durante esta fase. El acceso se habilita 
+            El producto se ofrece &quot;tal cual&quot; y &quot;según disponibilidad&quot; durante esta fase. El acceso se habilita 
             de forma progresiva y puede estar sujeto a cambios en funcionalidad mientras recopilamos feedback 
             operativo para futuras versiones.
           </p>

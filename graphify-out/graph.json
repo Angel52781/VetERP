@@ -1,0 +1,3824 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "veterp_project_phases",
+        "label": "VetERP Implementation Phases",
+        "nodes": [
+          "trae_documents_phase1_2_validation_fase1",
+          "trae_documents_phase1_2_validation_fase2",
+          "trae_documents_phase3_validation_fase3",
+          "trae_documents_phase4_validation_fase4",
+          "trae_documents_phase5_validation_fase5",
+          "trae_documents_phase6_validation_fase6",
+          "trae_documents_phase7_validation_fase7"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": ".trae/documents/veterp_technical_plan.md"
+      },
+      {
+        "id": "veterp_data_model",
+        "label": "VetERP Data Model Entities",
+        "nodes": [
+          "docs_data_model_user",
+          "docs_data_model_clinica",
+          "docs_data_model_membresiaclinica",
+          "docs_data_model_cliente",
+          "docs_data_model_mascota",
+          "docs_data_model_ordenservicio",
+          "docs_data_model_entradaclinica",
+          "docs_data_model_itemcola",
+          "docs_data_model_cita",
+          "docs_data_model_tipocita",
+          "docs_data_model_itemcatalogo",
+          "docs_data_model_proveedor",
+          "docs_data_model_almacen",
+          "docs_data_model_movimientostock",
+          "docs_data_model_venta",
+          "docs_data_model_itemventa",
+          "docs_data_model_ledger"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+      },
+      {
+        "id": "veterp_landing_docs",
+        "label": "VetERP Landing Page Documentation",
+        "nodes": [
+          "landing_landing_copy_landing_copy",
+          "landing_landing_implementation_notes_landing_implementation_notes",
+          "landing_landing_prd_landing_prd",
+          "landing_screenshot_shotlist_screenshot_shotlist"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "createTipoCita",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L79",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_createtipocita",
+      "community": 28,
+      "norm_label": "createtipocita"
+    },
+    {
+      "label": "updateTipoCita",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L111",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_updatetipocita",
+      "community": 37,
+      "norm_label": "updatetipocita"
+    },
+    {
+      "label": "setTipoCitaDisabled",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L146",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_settipocitadisabled",
+      "community": 34,
+      "norm_label": "settipocitadisabled"
+    },
+    {
+      "label": "createCita",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L176",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_createcita",
+      "community": 27,
+      "norm_label": "createcita"
+    },
+    {
+      "label": "getTiposCita",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L231",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_gettiposcita",
+      "community": 32,
+      "norm_label": "gettiposcita"
+    },
+    {
+      "label": "getTiposCitaForManagement",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L255",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_gettiposcitaformanagement",
+      "community": 33,
+      "norm_label": "gettiposcitaformanagement"
+    },
+    {
+      "label": "getCitas",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L278",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_getcitas",
+      "community": 29,
+      "norm_label": "getcitas"
+    },
+    {
+      "label": "updateCitaEstado",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L368",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_updatecitaestado",
+      "community": 36,
+      "norm_label": "updatecitaestado"
+    },
+    {
+      "label": "updateCita",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L463",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_updatecita",
+      "community": 35,
+      "norm_label": "updatecita"
+    },
+    {
+      "label": "getClientesParaAgenda",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L535",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_getclientesparaagenda",
+      "community": 30,
+      "norm_label": "getclientesparaagenda"
+    },
+    {
+      "label": "getMascotasDeCliente",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/actions.ts",
+      "source_location": "L571",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_actions_getmascotasdecliente",
+      "community": 31,
+      "norm_label": "getmascotasdecliente"
+    },
+    {
+      "label": "filterClienteSearchResults",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/cita-search.ts",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_cita_search_filterclientesearchresults",
+      "community": 38,
+      "norm_label": "filterclientesearchresults"
+    },
+    {
+      "label": "IniciarAtencionCitaBtn",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/iniciar-atencion-cita-btn.tsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_iniciar_atencion_cita_btn_iniciaratencioncitabtn",
+      "community": 39,
+      "norm_label": "iniciaratencioncitabtn"
+    },
+    {
+      "label": "AgendaPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/page.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_page_agendapage",
+      "community": 40,
+      "norm_label": "agendapage"
+    },
+    {
+      "label": "CitaArea",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_citaarea",
+      "community": 45,
+      "norm_label": "citaarea"
+    },
+    {
+      "label": "TipoCitaAgenda",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_tipocitaagenda",
+      "community": 49,
+      "norm_label": "tipocitaagenda"
+    },
+    {
+      "label": "AgendaMascotaSearch",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_agendamascotasearch",
+      "community": 43,
+      "norm_label": "agendamascotasearch"
+    },
+    {
+      "label": "AgendaClienteSearch",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_agendaclientesearch",
+      "community": 41,
+      "norm_label": "agendaclientesearch"
+    },
+    {
+      "label": "AgendaClienteSearchResult",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L83",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_agendaclientesearchresult",
+      "community": 42,
+      "norm_label": "agendaclientesearchresult"
+    },
+    {
+      "label": "CitaAgenda",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L90",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_citaagenda",
+      "community": 44,
+      "norm_label": "citaagenda"
+    },
+    {
+      "label": "normalizeCitaArea",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L109",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_normalizecitaarea",
+      "community": 48,
+      "norm_label": "normalizecitaarea"
+    },
+    {
+      "label": "getCitaAreaLabel",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L113",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_getcitaarealabel",
+      "community": 46,
+      "norm_label": "getcitaarealabel"
+    },
+    {
+      "label": "getCitaAreaPresentation",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/agenda/types.ts",
+      "source_location": "L117",
+      "_origin": "ast",
+      "id": "src_app_operativo_agenda_types_getcitaareapresentation",
+      "community": 47,
+      "norm_label": "getcitaareapresentation"
+    },
+    {
+      "label": "ClinicaTemaGuardado",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_clinicatemaguardado",
+      "community": 51,
+      "norm_label": "clinicatemaguardado"
+    },
+    {
+      "label": "getItemsCatalogo",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_getitemscatalogo",
+      "community": 62,
+      "norm_label": "getitemscatalogo"
+    },
+    {
+      "label": "createItemCatalogo",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L128",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_createitemcatalogo",
+      "community": 55,
+      "norm_label": "createitemcatalogo"
+    },
+    {
+      "label": "updateItemCatalogo",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L155",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_updateitemcatalogo",
+      "community": 70,
+      "norm_label": "updateitemcatalogo"
+    },
+    {
+      "label": "getCategorias",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L184",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_getcategorias",
+      "community": 59,
+      "norm_label": "getcategorias"
+    },
+    {
+      "label": "createCategoria",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L206",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_createcategoria",
+      "community": 53,
+      "norm_label": "createcategoria"
+    },
+    {
+      "label": "updateCategoria",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L233",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_updatecategoria",
+      "community": 67,
+      "norm_label": "updatecategoria"
+    },
+    {
+      "label": "getProveedores",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L261",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_getproveedores",
+      "community": 63,
+      "norm_label": "getproveedores"
+    },
+    {
+      "label": "createProveedor",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L283",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_createproveedor",
+      "community": 56,
+      "norm_label": "createproveedor"
+    },
+    {
+      "label": "updateProveedor",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L310",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_updateproveedor",
+      "community": 71,
+      "norm_label": "updateproveedor"
+    },
+    {
+      "label": "getAlmacenes",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L338",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_getalmacenes",
+      "community": 58,
+      "norm_label": "getalmacenes"
+    },
+    {
+      "label": "createAlmacen",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L360",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_createalmacen",
+      "community": 52,
+      "norm_label": "createalmacen"
+    },
+    {
+      "label": "updateAlmacen",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L387",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_updatealmacen",
+      "community": 66,
+      "norm_label": "updatealmacen"
+    },
+    {
+      "label": "getClinicaBranding",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L415",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_getclinicabranding",
+      "community": 61,
+      "norm_label": "getclinicabranding"
+    },
+    {
+      "label": "getClinicaApariencia",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L437",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_getclinicaapariencia",
+      "community": 60,
+      "norm_label": "getclinicaapariencia"
+    },
+    {
+      "label": "listClinicaTemasGuardados",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L477",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_listclinicatemasguardados",
+      "community": 64,
+      "norm_label": "listclinicatemasguardados"
+    },
+    {
+      "label": "createClinicaTemaGuardado",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L505",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_createclinicatemaguardado",
+      "community": 54,
+      "norm_label": "createclinicatemaguardado"
+    },
+    {
+      "label": "applyClinicaTemaGuardado",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L564",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_applyclinicatemaguardado",
+      "community": 50,
+      "norm_label": "applyclinicatemaguardado"
+    },
+    {
+      "label": "deleteClinicaTemaGuardado",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L618",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_deleteclinicatemaguardado",
+      "community": 57,
+      "norm_label": "deleteclinicatemaguardado"
+    },
+    {
+      "label": "updateClinicaBranding",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L647",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_updateclinicabranding",
+      "community": 69,
+      "norm_label": "updateclinicabranding"
+    },
+    {
+      "label": "updateClinicaApariencia",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L674",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_updateclinicaapariencia",
+      "community": 68,
+      "norm_label": "updateclinicaapariencia"
+    },
+    {
+      "label": "restoreClinicaApariencia",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L717",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_restoreclinicaapariencia",
+      "community": 65,
+      "norm_label": "restoreclinicaapariencia"
+    },
+    {
+      "label": "uploadClinicaLogo",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/actions.ts",
+      "source_location": "L747",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_actions_uploadclinicalogo",
+      "community": 72,
+      "norm_label": "uploadclinicalogo"
+    },
+    {
+      "label": "seedFullDemoData",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/seed-actions.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_seed_actions_seedfulldemodata",
+      "community": 73,
+      "norm_label": "seedfulldemodata"
+    },
+    {
+      "label": "SeedDemoButton",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/seed-demo-button.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_seed_demo_button_seeddemobutton",
+      "community": 74,
+      "norm_label": "seeddemobutton"
+    },
+    {
+      "label": "getStaff",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_getstaff",
+      "community": 79,
+      "norm_label": "getstaff"
+    },
+    {
+      "label": "getInvitations",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_getinvitations",
+      "community": 78,
+      "norm_label": "getinvitations"
+    },
+    {
+      "label": "createInvitation",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_createinvitation",
+      "community": 76,
+      "norm_label": "createinvitation"
+    },
+    {
+      "label": "revokeInvitation",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L121",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_revokeinvitation",
+      "community": 81,
+      "norm_label": "revokeinvitation"
+    },
+    {
+      "label": "updateStaffRole",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L142",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_updatestaffrole",
+      "community": 83,
+      "norm_label": "updatestaffrole"
+    },
+    {
+      "label": "updateStaffName",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L194",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_updatestaffname",
+      "community": 82,
+      "norm_label": "updatestaffname"
+    },
+    {
+      "label": "removeStaff",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L234",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_removestaff",
+      "community": 80,
+      "norm_label": "removestaff"
+    },
+    {
+      "label": "getInvitationDetails",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L275",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_getinvitationdetails",
+      "community": 77,
+      "norm_label": "getinvitationdetails"
+    },
+    {
+      "label": "acceptInvitation",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/ajustes/staff-actions.ts",
+      "source_location": "L293",
+      "_origin": "ast",
+      "id": "src_app_operativo_ajustes_staff_actions_acceptinvitation",
+      "community": 75,
+      "norm_label": "acceptinvitation"
+    },
+    {
+      "label": "DashboardRecordatorio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/app/recordatorios-panel.tsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "src_app_operativo_app_recordatorios_panel_dashboardrecordatorio",
+      "community": 84,
+      "norm_label": "dashboardrecordatorio"
+    },
+    {
+      "label": "AtencionesPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/atenciones/page.tsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "src_app_operativo_atenciones_page_atencionespage",
+      "community": 85,
+      "norm_label": "atencionespage"
+    },
+    {
+      "label": "CajaPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja/page.tsx",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_page_cajapage",
+      "community": 102,
+      "norm_label": "cajapage"
+    },
+    {
+      "label": "getVentaByOrden",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getventabyorden",
+      "community": 95,
+      "norm_label": "getventabyorden"
+    },
+    {
+      "label": "getVentasDeOrden",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getventasdeorden",
+      "community": 96,
+      "norm_label": "getventasdeorden"
+    },
+    {
+      "label": "crearVenta",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L115",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_crearventa",
+      "community": 90,
+      "norm_label": "crearventa"
+    },
+    {
+      "label": "getItemsCatalogo",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L190",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getitemscatalogo",
+      "community": 94,
+      "norm_label": "getitemscatalogo"
+    },
+    {
+      "label": "addItemToVenta",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L256",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_additemtoventa",
+      "community": 87,
+      "norm_label": "additemtoventa"
+    },
+    {
+      "label": "removeVentaItem",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L421",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_removeventaitem",
+      "community": 99,
+      "norm_label": "removeventaitem"
+    },
+    {
+      "label": "registrarPago",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L504",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_registrarpago",
+      "community": 98,
+      "norm_label": "registrarpago"
+    },
+    {
+      "label": "getVentasResumen",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L601",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getventasresumen",
+      "community": 97,
+      "norm_label": "getventasresumen"
+    },
+    {
+      "label": "getInventario",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L628",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getinventario",
+      "community": 93,
+      "norm_label": "getinventario"
+    },
+    {
+      "label": "addMovimientoStock",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L680",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_addmovimientostock",
+      "community": 88,
+      "norm_label": "addmovimientostock"
+    },
+    {
+      "label": "getCierreActual",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L726",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getcierreactual",
+      "community": 91,
+      "norm_label": "getcierreactual"
+    },
+    {
+      "label": "abrirCaja",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L745",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_abrircaja",
+      "community": 86,
+      "norm_label": "abrircaja"
+    },
+    {
+      "label": "cerrarCaja",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L785",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_cerrarcaja",
+      "community": 89,
+      "norm_label": "cerrarcaja"
+    },
+    {
+      "label": "getCierresHistorial",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/actions.ts",
+      "source_location": "L847",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_actions_getcierreshistorial",
+      "community": 92,
+      "norm_label": "getcierreshistorial"
+    },
+    {
+      "label": "CajaInventarioTabs",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/caja-inventario-tabs.tsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_caja_inventario_tabs_cajainventariotabs",
+      "community": 100,
+      "norm_label": "cajainventariotabs"
+    },
+    {
+      "label": "CajaInventarioPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/caja_inventario/page.tsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_app_operativo_caja_inventario_page_cajainventariopage",
+      "community": 101,
+      "norm_label": "cajainventariopage"
+    },
+    {
+      "label": "MascotaForm",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/clientes/[clienteId]/mascota-form.tsx",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "src_app_operativo_clientes_clienteid_mascota_form_mascotaform",
+      "community": 107,
+      "norm_label": "mascotaform"
+    },
+    {
+      "label": "createCliente",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/clientes/actions.ts",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "src_app_operativo_clientes_actions_createcliente",
+      "community": 103,
+      "norm_label": "createcliente"
+    },
+    {
+      "label": "updateCliente",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/clientes/actions.ts",
+      "source_location": "L86",
+      "_origin": "ast",
+      "id": "src_app_operativo_clientes_actions_updatecliente",
+      "community": 105,
+      "norm_label": "updatecliente"
+    },
+    {
+      "label": "createMascota",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/clientes/actions.ts",
+      "source_location": "L127",
+      "_origin": "ast",
+      "id": "src_app_operativo_clientes_actions_createmascota",
+      "community": 104,
+      "norm_label": "createmascota"
+    },
+    {
+      "label": "updateMascota",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/clientes/actions.ts",
+      "source_location": "L179",
+      "_origin": "ast",
+      "id": "src_app_operativo_clientes_actions_updatemascota",
+      "community": 106,
+      "norm_label": "updatemascota"
+    },
+    {
+      "label": "getGroomingDia",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/grooming/actions.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_app_operativo_grooming_actions_getgroomingdia",
+      "community": 108,
+      "norm_label": "getgroomingdia"
+    },
+    {
+      "label": "guardarGroomingServicio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/grooming/actions.ts",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "src_app_operativo_grooming_actions_guardargroomingservicio",
+      "community": 109,
+      "norm_label": "guardargroomingservicio"
+    },
+    {
+      "label": "marcarGroomingCompletado",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/grooming/actions.ts",
+      "source_location": "L116",
+      "_origin": "ast",
+      "id": "src_app_operativo_grooming_actions_marcargroomingcompletado",
+      "community": 110,
+      "norm_label": "marcargroomingcompletado"
+    },
+    {
+      "label": "marcarGroomingPendiente",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/grooming/actions.ts",
+      "source_location": "L159",
+      "_origin": "ast",
+      "id": "src_app_operativo_grooming_actions_marcargroomingpendiente",
+      "community": 111,
+      "norm_label": "marcargroomingpendiente"
+    },
+    {
+      "label": "GroomingPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/grooming/page.tsx",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_app_operativo_grooming_page_groomingpage",
+      "community": 112,
+      "norm_label": "groomingpage"
+    },
+    {
+      "label": "HospitalizacionDetailPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/[id]/page.tsx",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_id_page_hospitalizaciondetailpage",
+      "community": 122,
+      "norm_label": "hospitalizaciondetailpage"
+    },
+    {
+      "label": "getHospitalizaciones",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L135",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_gethospitalizaciones",
+      "community": 118,
+      "norm_label": "gethospitalizaciones"
+    },
+    {
+      "label": "createHospitalizacion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L283",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_createhospitalizacion",
+      "community": 113,
+      "norm_label": "createhospitalizacion"
+    },
+    {
+      "label": "createHospitalizacionControl",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L359",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_createhospitalizacioncontrol",
+      "community": 114,
+      "norm_label": "createhospitalizacioncontrol"
+    },
+    {
+      "label": "createTratamientoHospitalizacion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L413",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_createtratamientohospitalizacion",
+      "community": 115,
+      "norm_label": "createtratamientohospitalizacion"
+    },
+    {
+      "label": "updateTratamientoHospitalizacion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L465",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_updatetratamientohospitalizacion",
+      "community": 121,
+      "norm_label": "updatetratamientohospitalizacion"
+    },
+    {
+      "label": "terminarTratamientoHospitalizacion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L595",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_terminartratamientohospitalizacion",
+      "community": 120,
+      "norm_label": "terminartratamientohospitalizacion"
+    },
+    {
+      "label": "suspenderTratamientoHospitalizacion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L608",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_suspendertratamientohospitalizacion",
+      "community": 119,
+      "norm_label": "suspendertratamientohospitalizacion"
+    },
+    {
+      "label": "darAltaHospitalizacion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L621",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_daraltahospitalizacion",
+      "community": 116,
+      "norm_label": "daraltahospitalizacion"
+    },
+    {
+      "label": "getHospitalizacionById",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/actions.ts",
+      "source_location": "L662",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_actions_gethospitalizacionbyid",
+      "community": 117,
+      "norm_label": "gethospitalizacionbyid"
+    },
+    {
+      "label": "HospitalizacionPacienteOption",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/nueva-hospitalizacion-dialog.tsx",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_nueva_hospitalizacion_dialog_hospitalizacionpacienteoption",
+      "community": 123,
+      "norm_label": "hospitalizacionpacienteoption"
+    },
+    {
+      "label": "TratamientoHospitalizacionItem",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/hospitalizaciones/tratamientos-hospitalizacion-card.tsx",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "src_app_operativo_hospitalizaciones_tratamientos_hospitalizacion_card_tratamientohospitalizacionitem",
+      "community": 124,
+      "norm_label": "tratamientohospitalizacionitem"
+    },
+    {
+      "label": "createOrdenServicio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/index/actions.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "src_app_operativo_index_actions_createordenservicio",
+      "community": 125,
+      "norm_label": "createordenservicio"
+    },
+    {
+      "label": "getOrdenesServicio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/index/actions.ts",
+      "source_location": "L79",
+      "_origin": "ast",
+      "id": "src_app_operativo_index_actions_getordenesservicio",
+      "community": 127,
+      "norm_label": "getordenesservicio"
+    },
+    {
+      "label": "getAllOrdenesServicio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/index/actions.ts",
+      "source_location": "L170",
+      "_origin": "ast",
+      "id": "src_app_operativo_index_actions_getallordenesservicio",
+      "community": 126,
+      "norm_label": "getallordenesservicio"
+    },
+    {
+      "label": "updateEstadoOrden",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/index/actions.ts",
+      "source_location": "L204",
+      "_origin": "ast",
+      "id": "src_app_operativo_index_actions_updateestadoorden",
+      "community": 128,
+      "norm_label": "updateestadoorden"
+    },
+    {
+      "label": "getDashboardStats",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/index/dashboard-actions.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_app_operativo_index_dashboard_actions_getdashboardstats",
+      "community": 129,
+      "norm_label": "getdashboardstats"
+    },
+    {
+      "label": "IndexAliasPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/index/page.tsx",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "src_app_operativo_index_page_indexaliaspage",
+      "community": 130,
+      "norm_label": "indexaliaspage"
+    },
+    {
+      "label": "getProductosInventario",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/actions.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_actions_getproductosinventario",
+      "community": 134,
+      "norm_label": "getproductosinventario"
+    },
+    {
+      "label": "crearProducto",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/actions.ts",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_actions_crearproducto",
+      "community": 132,
+      "norm_label": "crearproducto"
+    },
+    {
+      "label": "actualizarProducto",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/actions.ts",
+      "source_location": "L135",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_actions_actualizarproducto",
+      "community": 131,
+      "norm_label": "actualizarproducto"
+    },
+    {
+      "label": "registrarMovimientoInventario",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/actions.ts",
+      "source_location": "L176",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_actions_registrarmovimientoinventario",
+      "community": 135,
+      "norm_label": "registrarmovimientoinventario"
+    },
+    {
+      "label": "getKardexProducto",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/actions.ts",
+      "source_location": "L266",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_actions_getkardexproducto",
+      "community": 133,
+      "norm_label": "getkardexproducto"
+    },
+    {
+      "label": "InventarioPage",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/page.tsx",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_page_inventariopage",
+      "community": 136,
+      "norm_label": "inventariopage"
+    },
+    {
+      "label": "ProductoInventario",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/types.ts",
+      "source_location": "L2",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_types_productoinventario",
+      "community": 139,
+      "norm_label": "productoinventario"
+    },
+    {
+      "label": "MovimientoKardex",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/types.ts",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_types_movimientokardex",
+      "community": 138,
+      "norm_label": "movimientokardex"
+    },
+    {
+      "label": "formatMotivoMovimiento",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/inventario/types.ts",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "src_app_operativo_inventario_types_formatmotivomovimiento",
+      "community": 137,
+      "norm_label": "formatmotivomovimiento"
+    },
+    {
+      "label": "MascotaAdjunto",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_mascotaadjunto",
+      "community": 148,
+      "norm_label": "mascotaadjunto"
+    },
+    {
+      "label": "resolverSeguimientoClinico",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L141",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_resolverseguimientoclinico",
+      "community": 150,
+      "norm_label": "resolverseguimientoclinico"
+    },
+    {
+      "label": "crearRegistroPrevio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L208",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_crearregistroprevio",
+      "community": 142,
+      "norm_label": "crearregistroprevio"
+    },
+    {
+      "label": "anularRegistroPrevio",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L248",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_anularregistroprevio",
+      "community": 140,
+      "norm_label": "anularregistroprevio"
+    },
+    {
+      "label": "cancelarSeguimientoClinico",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L273",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_cancelarseguimientoclinico",
+      "community": 141,
+      "norm_label": "cancelarseguimientoclinico"
+    },
+    {
+      "label": "reprogramarSeguimientoClinico",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L304",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_reprogramarseguimientoclinico",
+      "community": 149,
+      "norm_label": "reprogramarseguimientoclinico"
+    },
+    {
+      "label": "getMascotaAdjuntos",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L507",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_getmascotaadjuntos",
+      "community": 144,
+      "norm_label": "getmascotaadjuntos"
+    },
+    {
+      "label": "getMascotaAdjuntoSignedUrl",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L528",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_getmascotaadjuntosignedurl",
+      "community": 145,
+      "norm_label": "getmascotaadjuntosignedurl"
+    },
+    {
+      "label": "uploadMascotaAdjunto",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L571",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_uploadmascotaadjunto",
+      "community": 151,
+      "norm_label": "uploadmascotaadjunto"
+    },
+    {
+      "label": "getMascotaCompleta",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L666",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_getmascotacompleta",
+      "community": 146,
+      "norm_label": "getmascotacompleta"
+    },
+    {
+      "label": "getSeguimientosMascota",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L851",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_getseguimientosmascota",
+      "community": 147,
+      "norm_label": "getseguimientosmascota"
+    },
+    {
+      "label": "createSeguimientoClinico",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/actions.ts",
+      "source_location": "L863",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_actions_createseguimientoclinico",
+      "community": 143,
+      "norm_label": "createseguimientoclinico"
+    },
+    {
+      "label": "BtnNuevaAtencion",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/btn-nueva-atencion.tsx",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_btn_nueva_atencion_btnnuevaatencion",
+      "community": 152,
+      "norm_label": "btnnuevaatencion"
+    },
+    {
+      "label": "MascotaEditDialog",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/mascotas/[id]/mascota-edit-dialog.tsx",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "src_app_operativo_mascotas_id_mascota_edit_dialog_mascotaeditdialog",
+      "community": 153,
+      "norm_label": "mascotaeditdialog"
+    },
+    {
+      "label": "getOrdenCompleta",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/actions.ts",
+      "source_location": "L111",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_actions_getordencompleta",
+      "community": 155,
+      "norm_label": "getordencompleta"
+    },
+    {
+      "label": "createEntradaClinica",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/actions.ts",
+      "source_location": "L271",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_actions_createentradaclinica",
+      "community": 154,
+      "norm_label": "createentradaclinica"
+    },
+    {
+      "label": "updateEntradaClinicaConAuditoria",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/actions.ts",
+      "source_location": "L337",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_actions_updateentradaclinicaconauditoria",
+      "community": 156,
+      "norm_label": "updateentradaclinicaconauditoria"
+    },
+    {
+      "label": "uploadAdjunto",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/actions.ts",
+      "source_location": "L472",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_actions_uploadadjunto",
+      "community": 157,
+      "norm_label": "uploadadjunto"
+    },
+    {
+      "label": "AdjuntosPanel",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/adjuntos-panel.tsx",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_adjuntos_panel_adjuntospanel",
+      "community": 158,
+      "norm_label": "adjuntospanel"
+    },
+    {
+      "label": "EntradaClinicaEditable",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/editar-entrada-clinica-dialog.tsx",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_editar_entrada_clinica_dialog_entradaclinicaeditable",
+      "community": 159,
+      "norm_label": "entradaclinicaeditable"
+    },
+    {
+      "label": "FinalizarAtencionButton",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/finalizar-atencion-button.tsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_finalizar_atencion_button_finalizaratencionbutton",
+      "community": 160,
+      "norm_label": "finalizaratencionbutton"
+    },
+    {
+      "label": "NuevaEntradaForm",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/orden_y_colas/[id]/nueva-entrada-form.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_app_operativo_orden_y_colas_id_nueva_entrada_form_nuevaentradaform",
+      "community": 161,
+      "norm_label": "nuevaentradaform"
+    },
+    {
+      "label": "RecordatorioActions",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/recordatorios/recordatorio-actions.tsx",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "src_app_operativo_recordatorios_recordatorio_actions_recordatorioactions",
+      "community": 162,
+      "norm_label": "recordatorioactions"
+    },
+    {
+      "label": "signOutAndClearSession",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/session-actions.ts",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "src_app_operativo_session_actions_signoutandclearsession",
+      "community": 164,
+      "norm_label": "signoutandclearsession"
+    },
+    {
+      "label": "clearActiveClinica",
+      "file_type": "code",
+      "source_file": "src/app/(operativo)/session-actions.ts",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "src_app_operativo_session_actions_clearactiveclinica",
+      "community": 163,
+      "norm_label": "clearactiveclinica"
+    },
+    {
+      "label": "GET",
+      "file_type": "code",
+      "source_file": "src/app/auth/callback/route.ts",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "src_app_auth_callback_route_get",
+      "community": 19,
+      "norm_label": "get"
+    },
+    {
+      "label": "GET",
+      "file_type": "code",
+      "source_file": "src/app/auth/clear-clinica/route.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_app_auth_clear_clinica_route_get",
+      "community": 20,
+      "norm_label": "get"
+    },
+    {
+      "label": "GET",
+      "file_type": "code",
+      "source_file": "src/app/auth/logout/route.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "src_app_auth_logout_route_get",
+      "community": 21,
+      "norm_label": "get"
+    },
+    {
+      "label": "InvitacionClient",
+      "file_type": "code",
+      "source_file": "src/app/invitacion/[id]/client.tsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_app_invitacion_id_client_invitacionclient",
+      "community": 22,
+      "norm_label": "invitacionclient"
+    },
+    {
+      "label": "InvitacionPage",
+      "file_type": "code",
+      "source_file": "src/app/invitacion/[id]/page.tsx",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_app_invitacion_id_page_invitacionpage",
+      "community": 23,
+      "norm_label": "invitacionpage"
+    },
+    {
+      "label": "RootLayout",
+      "file_type": "code",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_app_layout_rootlayout",
+      "community": 24,
+      "norm_label": "rootlayout"
+    },
+    {
+      "label": "LoginState",
+      "file_type": "code",
+      "source_file": "src/app/login/actions.ts",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_app_login_actions_loginstate",
+      "community": 26,
+      "norm_label": "loginstate"
+    },
+    {
+      "label": "login",
+      "file_type": "code",
+      "source_file": "src/app/login/actions.ts",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "src_app_login_actions_login",
+      "community": 25,
+      "norm_label": "login"
+    },
+    {
+      "label": "LandingPage",
+      "file_type": "code",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_app_page_landingpage",
+      "community": 165,
+      "norm_label": "landingpage"
+    },
+    {
+      "label": "PrivacidadPage",
+      "file_type": "code",
+      "source_file": "src/app/privacidad/page.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_app_privacidad_page_privacidadpage",
+      "community": 166,
+      "norm_label": "privacidadpage"
+    },
+    {
+      "label": "ResetPasswordState",
+      "file_type": "code",
+      "source_file": "src/app/reset-password/actions.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_app_reset_password_actions_resetpasswordstate",
+      "community": 168,
+      "norm_label": "resetpasswordstate"
+    },
+    {
+      "label": "resetPassword",
+      "file_type": "code",
+      "source_file": "src/app/reset-password/actions.ts",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_app_reset_password_actions_resetpassword",
+      "community": 167,
+      "norm_label": "resetpassword"
+    },
+    {
+      "label": "ResetPasswordPage",
+      "file_type": "code",
+      "source_file": "src/app/reset-password/page.tsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "src_app_reset_password_page_resetpasswordpage",
+      "community": 169,
+      "norm_label": "resetpasswordpage"
+    },
+    {
+      "label": "CreateClinicaState",
+      "file_type": "code",
+      "source_file": "src/app/select-clinica/actions.ts",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_app_select_clinica_actions_createclinicastate",
+      "community": 172,
+      "norm_label": "createclinicastate"
+    },
+    {
+      "label": "createClinica",
+      "file_type": "code",
+      "source_file": "src/app/select-clinica/actions.ts",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "src_app_select_clinica_actions_createclinica",
+      "community": 171,
+      "norm_label": "createclinica"
+    },
+    {
+      "label": "selectClinica",
+      "file_type": "code",
+      "source_file": "src/app/select-clinica/actions.ts",
+      "source_location": "L181",
+      "_origin": "ast",
+      "id": "src_app_select_clinica_actions_selectclinica",
+      "community": 173,
+      "norm_label": "selectclinica"
+    },
+    {
+      "label": "bootstrapDemoAccess",
+      "file_type": "code",
+      "source_file": "src/app/select-clinica/actions.ts",
+      "source_location": "L224",
+      "_origin": "ast",
+      "id": "src_app_select_clinica_actions_bootstrapdemoaccess",
+      "community": 170,
+      "norm_label": "bootstrapdemoaccess"
+    },
+    {
+      "label": "signOutFromSelectClinica",
+      "file_type": "code",
+      "source_file": "src/app/select-clinica/actions.ts",
+      "source_location": "L276",
+      "_origin": "ast",
+      "id": "src_app_select_clinica_actions_signoutfromselectclinica",
+      "community": 174,
+      "norm_label": "signoutfromselectclinica"
+    },
+    {
+      "label": "CreateClinicaForm",
+      "file_type": "code",
+      "source_file": "src/app/select-clinica/create-clinica-form.tsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_app_select_clinica_create_clinica_form_createclinicaform",
+      "community": 175,
+      "norm_label": "createclinicaform"
+    },
+    {
+      "label": "SignupState",
+      "file_type": "code",
+      "source_file": "src/app/signup/actions.ts",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "src_app_signup_actions_signupstate",
+      "community": 177,
+      "norm_label": "signupstate"
+    },
+    {
+      "label": "signup",
+      "file_type": "code",
+      "source_file": "src/app/signup/actions.ts",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "src_app_signup_actions_signup",
+      "community": 176,
+      "norm_label": "signup"
+    },
+    {
+      "label": "TerminosPage",
+      "file_type": "code",
+      "source_file": "src/app/terminos/page.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_app_terminos_page_terminospage",
+      "community": 178,
+      "norm_label": "terminospage"
+    },
+    {
+      "label": "UpdatePasswordState",
+      "file_type": "code",
+      "source_file": "src/app/update-password/actions.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_app_update_password_actions_updatepasswordstate",
+      "community": 180,
+      "norm_label": "updatepasswordstate"
+    },
+    {
+      "label": "updatePassword",
+      "file_type": "code",
+      "source_file": "src/app/update-password/actions.ts",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_app_update_password_actions_updatepassword",
+      "community": 179,
+      "norm_label": "updatepassword"
+    },
+    {
+      "label": "UpdatePasswordPage",
+      "file_type": "code",
+      "source_file": "src/app/update-password/page.tsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_app_update_password_page_updatepasswordpage",
+      "community": 181,
+      "norm_label": "updatepasswordpage"
+    },
+    {
+      "label": "AlertasCriticasBanner",
+      "file_type": "code",
+      "source_file": "src/components/alertas-criticas-banner.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_components_alertas_criticas_banner_alertascriticasbanner",
+      "community": 182,
+      "norm_label": "alertascriticasbanner"
+    },
+    {
+      "label": "ThemePreset",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_lib_appearance_themepreset",
+      "community": 194,
+      "norm_label": "themepreset"
+    },
+    {
+      "label": "ThemePresetOption",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_lib_appearance_themepresetoption",
+      "community": 195,
+      "norm_label": "themepresetoption"
+    },
+    {
+      "label": "ClinicThemeInput",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L73",
+      "_origin": "ast",
+      "id": "src_lib_appearance_clinicthemeinput",
+      "community": 184,
+      "norm_label": "clinicthemeinput"
+    },
+    {
+      "label": "SavedThemeInput",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "src_lib_appearance_savedthemeinput",
+      "community": 192,
+      "norm_label": "savedthemeinput"
+    },
+    {
+      "label": "ValidSavedThemeInput",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "src_lib_appearance_validsavedthemeinput",
+      "community": 197,
+      "norm_label": "validsavedthemeinput"
+    },
+    {
+      "label": "SavedThemeValidationResult",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L92",
+      "_origin": "ast",
+      "id": "src_lib_appearance_savedthemevalidationresult",
+      "community": 193,
+      "norm_label": "savedthemevalidationresult"
+    },
+    {
+      "label": "isThemePreset",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L96",
+      "_origin": "ast",
+      "id": "src_lib_appearance_isthemepreset",
+      "community": 188,
+      "norm_label": "isthemepreset"
+    },
+    {
+      "label": "normalizeThemePreset",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L100",
+      "_origin": "ast",
+      "id": "src_lib_appearance_normalizethemepreset",
+      "community": 190,
+      "norm_label": "normalizethemepreset"
+    },
+    {
+      "label": "normalizeBrandColor",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L104",
+      "_origin": "ast",
+      "id": "src_lib_appearance_normalizebrandcolor",
+      "community": 189,
+      "norm_label": "normalizebrandcolor"
+    },
+    {
+      "label": "validateSavedThemeInput",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L121",
+      "_origin": "ast",
+      "id": "src_lib_appearance_validatesavedthemeinput",
+      "community": 196,
+      "norm_label": "validatesavedthemeinput"
+    },
+    {
+      "label": "getRelativeLuminance",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L177",
+      "_origin": "ast",
+      "id": "src_lib_appearance_getrelativeluminance",
+      "community": 187,
+      "norm_label": "getrelativeluminance"
+    },
+    {
+      "label": "getContrastRatio",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L190",
+      "_origin": "ast",
+      "id": "src_lib_appearance_getcontrastratio",
+      "community": 186,
+      "norm_label": "getcontrastratio"
+    },
+    {
+      "label": "getContrastForeground",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L204",
+      "_origin": "ast",
+      "id": "src_lib_appearance_getcontrastforeground",
+      "community": 185,
+      "norm_label": "getcontrastforeground"
+    },
+    {
+      "label": "resolveClinicTheme",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L219",
+      "_origin": "ast",
+      "id": "src_lib_appearance_resolveclinictheme",
+      "community": 191,
+      "norm_label": "resolveclinictheme"
+    },
+    {
+      "label": "buildClinicThemeStyle",
+      "file_type": "code",
+      "source_file": "src/lib/appearance.ts",
+      "source_location": "L236",
+      "_origin": "ast",
+      "id": "src_lib_appearance_buildclinicthemestyle",
+      "community": 183,
+      "norm_label": "buildclinicthemestyle"
+    },
+    {
+      "label": "ActiveClinicaContext",
+      "file_type": "code",
+      "source_file": "src/lib/clinica.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_lib_clinica_activeclinicacontext",
+      "community": 198,
+      "norm_label": "activeclinicacontext"
+    },
+    {
+      "label": "getClinicaIdFromCookies",
+      "file_type": "code",
+      "source_file": "src/lib/clinica.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_lib_clinica_getclinicaidfromcookies",
+      "community": 200,
+      "norm_label": "getclinicaidfromcookies"
+    },
+    {
+      "label": "getActiveClinicaContext",
+      "file_type": "code",
+      "source_file": "src/lib/clinica.ts",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_lib_clinica_getactiveclinicacontext",
+      "community": 199,
+      "norm_label": "getactiveclinicacontext"
+    },
+    {
+      "label": "requireClinicaIdFromCookies",
+      "file_type": "code",
+      "source_file": "src/lib/clinica.ts",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "src_lib_clinica_requireclinicaidfromcookies",
+      "community": 202,
+      "norm_label": "requireclinicaidfromcookies"
+    },
+    {
+      "label": "requireUserRole",
+      "file_type": "code",
+      "source_file": "src/lib/clinica.ts",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "src_lib_clinica_requireuserrole",
+      "community": 203,
+      "norm_label": "requireuserrole"
+    },
+    {
+      "label": "getUserRole",
+      "file_type": "code",
+      "source_file": "src/lib/clinica.ts",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "src_lib_clinica_getuserrole",
+      "community": 201,
+      "norm_label": "getuserrole"
+    },
+    {
+      "label": "toDateOnlyInputValue",
+      "file_type": "code",
+      "source_file": "src/lib/date-only.ts",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "src_lib_date_only_todateonlyinputvalue",
+      "community": 206,
+      "norm_label": "todateonlyinputvalue"
+    },
+    {
+      "label": "formatDateOnly",
+      "file_type": "code",
+      "source_file": "src/lib/date-only.ts",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "src_lib_date_only_formatdateonly",
+      "community": 204,
+      "norm_label": "formatdateonly"
+    },
+    {
+      "label": "getAgeFromDateOnly",
+      "file_type": "code",
+      "source_file": "src/lib/date-only.ts",
+      "source_location": "L50",
+      "_origin": "ast",
+      "id": "src_lib_date_only_getagefromdateonly",
+      "community": 205,
+      "norm_label": "getagefromdateonly"
+    },
+    {
+      "label": "getPublicBaseUrl",
+      "file_type": "code",
+      "source_file": "src/lib/http/public-url.ts",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "src_lib_http_public_url_getpublicbaseurl",
+      "community": 208,
+      "norm_label": "getpublicbaseurl"
+    },
+    {
+      "label": "buildRedirectUrl",
+      "file_type": "code",
+      "source_file": "src/lib/http/public-url.ts",
+      "source_location": "L52",
+      "_origin": "ast",
+      "id": "src_lib_http_public_url_buildredirecturl",
+      "community": 207,
+      "norm_label": "buildredirecturl"
+    },
+    {
+      "label": "ExpirationStatus",
+      "file_type": "code",
+      "source_file": "src/lib/inventory-expiration.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_lib_inventory_expiration_expirationstatus",
+      "community": 210,
+      "norm_label": "expirationstatus"
+    },
+    {
+      "label": "ExpirationMeta",
+      "file_type": "code",
+      "source_file": "src/lib/inventory-expiration.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_lib_inventory_expiration_expirationmeta",
+      "community": 209,
+      "norm_label": "expirationmeta"
+    },
+    {
+      "label": "getExpirationMeta",
+      "file_type": "code",
+      "source_file": "src/lib/inventory-expiration.ts",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_lib_inventory_expiration_getexpirationmeta",
+      "community": 211,
+      "norm_label": "getexpirationmeta"
+    },
+    {
+      "label": "formatMoneyPEN",
+      "file_type": "code",
+      "source_file": "src/lib/money.ts",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_lib_money_formatmoneypen",
+      "community": 212,
+      "norm_label": "formatmoneypen"
+    },
+    {
+      "label": "CitaEstado",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_citaestado",
+      "community": 213,
+      "norm_label": "citaestado"
+    },
+    {
+      "label": "OrdenEstado",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_ordenestado",
+      "community": 228,
+      "norm_label": "ordenestado"
+    },
+    {
+      "label": "GroomingEstado",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_groomingestado",
+      "community": 225,
+      "norm_label": "groomingestado"
+    },
+    {
+      "label": "VentaEstado",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_ventaestado",
+      "community": 230,
+      "norm_label": "ventaestado"
+    },
+    {
+      "label": "OperationalTone",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_operationaltone",
+      "community": 227,
+      "norm_label": "operationaltone"
+    },
+    {
+      "label": "OperationalStatusMeta",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_operationalstatusmeta",
+      "community": 226,
+      "norm_label": "operationalstatusmeta"
+    },
+    {
+      "label": "CombinedOperationalInput",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_combinedoperationalinput",
+      "community": 214,
+      "norm_label": "combinedoperationalinput"
+    },
+    {
+      "label": "FinancialStatusInput",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_financialstatusinput",
+      "community": 215,
+      "norm_label": "financialstatusinput"
+    },
+    {
+      "label": "OrderFinancialStatusInput",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_orderfinancialstatusinput",
+      "community": 229,
+      "norm_label": "orderfinancialstatusinput"
+    },
+    {
+      "label": "getCitaStatusMeta",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L79",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getcitastatusmeta",
+      "community": 217,
+      "norm_label": "getcitastatusmeta"
+    },
+    {
+      "label": "getOrdenStatusMeta",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L84",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getordenstatusmeta",
+      "community": 221,
+      "norm_label": "getordenstatusmeta"
+    },
+    {
+      "label": "getGroomingStatusMeta",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L89",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getgroomingstatusmeta",
+      "community": 220,
+      "norm_label": "getgroomingstatusmeta"
+    },
+    {
+      "label": "getVentaStatusMeta",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getventastatusmeta",
+      "community": 224,
+      "norm_label": "getventastatusmeta"
+    },
+    {
+      "label": "getFinancialStatusMeta",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L99",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getfinancialstatusmeta",
+      "community": 219,
+      "norm_label": "getfinancialstatusmeta"
+    },
+    {
+      "label": "getOrderFinancialStatus",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L115",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getorderfinancialstatus",
+      "community": 222,
+      "norm_label": "getorderfinancialstatus"
+    },
+    {
+      "label": "getToneBadgeClass",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L130",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_gettonebadgeclass",
+      "community": 223,
+      "norm_label": "gettonebadgeclass"
+    },
+    {
+      "label": "getBadgeVariantByTone",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L141",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getbadgevariantbytone",
+      "community": 216,
+      "norm_label": "getbadgevariantbytone"
+    },
+    {
+      "label": "getCombinedOperationalStatus",
+      "file_type": "code",
+      "source_file": "src/lib/operational-status.ts",
+      "source_location": "L148",
+      "_origin": "ast",
+      "id": "src_lib_operational_status_getcombinedoperationalstatus",
+      "community": 218,
+      "norm_label": "getcombinedoperationalstatus"
+    },
+    {
+      "label": "formatSpeciesLabel",
+      "file_type": "code",
+      "source_file": "src/lib/patient-labels.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "src_lib_patient_labels_formatspecieslabel",
+      "community": 232,
+      "norm_label": "formatspecieslabel"
+    },
+    {
+      "label": "formatBreedLabel",
+      "file_type": "code",
+      "source_file": "src/lib/patient-labels.ts",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_lib_patient_labels_formatbreedlabel",
+      "community": 231,
+      "norm_label": "formatbreedlabel"
+    },
+    {
+      "label": "StaffDirectoryEntry",
+      "file_type": "code",
+      "source_file": "src/lib/staff-directory.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_lib_staff_directory_staffdirectoryentry",
+      "community": 234,
+      "norm_label": "staffdirectoryentry"
+    },
+    {
+      "label": "getClinicaStaffDirectory",
+      "file_type": "code",
+      "source_file": "src/lib/staff-directory.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_lib_staff_directory_getclinicastaffdirectory",
+      "community": 233,
+      "norm_label": "getclinicastaffdirectory"
+    },
+    {
+      "label": "createClient",
+      "file_type": "code",
+      "source_file": "src/lib/supabase/client.ts",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "src_lib_supabase_client_createclient",
+      "community": 235,
+      "norm_label": "createclient"
+    },
+    {
+      "label": "assertSupabaseEnv",
+      "file_type": "code",
+      "source_file": "src/lib/supabase/env.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "src_lib_supabase_env_assertsupabaseenv",
+      "community": 236,
+      "norm_label": "assertsupabaseenv"
+    },
+    {
+      "label": "updateSession",
+      "file_type": "code",
+      "source_file": "src/lib/supabase/middleware.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "src_lib_supabase_middleware_updatesession",
+      "community": 237,
+      "norm_label": "updatesession"
+    },
+    {
+      "label": "createClient",
+      "file_type": "code",
+      "source_file": "src/lib/supabase/server.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "src_lib_supabase_server_createclient",
+      "community": 238,
+      "norm_label": "createclient"
+    },
+    {
+      "label": "cn",
+      "file_type": "code",
+      "source_file": "src/lib/utils.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_lib_utils_cn",
+      "community": 239,
+      "norm_label": "cn"
+    },
+    {
+      "label": "TipoAdjuntoMascota",
+      "file_type": "code",
+      "source_file": "src/lib/validators/adjuntos.ts",
+      "source_location": "L57",
+      "_origin": "ast",
+      "id": "src_lib_validators_adjuntos_tipoadjuntomascota",
+      "community": 241,
+      "norm_label": "tipoadjuntomascota"
+    },
+    {
+      "label": "SubirAdjuntoMascotaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/adjuntos.ts",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "src_lib_validators_adjuntos_subiradjuntomascotainput",
+      "community": 240,
+      "norm_label": "subiradjuntomascotainput"
+    },
+    {
+      "label": "UpdateMetadataAdjuntoMascotaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/adjuntos.ts",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "src_lib_validators_adjuntos_updatemetadataadjuntomascotainput",
+      "community": 242,
+      "norm_label": "updatemetadataadjuntomascotainput"
+    },
+    {
+      "label": "CitaMovilidadPayload",
+      "file_type": "code",
+      "source_file": "src/lib/validators/agenda.ts",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "src_lib_validators_agenda_citamovilidadpayload",
+      "community": 244,
+      "norm_label": "citamovilidadpayload"
+    },
+    {
+      "label": "resolveCitaMovilidadFields",
+      "file_type": "code",
+      "source_file": "src/lib/validators/agenda.ts",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "src_lib_validators_agenda_resolvecitamovilidadfields",
+      "community": 245,
+      "norm_label": "resolvecitamovilidadfields"
+    },
+    {
+      "label": "TipoCitaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/agenda.ts",
+      "source_location": "L124",
+      "_origin": "ast",
+      "id": "src_lib_validators_agenda_tipocitainput",
+      "community": 247,
+      "norm_label": "tipocitainput"
+    },
+    {
+      "label": "TipoCitaUpdateInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/agenda.ts",
+      "source_location": "L125",
+      "_origin": "ast",
+      "id": "src_lib_validators_agenda_tipocitaupdateinput",
+      "community": 248,
+      "norm_label": "tipocitaupdateinput"
+    },
+    {
+      "label": "TipoCitaDisabledInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/agenda.ts",
+      "source_location": "L126",
+      "_origin": "ast",
+      "id": "src_lib_validators_agenda_tipocitadisabledinput",
+      "community": 246,
+      "norm_label": "tipocitadisabledinput"
+    },
+    {
+      "label": "CitaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/agenda.ts",
+      "source_location": "L127",
+      "_origin": "ast",
+      "id": "src_lib_validators_agenda_citainput",
+      "community": 243,
+      "norm_label": "citainput"
+    },
+    {
+      "label": "AparienciaClinicaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_aparienciaclinicainput",
+      "community": 250,
+      "norm_label": "aparienciaclinicainput"
+    },
+    {
+      "label": "TemaGuardadoClinicaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L49",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_temaguardadoclinicainput",
+      "community": 258,
+      "norm_label": "temaguardadoclinicainput"
+    },
+    {
+      "label": "ItemCatalogoInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_itemcatalogoinput",
+      "community": 253,
+      "norm_label": "itemcatalogoinput"
+    },
+    {
+      "label": "CategoriaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L69",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_categoriainput",
+      "community": 251,
+      "norm_label": "categoriainput"
+    },
+    {
+      "label": "ProveedorInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L77",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_proveedorinput",
+      "community": 257,
+      "norm_label": "proveedorinput"
+    },
+    {
+      "label": "AlmacenInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_almaceninput",
+      "community": 249,
+      "norm_label": "almaceninput"
+    },
+    {
+      "label": "MovimientoStockInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L95",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_movimientostockinput",
+      "community": 256,
+      "norm_label": "movimientostockinput"
+    },
+    {
+      "label": "ClinicaBrandingInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L107",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_clinicabrandinginput",
+      "community": 252,
+      "norm_label": "clinicabrandinginput"
+    },
+    {
+      "label": "UnidadInventario",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L115",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_unidadinventario",
+      "community": 260,
+      "norm_label": "unidadinventario"
+    },
+    {
+      "label": "ItemInventarioInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L137",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_iteminventarioinput",
+      "community": 254,
+      "norm_label": "iteminventarioinput"
+    },
+    {
+      "label": "TipoMovimiento",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L151",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_tipomovimiento",
+      "community": 259,
+      "norm_label": "tipomovimiento"
+    },
+    {
+      "label": "MovimientoInventarioInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ajustes.ts",
+      "source_location": "L164",
+      "_origin": "ast",
+      "id": "src_lib_validators_ajustes_movimientoinventarioinput",
+      "community": 255,
+      "norm_label": "movimientoinventarioinput"
+    },
+    {
+      "label": "OrdenServicioInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/atencion.ts",
+      "source_location": "L118",
+      "_origin": "ast",
+      "id": "src_lib_validators_atencion_ordenservicioinput",
+      "community": 264,
+      "norm_label": "ordenservicioinput"
+    },
+    {
+      "label": "EntradaClinicaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/atencion.ts",
+      "source_location": "L119",
+      "_origin": "ast",
+      "id": "src_lib_validators_atencion_entradaclinicainput",
+      "community": 263,
+      "norm_label": "entradaclinicainput"
+    },
+    {
+      "label": "SignosVitalesInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/atencion.ts",
+      "source_location": "L120",
+      "_origin": "ast",
+      "id": "src_lib_validators_atencion_signosvitalesinput",
+      "community": 265,
+      "norm_label": "signosvitalesinput"
+    },
+    {
+      "label": "AdjuntoInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/atencion.ts",
+      "source_location": "L121",
+      "_origin": "ast",
+      "id": "src_lib_validators_atencion_adjuntoinput",
+      "community": 261,
+      "norm_label": "adjuntoinput"
+    },
+    {
+      "label": "EditarEntradaClinicaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/atencion.ts",
+      "source_location": "L122",
+      "_origin": "ast",
+      "id": "src_lib_validators_atencion_editarentradaclinicainput",
+      "community": 262,
+      "norm_label": "editarentradaclinicainput"
+    },
+    {
+      "label": "ClienteFormValues",
+      "file_type": "code",
+      "source_file": "src/lib/validators/clientes.ts",
+      "source_location": "L64",
+      "_origin": "ast",
+      "id": "src_lib_validators_clientes_clienteformvalues",
+      "community": 266,
+      "norm_label": "clienteformvalues"
+    },
+    {
+      "label": "formatTipoDocumentoLabel",
+      "file_type": "code",
+      "source_file": "src/lib/validators/clientes.ts",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "src_lib_validators_clientes_formattipodocumentolabel",
+      "community": 268,
+      "norm_label": "formattipodocumentolabel"
+    },
+    {
+      "label": "formatClienteDocumento",
+      "file_type": "code",
+      "source_file": "src/lib/validators/clientes.ts",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "src_lib_validators_clientes_formatclientedocumento",
+      "community": 267,
+      "norm_label": "formatclientedocumento"
+    },
+    {
+      "label": "MascotaFormValues",
+      "file_type": "code",
+      "source_file": "src/lib/validators/clientes.ts",
+      "source_location": "L98",
+      "_origin": "ast",
+      "id": "src_lib_validators_clientes_mascotaformvalues",
+      "community": 269,
+      "norm_label": "mascotaformvalues"
+    },
+    {
+      "label": "GuardarGroomingInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/grooming.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_lib_validators_grooming_guardargroominginput",
+      "community": 270,
+      "norm_label": "guardargroominginput"
+    },
+    {
+      "label": "CreateHospitalizacionInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L115",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_createhospitalizacioninput",
+      "community": 274,
+      "norm_label": "createhospitalizacioninput"
+    },
+    {
+      "label": "CreateHospitalizacionControlInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L116",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_createhospitalizacioncontrolinput",
+      "community": 273,
+      "norm_label": "createhospitalizacioncontrolinput"
+    },
+    {
+      "label": "AltaHospitalizacionInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L117",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_altahospitalizacioninput",
+      "community": 271,
+      "norm_label": "altahospitalizacioninput"
+    },
+    {
+      "label": "CreateTratamientoHospitalizacionInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L118",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_createtratamientohospitalizacioninput",
+      "community": 275,
+      "norm_label": "createtratamientohospitalizacioninput"
+    },
+    {
+      "label": "UpdateTratamientoHospitalizacionInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L119",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_updatetratamientohospitalizacioninput",
+      "community": 278,
+      "norm_label": "updatetratamientohospitalizacioninput"
+    },
+    {
+      "label": "CambiarEstadoTratamientoHospitalizacionInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L120",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_cambiarestadotratamientohospitalizacioninput",
+      "community": 272,
+      "norm_label": "cambiarestadotratamientohospitalizacioninput"
+    },
+    {
+      "label": "HospitalizacionEstado",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L123",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_hospitalizacionestado",
+      "community": 276,
+      "norm_label": "hospitalizacionestado"
+    },
+    {
+      "label": "TratamientoEstado",
+      "file_type": "code",
+      "source_file": "src/lib/validators/hospitalizaciones.ts",
+      "source_location": "L124",
+      "_origin": "ast",
+      "id": "src_lib_validators_hospitalizaciones_tratamientoestado",
+      "community": 277,
+      "norm_label": "tratamientoestado"
+    },
+    {
+      "label": "getSeguimientoTipoLabel",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L80",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_getseguimientotipolabel",
+      "community": 283,
+      "norm_label": "getseguimientotipolabel"
+    },
+    {
+      "label": "getSeguimientoEstadoLabel",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L89",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_getseguimientoestadolabel",
+      "community": 282,
+      "norm_label": "getseguimientoestadolabel"
+    },
+    {
+      "label": "getRecurrenciaLabel",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_getrecurrencialabel",
+      "community": 281,
+      "norm_label": "getrecurrencialabel"
+    },
+    {
+      "label": "formatRecurrencia",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_formatrecurrencia",
+      "community": 280,
+      "norm_label": "formatrecurrencia"
+    },
+    {
+      "label": "calculateNextRecurrenceDate",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L113",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_calculatenextrecurrencedate",
+      "community": 279,
+      "norm_label": "calculatenextrecurrencedate"
+    },
+    {
+      "label": "RecordatorioInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L146",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_recordatorioinput",
+      "community": 285,
+      "norm_label": "recordatorioinput"
+    },
+    {
+      "label": "RecordatorioTipo",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L147",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_recordatoriotipo",
+      "community": 286,
+      "norm_label": "recordatoriotipo"
+    },
+    {
+      "label": "RecordatorioEstado",
+      "file_type": "code",
+      "source_file": "src/lib/validators/recordatorios.ts",
+      "source_location": "L148",
+      "_origin": "ast",
+      "id": "src_lib_validators_recordatorios_recordatorioestado",
+      "community": 284,
+      "norm_label": "recordatorioestado"
+    },
+    {
+      "label": "CreateRegistroPrevioInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/registros-previos.ts",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "src_lib_validators_registros_previos_createregistroprevioinput",
+      "community": 288,
+      "norm_label": "createregistroprevioinput"
+    },
+    {
+      "label": "AnularRegistroPrevioInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/registros-previos.ts",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_lib_validators_registros_previos_anularregistroprevioinput",
+      "community": 287,
+      "norm_label": "anularregistroprevioinput"
+    },
+    {
+      "label": "SeguimientoClinicoInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/seguimiento.ts",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "src_lib_validators_seguimiento_seguimientoclinicoinput",
+      "community": 289,
+      "norm_label": "seguimientoclinicoinput"
+    },
+    {
+      "label": "SeguimientoTipo",
+      "file_type": "code",
+      "source_file": "src/lib/validators/seguimiento.ts",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "src_lib_validators_seguimiento_seguimientotipo",
+      "community": 291,
+      "norm_label": "seguimientotipo"
+    },
+    {
+      "label": "SeguimientoEstado",
+      "file_type": "code",
+      "source_file": "src/lib/validators/seguimiento.ts",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "src_lib_validators_seguimiento_seguimientoestado",
+      "community": 290,
+      "norm_label": "seguimientoestado"
+    },
+    {
+      "label": "StaffRole",
+      "file_type": "code",
+      "source_file": "src/lib/validators/staff.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_lib_validators_staff_staffrole",
+      "community": 294,
+      "norm_label": "staffrole"
+    },
+    {
+      "label": "InvitationInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/staff.ts",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "src_lib_validators_staff_invitationinput",
+      "community": 292,
+      "norm_label": "invitationinput"
+    },
+    {
+      "label": "UpdateRoleInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/staff.ts",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "src_lib_validators_staff_updateroleinput",
+      "community": 296,
+      "norm_label": "updateroleinput"
+    },
+    {
+      "label": "UpdateNameInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/staff.ts",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "src_lib_validators_staff_updatenameinput",
+      "community": 295,
+      "norm_label": "updatenameinput"
+    },
+    {
+      "label": "StaffMember",
+      "file_type": "code",
+      "source_file": "src/lib/validators/staff.ts",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "src_lib_validators_staff_staffmember",
+      "community": 293,
+      "norm_label": "staffmember"
+    },
+    {
+      "label": "ItemCatalogoInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ventas.ts",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_lib_validators_ventas_itemcatalogoinput",
+      "community": 299,
+      "norm_label": "itemcatalogoinput"
+    },
+    {
+      "label": "VentaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ventas.ts",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "src_lib_validators_ventas_ventainput",
+      "community": 302,
+      "norm_label": "ventainput"
+    },
+    {
+      "label": "ItemVentaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ventas.ts",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "src_lib_validators_ventas_itemventainput",
+      "community": 300,
+      "norm_label": "itemventainput"
+    },
+    {
+      "label": "LedgerInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ventas.ts",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "src_lib_validators_ventas_ledgerinput",
+      "community": 301,
+      "norm_label": "ledgerinput"
+    },
+    {
+      "label": "AbrirCajaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ventas.ts",
+      "source_location": "L52",
+      "_origin": "ast",
+      "id": "src_lib_validators_ventas_abrircajainput",
+      "community": 297,
+      "norm_label": "abrircajainput"
+    },
+    {
+      "label": "CerrarCajaInput",
+      "file_type": "code",
+      "source_file": "src/lib/validators/ventas.ts",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "src_lib_validators_ventas_cerrarcajainput",
+      "community": 298,
+      "norm_label": "cerrarcajainput"
+    },
+    {
+      "label": "proxy",
+      "file_type": "code",
+      "source_file": "src/proxy.ts",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "src_proxy_proxy",
+      "community": 303,
+      "norm_label": "proxy"
+    },
+    {
+      "label": "VetERP",
+      "file_type": "concept",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "agents_agents_agents_veterp",
+      "community": 0,
+      "norm_label": "veterp"
+    },
+    {
+      "label": "Next.js App Router",
+      "file_type": "concept",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "agents_agents_agents_nextjs",
+      "community": 0,
+      "norm_label": "next.js app router"
+    },
+    {
+      "label": "Supabase",
+      "file_type": "concept",
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "agents_agents_agents_supabase",
+      "community": 0,
+      "norm_label": "supabase"
+    },
+    {
+      "label": "Fase 1: Autenticaci\u00f3n",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase1_2_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase1_2_validation_fase1",
+      "community": 0,
+      "norm_label": "fase 1: autenticacion"
+    },
+    {
+      "label": "Fase 2: Clientes y Mascotas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase1_2_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase1_2_validation_fase2",
+      "community": 0,
+      "norm_label": "fase 2: clientes y mascotas"
+    },
+    {
+      "label": "Fase 3: Agenda y Citas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase3_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase3_validation_fase3",
+      "community": 0,
+      "norm_label": "fase 3: agenda y citas"
+    },
+    {
+      "label": "Fase 4: \u00d3rdenes y Entradas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase4_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase4_validation_fase4",
+      "community": 0,
+      "norm_label": "fase 4: ordenes y entradas"
+    },
+    {
+      "label": "Fase 5: Caja y Ventas",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase5_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase5_validation_fase5",
+      "community": 0,
+      "norm_label": "fase 5: caja y ventas"
+    },
+    {
+      "label": "Fase 6: Inventario",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase6_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase6_validation_fase6",
+      "community": 0,
+      "norm_label": "fase 6: inventario"
+    },
+    {
+      "label": "Fase 7: Hardening y Seguridad",
+      "file_type": "concept",
+      "source_file": ".trae/documents/phase7_validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_phase7_validation_fase7",
+      "community": 0,
+      "norm_label": "fase 7: hardening y seguridad"
+    },
+    {
+      "label": "VetERP Technical Plan",
+      "file_type": "concept",
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "trae_documents_veterp_technical_plan_veterp",
+      "community": 0,
+      "norm_label": "veterp technical plan"
+    },
+    {
+      "label": "Implement Phase 7 Hardening Spec",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/spec.md",
+      "id": "implement_phase7_hardening_spec_spec",
+      "community": 8,
+      "norm_label": "implement phase 7 hardening spec"
+    },
+    {
+      "label": "RBAC Authorization",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/spec.md",
+      "id": "implement_phase7_hardening_spec_rbac",
+      "community": 3,
+      "norm_label": "rbac authorization"
+    },
+    {
+      "label": "Implement Phase 7 Tasks",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/tasks.md",
+      "id": "implement_phase7_hardening_tasks_tasks",
+      "community": 8,
+      "norm_label": "implement phase 7 tasks"
+    },
+    {
+      "label": "Rebuild VetERP Checklist",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/checklist.md",
+      "id": "rebuild_veterp_checklist_checklist",
+      "community": 6,
+      "norm_label": "rebuild veterp checklist"
+    },
+    {
+      "label": "Rebuild VetERP Spec",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/spec.md",
+      "id": "rebuild_veterp_spec_spec",
+      "community": 6,
+      "norm_label": "rebuild veterp spec"
+    },
+    {
+      "label": "Rebuild VetERP Tasks",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/tasks.md",
+      "id": "rebuild_veterp_tasks_tasks",
+      "community": 6,
+      "norm_label": "rebuild veterp tasks"
+    },
+    {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/AGENTS.md",
+      "id": "agents_agents",
+      "community": 7,
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/CLAUDE.md",
+      "id": "claude_claude",
+      "community": 7,
+      "norm_label": "claude.md"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/README.md",
+      "id": "readme_readme",
+      "community": 17,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Regla UX: No mostrar valores internos",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/Regla obligatoria de UX no mostrar valores internos al usuario.txt",
+      "id": "regla_obligatoria_de_ux_no_mostrar_valores_internos_al_usuario_regla",
+      "community": 18,
+      "norm_label": "regla ux: no mostrar valores internos"
+    },
+    {
+      "label": "VetERP ChatGPT Transcript",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/VetERP_chatgpt.md",
+      "id": "veterp_chatgpt_chatgpt",
+      "community": 304,
+      "norm_label": "veterp chatgpt transcript"
+    },
+    {
+      "label": "App Flow Map",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/app_flow_map.md",
+      "id": "docs_app_flow_map_app_flow_map",
+      "community": 9,
+      "norm_label": "app flow map"
+    },
+    {
+      "label": "Data Model Document",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_data_model",
+      "community": 10,
+      "norm_label": "data model document"
+    },
+    {
+      "label": "User Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_user",
+      "community": 3,
+      "norm_label": "user data model"
+    },
+    {
+      "label": "Clinica Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_clinica",
+      "community": 1,
+      "norm_label": "clinica data model"
+    },
+    {
+      "label": "MembresiaClinica Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_membresiaclinica",
+      "community": 3,
+      "norm_label": "membresiaclinica data model"
+    },
+    {
+      "label": "Cliente Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_cliente",
+      "community": 1,
+      "norm_label": "cliente data model"
+    },
+    {
+      "label": "Mascota Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_mascota",
+      "community": 1,
+      "norm_label": "mascota data model"
+    },
+    {
+      "label": "OrdenServicio Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_ordenservicio",
+      "community": 1,
+      "norm_label": "ordenservicio data model"
+    },
+    {
+      "label": "EntradaClinica Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_entradaclinica",
+      "community": 1,
+      "norm_label": "entradaclinica data model"
+    },
+    {
+      "label": "ItemCola Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_itemcola",
+      "community": 1,
+      "norm_label": "itemcola data model"
+    },
+    {
+      "label": "Cita Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_cita",
+      "community": 1,
+      "norm_label": "cita data model"
+    },
+    {
+      "label": "TipoCita Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_tipocita",
+      "community": 1,
+      "norm_label": "tipocita data model"
+    },
+    {
+      "label": "ItemCatalogo Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_itemcatalogo",
+      "community": 2,
+      "norm_label": "itemcatalogo data model"
+    },
+    {
+      "label": "Proveedor Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_proveedor",
+      "community": 2,
+      "norm_label": "proveedor data model"
+    },
+    {
+      "label": "Almacen Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_almacen",
+      "community": 2,
+      "norm_label": "almacen data model"
+    },
+    {
+      "label": "MovimientoStock Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_movimientostock",
+      "community": 2,
+      "norm_label": "movimientostock data model"
+    },
+    {
+      "label": "Venta Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_venta",
+      "community": 1,
+      "norm_label": "venta data model"
+    },
+    {
+      "label": "ItemVenta Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_itemventa",
+      "community": 2,
+      "norm_label": "itemventa data model"
+    },
+    {
+      "label": "Ledger Data Model",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "id": "docs_data_model_ledger",
+      "community": 1,
+      "norm_label": "ledger data model"
+    },
+    {
+      "label": "Feedback Veterinario",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/feedback_veterinario.md",
+      "id": "docs_feedback_veterinario_feedback",
+      "community": 11,
+      "norm_label": "feedback veterinario"
+    },
+    {
+      "label": "Landing Copy",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-copy.md",
+      "id": "landing_landing_copy_landing_copy",
+      "community": 5,
+      "norm_label": "landing copy"
+    },
+    {
+      "label": "Landing Implementation Notes",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-implementation-notes.md",
+      "id": "landing_landing_implementation_notes_landing_implementation_notes",
+      "community": 16,
+      "norm_label": "landing implementation notes"
+    },
+    {
+      "label": "Landing PRD",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md",
+      "id": "landing_landing_prd_landing_prd",
+      "community": 5,
+      "norm_label": "landing prd"
+    },
+    {
+      "label": "Landing Screenshot Shotlist",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/screenshot-shotlist.md",
+      "id": "landing_screenshot_shotlist_screenshot_shotlist",
+      "community": 5,
+      "norm_label": "landing screenshot shotlist"
+    },
+    {
+      "label": "Migration Risks",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/migration_risks.md",
+      "id": "docs_migration_risks_migration_risks",
+      "community": 12,
+      "norm_label": "migration risks"
+    },
+    {
+      "label": "Product Spec",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/product_spec.md",
+      "id": "docs_product_spec_product_spec",
+      "community": 13,
+      "norm_label": "product spec"
+    },
+    {
+      "label": "VetERP Beta Smoke Test",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/veterp_beta_smoke_test.md",
+      "id": "docs_veterp_beta_smoke_test_smoke_test",
+      "community": 14,
+      "norm_label": "veterp beta smoke test"
+    },
+    {
+      "label": "VetERP Roadmap",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/veterp_roadmap_general.md",
+      "id": "docs_veterp_roadmap_general_roadmap",
+      "community": 15,
+      "norm_label": "veterp roadmap"
+    },
+    {
+      "label": "Domain Certificate veterp.qzz.io PDF",
+      "file_type": "document",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf",
+      "id": "domain_certificate_veterp_qzz_io_pdf",
+      "community": 4,
+      "norm_label": "domain certificate veterp.qzz.io pdf"
+    },
+    {
+      "label": "veterp.qzz.io Domain",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf",
+      "id": "domain_certificate_veterp_qzz_io_veterp_qzz_io",
+      "community": 4,
+      "norm_label": "veterp.qzz.io domain"
+    },
+    {
+      "label": "Angel Rea\u00f1o V\u00e1squez",
+      "file_type": "concept",
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf",
+      "id": "domain_certificate_veterp_qzz_io_angel_reano_vasquez",
+      "community": 4,
+      "norm_label": "angel reano vasquez"
+    }
+  ],
+  "links": [
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "agents_agents_agents_veterp",
+      "target": "agents_agents_agents_nextjs"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "agents_agents_agents_veterp",
+      "target": "agents_agents_agents_supabase"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "agents_agents_agents_veterp",
+      "target": "trae_documents_veterp_technical_plan_veterp"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase1_2_validation_fase1"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase1_2_validation_fase2"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase3_validation_fase3"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase4_validation_fase4"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase5_validation_fase5"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase6_validation_fase6"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".trae/documents/veterp_technical_plan.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "trae_documents_veterp_technical_plan_veterp",
+      "target": "trae_documents_phase7_validation_fase7"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/tasks.md",
+      "source": "implement_phase7_hardening_tasks_tasks",
+      "target": "implement_phase7_hardening_spec_spec"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/implement-phase7-hardening/spec.md",
+      "source": "implement_phase7_hardening_spec_rbac",
+      "target": "docs_data_model_membresiaclinica"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/tasks.md",
+      "source": "rebuild_veterp_tasks_tasks",
+      "target": "rebuild_veterp_checklist_checklist"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/.trae/specs/rebuild-veterp/tasks.md",
+      "source": "rebuild_veterp_tasks_tasks",
+      "target": "rebuild_veterp_spec_spec"
+    },
+    {
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/CLAUDE.md",
+      "source": "claude_claude",
+      "target": "agents_agents"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_membresiaclinica",
+      "target": "docs_data_model_user"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_ordenservicio",
+      "target": "docs_data_model_user"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_cliente",
+      "target": "docs_data_model_clinica"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_mascota",
+      "target": "docs_data_model_clinica"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_membresiaclinica",
+      "target": "docs_data_model_clinica"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_cita",
+      "target": "docs_data_model_cliente"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_ledger",
+      "target": "docs_data_model_cliente"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_mascota",
+      "target": "docs_data_model_cliente"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_ordenservicio",
+      "target": "docs_data_model_cliente"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_venta",
+      "target": "docs_data_model_cliente"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_cita",
+      "target": "docs_data_model_mascota"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_ordenservicio",
+      "target": "docs_data_model_mascota"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_entradaclinica",
+      "target": "docs_data_model_ordenservicio"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_itemcola",
+      "target": "docs_data_model_ordenservicio"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_ledger",
+      "target": "docs_data_model_ordenservicio"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_venta",
+      "target": "docs_data_model_ordenservicio"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_cita",
+      "target": "docs_data_model_tipocita"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_itemcatalogo",
+      "target": "docs_data_model_proveedor"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_itemventa",
+      "target": "docs_data_model_itemcatalogo"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_movimientostock",
+      "target": "docs_data_model_itemcatalogo"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_movimientostock",
+      "target": "docs_data_model_almacen"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_movimientostock",
+      "target": "docs_data_model_venta"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_itemventa",
+      "target": "docs_data_model_venta"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md",
+      "source": "docs_data_model_ledger",
+      "target": "docs_data_model_venta"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md",
+      "source": "landing_landing_prd_landing_prd",
+      "target": "landing_landing_copy_landing_copy"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/screenshot-shotlist.md",
+      "source": "landing_screenshot_shotlist_screenshot_shotlist",
+      "target": "landing_landing_prd_landing_prd"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf",
+      "source": "domain_certificate_veterp_qzz_io_pdf",
+      "target": "domain_certificate_veterp_qzz_io_veterp_qzz_io"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/domain-certificate-veterp.qzz.io.pdf",
+      "source": "domain_certificate_veterp_qzz_io_angel_reano_vasquez",
+      "target": "domain_certificate_veterp_qzz_io_veterp_qzz_io"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "veterp_project_phases",
+      "label": "VetERP Implementation Phases",
+      "nodes": [
+        "trae_documents_phase1_2_validation_fase1",
+        "trae_documents_phase1_2_validation_fase2",
+        "trae_documents_phase3_validation_fase3",
+        "trae_documents_phase4_validation_fase4",
+        "trae_documents_phase5_validation_fase5",
+        "trae_documents_phase6_validation_fase6",
+        "trae_documents_phase7_validation_fase7"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".trae/documents/veterp_technical_plan.md"
+    },
+    {
+      "id": "veterp_data_model",
+      "label": "VetERP Data Model Entities",
+      "nodes": [
+        "docs_data_model_user",
+        "docs_data_model_clinica",
+        "docs_data_model_membresiaclinica",
+        "docs_data_model_cliente",
+        "docs_data_model_mascota",
+        "docs_data_model_ordenservicio",
+        "docs_data_model_entradaclinica",
+        "docs_data_model_itemcola",
+        "docs_data_model_cita",
+        "docs_data_model_tipocita",
+        "docs_data_model_itemcatalogo",
+        "docs_data_model_proveedor",
+        "docs_data_model_almacen",
+        "docs_data_model_movimientostock",
+        "docs_data_model_venta",
+        "docs_data_model_itemventa",
+        "docs_data_model_ledger"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/data_model.md"
+    },
+    {
+      "id": "veterp_landing_docs",
+      "label": "VetERP Landing Page Documentation",
+      "nodes": [
+        "landing_landing_copy_landing_copy",
+        "landing_landing_implementation_notes_landing_implementation_notes",
+        "landing_landing_prd_landing_prd",
+        "landing_screenshot_shotlist_screenshot_shotlist"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:/Users/angel/OneDrive/Escritorio/Empresa/VetERP/docs/landing/landing-prd.md"
+    }
+  ],
+  "built_at_commit": "1ce770208f76a9ca63ae111c748317f663e41d00"
+}
