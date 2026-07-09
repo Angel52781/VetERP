@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getInvitationDetails } from "@/app/(operativo)/ajustes/staff-actions";
-import { redirect } from "next/navigation";
 import { InvitacionClient } from "./client";
+
+type InvitacionClinicaRef = { nombre?: string | null };
 
 export default async function InvitacionPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -57,9 +58,8 @@ export default async function InvitacionPage(props: { params: Promise<{ id: stri
     );
   }
 
-  const clinicaNombre = Array.isArray(invitation.clinicas) 
-    ? invitation.clinicas[0]?.nombre 
-    : (invitation.clinicas as any)?.nombre;
+  const clinicas = invitation.clinicas as InvitacionClinicaRef | InvitacionClinicaRef[] | null;
+  const clinicaNombre = Array.isArray(clinicas) ? clinicas[0]?.nombre : clinicas?.nombre;
 
   if (!user) {
     // Si no está logueado, redirigir a login, pero podemos pasar un returnTo o similar
