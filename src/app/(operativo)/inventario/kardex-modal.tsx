@@ -8,7 +8,7 @@ import { formatMotivoMovimiento, type MovimientoKardex } from "./types";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowDownCircle, ArrowUpCircle, ArrowLeftRight, Loader2 } from "lucide-react";
+import { ArrowLeftRight, Loader2 } from "lucide-react";
 
 const TIPO_META: Record<string, { label: string; color: string; signo: "+" | "-" | "~" }> = {
   entrada:          { label: "Entrada",      color: "bg-emerald-100 text-emerald-800", signo: "+" },
@@ -27,19 +27,40 @@ interface Props {
   itemNombre: string;
 }
 
+interface KardexRequestState {
+  itemId: string | null;
+  movimientos: MovimientoKardex[];
+  error: string | null;
+}
+
 export function KardexModal({ itemId, itemNombre }: Props) {
-  const [movimientos, setMovimientos] = useState<MovimientoKardex[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [requestState, setRequestState] = useState<KardexRequestState>({
+    itemId: null,
+    movimientos: [],
+    error: null,
+  });
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
+
     getKardexProducto(itemId, 50).then((res) => {
-      if (res.error) setError(res.error);
-      else setMovimientos(res.data);
-      setLoading(false);
+      if (cancelled) return;
+
+      setRequestState({
+        itemId,
+        movimientos: res.error ? [] : res.data,
+        error: res.error,
+      });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [itemId]);
+
+  const loading = requestState.itemId !== itemId;
+  const movimientos = requestState.movimientos;
+  const error = requestState.error;
 
   return (
     <>
