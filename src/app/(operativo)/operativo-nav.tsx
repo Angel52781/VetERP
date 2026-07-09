@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -66,11 +66,6 @@ export function OperativoNav({ mobile = false, isAdminOrOwner, hideCaja }: Opera
     [isAdminOrOwner, hideCaja],
   );
 
-  useEffect(() => {
-    if (mobile) {
-      setOpen(false);
-    }
-  }, [mobile, pathname]);
 
   if (mobile) {
     return (
