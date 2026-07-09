@@ -66,7 +66,7 @@ export function AdjuntosPanel({ ordenId, adjuntos }: AdjuntosPanelProps) {
         
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError("Error inesperado al subir el archivo.");
     } finally {
       setIsUploading(false);
