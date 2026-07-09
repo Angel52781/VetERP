@@ -74,7 +74,8 @@ function getFileIcon(mimeType: string | null) {
 
 function validateClientFile(file: File | null) {
   if (!file) return "Selecciona un archivo.";
-  if (!MASCOTA_ADJUNTO_MIME_TYPES.includes(file.type as any)) {
+  const allowedMimeTypes: readonly string[] = MASCOTA_ADJUNTO_MIME_TYPES;
+  if (!allowedMimeTypes.includes(file.type)) {
     return "Formato no permitido. Usa PDF, JPG, PNG o WEBP.";
   }
   if (file.size > MAX_MASCOTA_ADJUNTO_BYTES) {
