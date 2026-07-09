@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
@@ -27,11 +27,19 @@ export function IniciarAtencionCitaBtn({
   citaEstado,
   citaStartDate,
   activeOrderId,
-  activeOrderEstadoText,
   compact = false,
 }: IniciarAtencionCitaBtnProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [nowMs, setNowMs] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setNowMs(Date.now());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const hasActiveOrder = Boolean(activeOrderId);
   const estadoActual = citaEstado ?? "programada";
@@ -40,7 +48,7 @@ export function IniciarAtencionCitaBtn({
   const isLlegada = estadoActual === "llego";
   const isEnAtencion = estadoActual === "en_atencion";
   const startMs = citaStartDate ? new Date(citaStartDate).getTime() : NaN;
-  const msToStart = Number.isNaN(startMs) ? -1 : startMs - Date.now();
+  const msToStart = Number.isNaN(startMs) || nowMs === null ? -1 : startMs - nowMs;
   const withinEarlyWindow = msToStart <= 120 * 60 * 1000;
 
   async function marcarCitaEnAtencionSiAplica() {

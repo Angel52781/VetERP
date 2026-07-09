@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -40,11 +40,19 @@ function getAllowedActions(estado: string) {
 export function CitaEstadoControl({ citaId, estado, startDate, compact = false }: CitaEstadoControlProps) {
   const router = useRouter();
   const [loadingEstado, setLoadingEstado] = useState<string | null>(null);
+  const [nowMs, setNowMs] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setNowMs(Date.now());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const estadoActual = estado ?? "programada";
   const startMs = startDate ? new Date(startDate).getTime() : NaN;
-  const nowMs = Date.now();
-  const msToStart = Number.isNaN(startMs) ? -1 : startMs - nowMs;
+  const msToStart = Number.isNaN(startMs) || nowMs === null ? -1 : startMs - nowMs;
   const isFuture = msToStart > 0;
   const isFutureFar = msToStart > 120 * 60 * 1000;
   const meta = getCitaStatusMeta(estadoActual);
