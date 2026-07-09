@@ -39,7 +39,6 @@ export default async function AjustesPage() {
 
   const role = context.role ?? "";
   const isAdminOrOwner = role === "owner" || role === "admin";
-  const tabTriggerClassName = "h-10 flex-1 basis-[140px] px-4 text-sm";
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
