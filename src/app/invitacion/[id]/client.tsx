@@ -7,7 +7,16 @@ import { Button } from "@/components/ui/button";
 import { acceptInvitation } from "@/app/(operativo)/ajustes/staff-actions";
 import { clinicaCookieName } from "@/lib/supabase/env";
 
-export function InvitacionClient({ invitation }: { invitation: any }) {
+type InvitacionClinicaRef = { nombre?: string | null };
+
+type InvitacionClientData = {
+  id: string;
+  email: string;
+  role: string;
+  clinicas?: InvitacionClinicaRef | InvitacionClinicaRef[] | null;
+};
+
+export function InvitacionClient({ invitation }: { invitation: InvitacionClientData }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -33,7 +42,7 @@ export function InvitacionClient({ invitation }: { invitation: any }) {
 
   const clinicaNombre = Array.isArray(invitation.clinicas) 
     ? invitation.clinicas[0]?.nombre 
-    : (invitation.clinicas as any)?.nombre;
+    : invitation.clinicas?.nombre;
 
   return (
     <div className="bg-white p-8 rounded-lg shadow max-w-md w-full space-y-6 text-center">
