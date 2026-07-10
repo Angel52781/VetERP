@@ -4,6 +4,17 @@ import { InvitacionClient } from "./client";
 
 type InvitacionClinicaRef = { nombre?: string | null };
 
+function formatRole(role: string): string {
+  const cleanRole = role ? role.toLowerCase().trim() : "";
+  const roleMap: Record<string, string> = {
+    owner: "Propietario",
+    admin: "Administrador",
+    veterinario: "Veterinario",
+    asistente: "Asistente",
+  };
+  return roleMap[cleanRole] || "Rol no especificado";
+}
+
 export default async function InvitacionPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const invitationId = params.id;
@@ -69,7 +80,7 @@ export default async function InvitacionPage(props: { params: Promise<{ id: stri
         <div className="bg-white p-8 rounded-lg shadow max-w-md w-full text-center space-y-4">
           <h2 className="text-xl font-bold">¡Has sido invitado!</h2>
           <p className="text-muted-foreground">
-            Has sido invitado a unirte a la clínica <strong>{clinicaNombre}</strong> como <strong>{invitation.role}</strong>.
+            Has sido invitado a unirte a la clínica <strong>{clinicaNombre}</strong> como <strong>{formatRole(invitation.role)}</strong>.
           </p>
           <div className="bg-blue-50 text-blue-800 p-3 rounded-md text-sm text-left">
             La invitación está a nombre de: <strong>{invitation.email}</strong>.<br/>

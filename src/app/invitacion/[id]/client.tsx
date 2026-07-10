@@ -16,6 +16,17 @@ type InvitacionClientData = {
   clinicas?: InvitacionClinicaRef | InvitacionClinicaRef[] | null;
 };
 
+function formatRole(role: string): string {
+  const cleanRole = role ? role.toLowerCase().trim() : "";
+  const roleMap: Record<string, string> = {
+    owner: "Propietario",
+    admin: "Administrador",
+    veterinario: "Veterinario",
+    asistente: "Asistente",
+  };
+  return roleMap[cleanRole] || "Rol no especificado";
+}
+
 export function InvitacionClient({ invitation }: { invitation: InvitacionClientData }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -60,7 +71,7 @@ export function InvitacionClient({ invitation }: { invitation: InvitacionClientD
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Tu nuevo rol:</span>
-          <span className="font-medium capitalize">{invitation.role}</span>
+          <span className="font-medium">{formatRole(invitation.role)}</span>
         </div>
       </div>
 
