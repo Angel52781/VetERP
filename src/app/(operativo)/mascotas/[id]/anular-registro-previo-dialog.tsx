@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -41,7 +41,7 @@ export function AnularRegistroPrevioDialog({ registroId, mascotaId, titulo }: An
     reset,
     formState: { errors },
   } = useForm<AnularRegistroPrevioInput>({
-    resolver: zodResolver(anularRegistroPrevioSchema) as any,
+    resolver: zodResolver(anularRegistroPrevioSchema) as Resolver<AnularRegistroPrevioInput>,
     defaultValues: {
       id: registroId,
       mascota_id: mascotaId,
@@ -65,7 +65,7 @@ export function AnularRegistroPrevioDialog({ registroId, mascotaId, titulo }: An
         setOpen(false);
         router.refresh();
       }
-    } catch (e: any) {
+    } catch {
       toast.error("Error al anular", {
         description: "Ocurrió un error inesperado. Intente nuevamente.",
       });
