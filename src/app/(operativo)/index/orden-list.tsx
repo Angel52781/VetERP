@@ -20,8 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Loader2, MoreVertical, Play, CheckCircle, Clock } from "lucide-react";
+import { Loader2, MoreVertical, Play, CheckCircle, Clock, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { getFinancialStatusMeta, getOrdenStatusMeta, getToneBadgeClass } from "@/lib/operational-status";
 
@@ -40,7 +39,7 @@ interface OrdenListProps {
   ordenes: Orden[];
 }
 
-const ESTADOS_ICON: Record<string, any> = {
+const ESTADOS_ICON: Record<string, LucideIcon> = {
   open: Clock,
   in_progress: Play,
   finished: CheckCircle,
