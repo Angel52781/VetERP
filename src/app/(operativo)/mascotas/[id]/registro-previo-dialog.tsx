@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import {
@@ -44,7 +44,7 @@ export function RegistroPrevioDialog({ mascotaId, mascotaNacimiento }: RegistroP
     watch,
     formState: { errors },
   } = useForm<CreateRegistroPrevioInput>({
-    resolver: zodResolver(createRegistroPrevioSchema) as any,
+    resolver: zodResolver(createRegistroPrevioSchema) as Resolver<CreateRegistroPrevioInput>,
     defaultValues: {
       mascota_id: mascotaId,
       fecha_historica_date: format(new Date(), "yyyy-MM-dd"),
@@ -73,7 +73,7 @@ export function RegistroPrevioDialog({ mascotaId, mascotaNacimiento }: RegistroP
         setOpen(false);
         router.refresh();
       }
-    } catch (e: any) {
+    } catch {
       toast.error("Error al guardar", {
         description: "Ocurrió un error inesperado. Intente nuevamente.",
       });
