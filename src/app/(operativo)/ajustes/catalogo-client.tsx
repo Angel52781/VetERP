@@ -85,13 +85,14 @@ export function ItemCatalogoForm({
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const defaultKind: ItemCatalogoInput["kind"] = initialData?.kind === "servicio" ? "servicio" : "producto";
 
   const form = useForm<z.input<typeof itemCatalogoSchema>>({
     resolver: zodResolver(itemCatalogoSchema),
     defaultValues: {
       nombre: initialData?.nombre || "",
       descripcion: initialData?.descripcion || "",
-      kind: (initialData?.kind as any) || "producto",
+      kind: defaultKind,
       precio_inc: initialData?.precio_inc || 0,
       fecha_vencimiento: initialData?.fecha_vencimiento || "",
       proveedor_id: initialData?.proveedor_id || "",
