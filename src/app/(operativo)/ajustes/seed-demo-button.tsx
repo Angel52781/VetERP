@@ -6,9 +6,21 @@ import { toast } from "sonner";
 import { Loader2, Database } from "lucide-react";
 import { seedFullDemoData } from "./seed-actions";
 
+type SeedDemoCounts = {
+  clientes: number;
+  mascotas: number;
+  tiposCita: number;
+  citas: number;
+  ordenes: number;
+  catalogo: number;
+  categorias: number;
+  stock: number;
+  ventas: number;
+};
+
 export function SeedDemoButton() {
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<SeedDemoCounts | null>(null);
 
   async function handleSeed() {
     setLoading(true);
@@ -18,7 +30,7 @@ export function SeedDemoButton() {
 
     if (result.success) {
       toast.success("Datos demo inyectados correctamente");
-      setResults(result.counts);
+      setResults(result.counts ?? null);
     } else {
       toast.error(result.error || "Error al inyectar demo data");
     }
