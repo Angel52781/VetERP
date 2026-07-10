@@ -6,15 +6,45 @@ import { es } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Stethoscope, BedDouble, Syringe, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { getSeguimientoTipoLabel } from "@/lib/validators/recordatorios";
+
+type EntradaClinicaResumen = {
+  tipo_text?: string | null;
+  diagnostico_text?: string | null;
+  motivo_consulta_text?: string | null;
+};
+
+type OrdenResumen = {
+  id: string;
+  created_at: string;
+  started_at?: string | null;
+  entradas_clinicas?: EntradaClinicaResumen[] | null;
+};
+
+type HospitalizacionResumen = {
+  id: string;
+  internado_at: string;
+  estado_text?: string | null;
+  diagnostico_presuntivo_text?: string | null;
+  motivo_text?: string | null;
+};
+
+type SeguimientoResumen = {
+  id: string;
+  resuelto_at?: string | null;
+  fecha_aplicacion_date?: string | null;
+  created_at?: string | null;
+  nombre_text?: string | null;
+  tipo_text?: string | null;
+  estado_text?: string | null;
+};
 
 interface ContextoRecienteProps {
   currentOrdenId: string;
   mascotaId: string;
-  ordenes: any[];
-  hospitalizaciones: any[];
-  seguimientos: any[];
+  ordenes: OrdenResumen[];
+  hospitalizaciones: HospitalizacionResumen[];
+  seguimientos: SeguimientoResumen[];
   mascotaReturnTo: string;
 }
 
@@ -45,7 +75,7 @@ export function ContextoReciente({
       
       const date = orden.started_at ? new Date(orden.started_at) : new Date(orden.created_at);
       const mainNote = (orden.entradas_clinicas || []).find(
-        (e: any) => e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje"
+        (e: EntradaClinicaResumen) => e.tipo_text === "Nota Clínica de Evolución" || e.tipo_text === "Signos Vitales y Triaje"
       );
       
       let summary = "Sin detalle clínico registrado.";
