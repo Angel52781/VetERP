@@ -48,6 +48,15 @@ interface ResumenCaja {
   total: number;
 }
 
+interface HistorialCierreCaja {
+  id: string;
+  fecha_cierre: string;
+  total_sistema: number;
+  monto_cierre_efectivo_real: number;
+  monto_apertura: number;
+  monto_efectivo_sistema: number;
+}
+
 export function CorteCajaClient({ 
   cierreActual, 
   resumenActual,
@@ -55,7 +64,7 @@ export function CorteCajaClient({
 }: { 
   cierreActual: CierreCaja | null, 
   resumenActual: ResumenCaja,
-  historial: any[]
+  historial: HistorialCierreCaja[]
 }) {
   const [loading, setLoading] = useState(false);
   const [montoApertura, setMontoApertura] = useState<number>(0);
